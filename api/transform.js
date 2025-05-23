@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 module.exports = async function handler(req, res) {
 
   // Configurar CORS
