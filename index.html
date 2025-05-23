@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#667eea">
+<title>Baja un Cambio</title>
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+body {
+font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+sans-serif;
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+min-height: 100vh;
+padding: 10px;
+color: #333;
+}
+.app-container {
+max-width: 420px;
+margin: 0 auto;
+background: rgba(255, 255, 255, 0.98);
+border-radius: 25px;
+overflow: hidden;
+box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+backdrop-filter: blur(20px);
+border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.header {
+background: linear-gradient(135deg, #667eea, #764ba2);
+color: white;
+padding: 30px 25px 25px;
+text-align: center;
+position: relative;
+}
+.app-title {
+font-size: 2rem;
+font-weight: 800;
+margin-bottom: 8px;
+position: relative;
+z-index: 1;
+}
+.app-subtitle {
+font-size: 1rem;
+opacity: 0.9;
+position: relative;
+z-index: 1;
+}
+.main-content {
+padding: 25px;
+}
+.input-group {
+margin-bottom: 25px;
+}
+.input-label {
+display: flex;
+align-items: center;
+gap: 10px;
+font-weight: 600;
+margin-bottom: 12px;
+font-size: 1.1rem;
+}
+.input-label.angry {
+color: #e74c3c;
+}
+.input-label.calm {
+color: #27ae60;
+}
+.text-input {
+width: 100%;
+min-height: 120px;
+padding: 18px;
+border: 2px solid #e0e6ed;
+border-radius: 18px;
+font-size: 1rem;
+font-family: inherit;
+resize: vertical;
+transition: all 0.3s ease;
+background: #fafbfc;
+}
+.text-input:focus {
+outline: none;
+border-color: #667eea;
+box-shadow: 0 0 20px rgba(102, 126, 234, 0.15);
+background: white;
+}
+.text-input.angry {
+background: linear-gradient(135deg, #ffebee, #fff5f5);
+border-color: #ffcdd2;
+}
+.text-input.calm {
+background: linear-gradient(135deg, #e8f5e8, #f3fff3);
+border-color: #c8e6c9;
+}
+.controls {
+display: flex;
+flex-direction: column;
+gap: 15px;
+margin: 25px 0;
+}
+.mode-select {
+width: 100%;
+padding: 16px 20px;
+border: 2px solid #e0e6ed;
+border-radius: 15px;
+font-size: 1rem;
+background: white;
+cursor: pointer;
+}
+.mode-select:focus {
+outline: none;
+border-color: #667eea;
+box-shadow: 0 0 15px rgba(102, 126, 234, 0.15);
+}
+.button-group {
+display: flex;
+gap: 12px;
+}
+.btn {
+flex: 1;
+padding: 16px 20px;
+border: none;
+border-radius: 15px;
+font-size: 1rem;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.3s ease;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+}
+.btn:disabled {
+opacity: 0.6;
+cursor: not-allowed;
+}
+.btn-primary {
+background: linear-gradient(135deg, #667eea, #764ba2);
+color: white;
+box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+.btn-primary:hover:not(:disabled) {
+transform: translateY(-2px);
+box-shadow: 0 12px 25px rgba(102, 126, 234, 0.4);
+}
+.btn-secondary {
+background: #f8f9fa;
+color: #495057;
+border: 2px solid #e9ecef;
+}
+.btn-secondary:hover:not(:disabled) {
+background: #e9ecef;
+border-color: #dee2e6;
+transform: translateY(-1px);
+}
+.loading-overlay {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: rgba(0, 0, 0, 0.5);
+z-index: 1000;
+align-items: center;
+justify-content: center;
+}
+.loading-content {
+background: white;
+padding: 30px;
+border-radius: 20px;
+text-align: center;
+max-width: 300px;
+margin: 20px;
+}
+.spinner {
+width: 40px;
+height: 40px;
+border: 4px solid #f3f3f3;
+border-top: 4px solid #667eea;
+border-radius: 50%;
+animation: spin 1s linear infinite;
+margin: 0 auto 15px;
+}
+@keyframes spin {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
+}
+.examples-section {
+margin-top: 30px;
+padding: 20px;
+background: linear-gradient(135deg, #f8f9fa, #ffffff);
+border-radius: 20px;
+border: 1px solid rgba(102, 126, 234, 0.1);
+}
+.examples-title {
+font-size: 1.2rem;
+font-weight: 700;
+margin-bottom: 15px;
+color: #333;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+.example-item {
+margin-bottom: 15px;
+padding: 15px;
+background: white;
+border-radius: 12px;
+box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+border-left: 4px solid #667eea;
+}
+.example-before {
+color: #e74c3c;
+font-weight: 500;
+margin-bottom: 8px;
+font-size: 0.95rem;
+}
+.example-after {
+color: #27ae60;
+font-style: italic;
+font-size: 0.95rem;
+}
+.toast {
+position: fixed;
+bottom: 20px;
+left: 50%;
+transform: translateX(-50%);
+background: #333;
+color: white;
+padding: 12px 20px;
+border-radius: 25px;
+font-size: 0.9rem;
+opacity: 0;
+transition: all 0.3s ease;
+z-index: 1001;
+}
+.toast.show {
+opacity: 1;
+transform: translateX(-50%) translateY(-10px);
+}
+.footer {
+text-align: center;
+padding: 20px;
+border-top: 1px solid rgba(0, 0, 0, 0.05);
+color: #666;
+font-size: 0.9rem;
+}
+.config-section {
+background: #f8f9fa;
+padding: 20px;
+border-radius: 15px;
+margin-bottom: 20px;
+border: 1px solid #e9ecef;
+}
+.config-title {
+font-weight: 600;
+margin-bottom: 15px;
+color: #333;
+}
+.config-input {
+width: 100%;
+padding: 12px;
+border: 1px solid #ddd;
+border-radius: 8px;
+font-size: 0.9rem;
+margin-bottom: 10px;
+}
+.api-status {
+padding: 10px;
+border-radius: 8px;
+font-size: 0.9rem;
+text-align: center;
+margin-top: 10px;
+}
+.api-status.connected {
+background: #d4edda;
+color: #155724;
+border: 1px solid #c3e6cb;
+}
+.api-status.disconnected {
+background: #f8d7da;
+color: #721c24;
+border: 1px solid #f5c6cb;
+}
+@media (max-width: 480px) {
+.app-container {
+margin: 5px;
+border-radius: 20px;
+}
+.main-content {
+padding: 20px;
+}
+.app-title {
+font-size: 1.8rem;
+}
+}
+</style>
+</head>
+<body>
+<div class="app-container">
+<div class="header">
+<h1 class="app-title">Baja un Cambio</h1>
+</div>
+<div class="main-content">
+<!-- Configuración de API -->
+<div class="config-section">
+<div class="config-title">
+⚙ Configuración de IA
+</div>
+<select id="aiProvider" class="config-input">
+<option value="openai">OpenAI (ChatGPT)</option>
+<option value="anthropic">Anthropic (Claude)</option>
+<option value="gemini">Google Gemini</option>
+</select>
+<input type="password" id="apiKey" class="config-input" placeholder="Tu API Key aquí (se guarda localmente)">
+<button class="btn btn-secondary" id="testConnection" style="width: 100%;">
+🔌 Probar Conexión
+</button>
+<div id="apiStatus" class="api-status disconnected">
+❌ No configurado
+</div>
+</div>
+<div class="input-group">
+<label class="input-label angry">
+😡 Tu desahogo (sin filtros)
+</label>
+<textarea id="originalText" class="text-input angry" placeholder="Escribí acá lo que realmente pensás... desahógate sin miedo 🔥" rows="4"></textarea>
+</div>
+<div class="controls">
+<select id="modeSelect" class="mode-select">
+<option value="corporativo">🏢 Corporativo - Para el trabajo</option>
+<option value="diplomatico">🤝 Diplomático - Para amigos</option>
+<option value="directo">💬 Directo pero educado</option>
+<option value="mama">󰥜 Modo mamá - Firme pero amoroso</option>
+<option value="profesional">👔 Profesional constructivo</option>
+<option value="romantico">💕 Romántico - Para parejas</option>
+</select>
+<div class="button-group">
+<button class="btn btn-primary" id="transformBtn">
+✨ Bajar el cambio
+</button>
+<button class="btn btn-secondary" id="copyBtn">
+📋 Copiar
+</button>
+</div>
+</div>
+<div class="input-group">
+<label class="input-label calm">
+🕊 Versión civilizada (listo para enviar)
+</label>
+<textarea id="civilizedText" class="text-input calm" placeholder="Acá va a aparecer tu mensaje transformado por la IA..." rows="4" readonly></textarea>
+</div>
+<div class="examples-section">
+<h3 class="examples-title">
+💡 Ejemplos de transformaciones con IA
+</h3>
+<div class="example-item">
+<div class="example-before">
+😡 "Me cansé, váyanse a la puta que los parió"
+</div>
+<div class="example-after">
+🏢 "Estimados colegas, me encuentro en un punto de agotamiento considerable. Les solicito encarecidamente que asuman sus respectivas responsabilidades para resolver esta situación."
+</div>
+</div>
+<div class="example-item">
+<div class="example-before">
+😡 "Estos pelotudos no entienden nada"
+</div>
+<div class="example-after">
+🤝 "Creo que hay algunas diferencias en cómo estamos entendiendo el proyecto. ¿Podríamos coordinar una reunión para alinear mejor las expectativas?"
+</div>
+</div>
+<div class="example-item">
+<div class="example-before">
+😡 "Ya me tienen hasta las bolas con esto"
+</div>
+<div class="example-after">
+󰥜 "Mi amor, ya hablamos de este tema varias veces. Necesito que me escuches y hagamos los cambios que acordamos, ¿dale?"
+</div>
+</div>
+</div>
+</div>
+<div class="footer">
+<p>
+Creado con 💜 para salvar relaciones y trabajos
+</p>
+<p><strong>@nada.respetan</strong> • Versión IA Real 3.0</p>
+</div>
+</div>
+<div class="loading-overlay" id="loadingOverlay">
+<div class="loading-content">
+<div class="spinner"></div>
+<h3 id="loadingTitle">Procesando tu desahogo...</h3>
+<p id="loadingMessage">La IA está trabajando en civilizar tu mensaje</p>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+// Variables globales para almacenamiento en memoria
+let apiKeyStorage = '';
+let providerStorage = 'openai';
+
+// Configuración de APIs
+const API_CONFIGS = {
+openai: {
+url: 'https://api.openai.com/v1/chat/completions',
+model: 'gpt-3.5-turbo',
+headers: (apiKey) => ({
+'Authorization': `Bearer ${apiKey}`,
+'Content-Type': 'application/json'
+})
+},
+anthropic: {
+url: 'https://api.anthropic.com/v1/messages',
+model: 'claude-3-sonnet-20240229',
+headers: (apiKey) => ({
+'x-api-key': apiKey,
+'Content-Type': 'application/json',
+'anthropic-version': '2023-06-01'
+})
+},
+gemini: {
+url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
+headers: (apiKey) => ({
+'Content-Type': 'application/json'
+})
+}
+};
+
+// Prompts para cada modo
+const PROMPTS = {
+corporativo: "Eres un asistente que transforma mensajes informales, agresivos o emocionales en comunicación corporativa profesional. Mantén el mensaje principal pero úsalo con un tono formal, diplomático y constructivo. El resultado debe sonar como un email profesional o comunicación de oficina.",
+diplomatico: "Transforma este mensaje agresivo o directo en comunicación diplomática y amigable. Mantén la firmeza del mensaje pero con calidez y tacto. Como si fuera para resolver un conflicto entre amigos.",
+directo: "Convierte este mensaje en comunicación directa pero respetuosa. Elimina la agresividad pero mantén la claridad y firmeza del mensaje. Sin vueltas pero sin ofender.",
+mama: "Transforma este mensaje usando un tono maternal: firme pero amoroso, como una madre que pone límites con cariño. Debe sonar protector pero claro en las expectativas.",
+profesional: "Convierte en comunicación de management profesional, enfocado en soluciones y planes de acción. Usa terminología de negocios y enfoque en resultados.",
+romantico: "Transforma este mensaje de pareja enojado en comunicación romántica pero honesta, expresando necesidades con amor y vulnerabilidad."
+};
+
+// Variables globales
+let currentApiKey = '';
+let currentProvider = 'openai';
+
+// Elementos del DOM
+const originalText = document.getElementById('originalText');
+const civilizedText = document.getElementById('civilizedText');
+const modeSelect = document.getElementById('modeSelect');
+const transformBtn = document.getElementById('transformBtn');
+const copyBtn = document.getElementById('copyBtn');
+const apiKeyInput = document.getElementById('apiKey');
+const aiProviderSelect = document.getElementById('aiProvider');
+const testConnectionBtn = document.getElementById('testConnection');
+const apiStatus = document.getElementById('apiStatus');
+const loadingOverlay = document.getElementById('loadingOverlay');
+const loadingTitle = document.getElementById('loadingTitle');
+const loadingMessage = document.getElementById('loadingMessage');
+const toast = document.getElementById('toast');
+
+// Mensajes de loading
+const loadingMessages = [
+"Procesando tu desahogo...",
+"La IA está leyendo entre líneas...",
+"Convirtiendo calentura en diplomacia...",
+"Aplicando filtro de civilización...",
+"Transformando frustraciones en coherencia...",
+"Generando versión apta para todo público...",
+"Salvando relaciones una palabra a la vez..."
+];
+
+// Inicialización
+function init() {
+aiProviderSelect.value = currentProvider;
+if (currentApiKey) {
+apiKeyInput.value = currentApiKey;
+updateApiStatus(true);
+}
+}
+
+// Eventos
+transformBtn.addEventListener('click', transformText);
+copyBtn.addEventListener('click', copyToClipboard);
+testConnectionBtn.addEventListener('click', testApiConnection);
+apiKeyInput.addEventListener('input', saveApiKey);
+aiProviderSelect.addEventListener('change', changeProvider);
+
+// Guardar configuración
+function saveApiKey() {
+currentApiKey = apiKeyInput.value.trim();
+apiKeyStorage = currentApiKey;
+updateApiStatus(!!currentApiKey);
+}
+
+function changeProvider() {
+currentProvider = aiProviderSelect.value;
+providerStorage = currentProvider;
+}
+
+// Actualizar estado de API
+function updateApiStatus(connected) {
+if (connected && currentApiKey) {
+apiStatus.textContent = '✅ Configurado correctamente';
+apiStatus.className = 'api-status connected';
+} else {
+apiStatus.textContent = '❌ Falta configurar API Key';
+apiStatus.className = 'api-status disconnected';
+}
+}
+
+// Probar conexión
+async function testApiConnection() {
+if (!currentApiKey) {
+showToast('❌ Primero ingresá tu API Key');
+return;
+}
+showLoading('Probando conexión...', 'Verificando credenciales...');
+try {
+const testMessage = "Hola";
+const result = await callAI(testMessage, 'directo');
+hideLoading();
+showToast('✅ Conexión exitosa!');
+updateApiStatus(true);
+} catch (error) {
+hideLoading();
+showToast('❌ Error de conexión: ' + error.message);
+updateApiStatus(false);
+}
+}
+
+// Función principal de transformación
+async function transformText() {
+const text = originalText.value.trim();
+const mode = modeSelect.value;
+if (!text) {
+showToast('¡Escribí algo primero! Desahógate sin miedo 😉');
+return;
+}
+if (!currentApiKey) {
+showToast('❌ Primero configurá tu API Key');
+return;
+}
+
+showLoading();
+try {
+const result = await callAI(text, mode);
+civilizedText.value = result;
+showToast('✅ ¡Transformación completada!');
+} catch (error) {
+showToast('❌ Error: ' + error.message);
+console.error('Error:', error);
+} finally {
+hideLoading();
+}
+}
+
+// Llamada a la IA
+async function callAI(text, mode) {
+const config = API_CONFIGS[currentProvider];
+const prompt = PROMPTS[mode];
+let requestBody;
+let response;
+
+try {
+switch(currentProvider) {
+case 'openai':
+requestBody = {
+model: config.model,
+messages: [
+{
+role: "system",
+content: prompt
+},
+{
+role: "user",
+content: `Transforma este texto: "${text}"`
+}
+],
+max_tokens: 300,
+temperature: 0.7
+};
+break;
+
+case 'anthropic':
+requestBody = {
+model: config.model,
+max_tokens: 300,
+temperature: 0.7,
+system: prompt,
+messages: [
+{
+role: "user",
+content: `Transforma este texto: "${text}"`
+}
+]
+};
+break;
+
+case 'gemini':
+requestBody = {
+contents: [{
+parts: [{
+text: `${prompt}\n\nTransforma este texto: "${text}"`
+}]
+}],
+generationConfig: {
+temperature: 0.7,
+maxOutputTokens: 300
+}
+};
+break;
+}
+
+// Hacer la llamada
+const url = currentProvider === 'gemini'
+? `${config.url}?key=${currentApiKey}`
+: config.url;
+
+response = await fetch(url, {
+method: 'POST',
+headers: config.headers(currentApiKey),
+body: JSON.stringify(requestBody)
+});
+
+if (!response.ok) {
+const errorData = await response.json().catch(() => ({}));
+throw new Error(`HTTP ${response.status}: ${errorData.error?.message || 'Error desconocido'}`);
+}
+
+const data = await response.json();
+
+// Extraer respuesta según el proveedor
+let result;
+switch(currentProvider) {
+case 'openai':
+result = data.choices[0].message.content.trim();
+break;
+case 'anthropic':
+result = data.content[0].text.trim();
+break;
+case 'gemini':
+result = data.candidates[0].content.parts[0].text.trim();
+break;
+}
+
+return result;
+
+} catch (error) {
+if (error.name === 'TypeError') {
+throw new Error('Error de conexión. Verificá tu internet.');
+}
+throw error;
+}
+}
+
+// Copiar al portapapeles
+async function copyToClipboard() {
+const text = civilizedText.value;
+if (!text) {
+showToast('❌ No hay nada para copiar');
+return;
+}
+
+try {
+await navigator.clipboard.writeText(text);
+showToast('📋 ¡Copiado al portapapeles!');
+} catch (error) {
+// Fallback para navegadores que no soportan clipboard API
+const textArea = document.createElement('textarea');
+textArea.value = text;
+document.body.appendChild(textArea);
+textArea.select();
+document.execCommand('copy');
+document.body.removeChild(textArea);
+showToast('📋 ¡Copiado al portapapeles!');
+}
+}
+
+// Mostrar loading
+function showLoading(title = null, message = null) {
+loadingTitle.textContent = title || loadingMessages[Math.floor(Math.random() * loadingMessages.length)];
+loadingMessage.textContent = message || 'La IA está trabajando en civilizar tu mensaje';
+loadingOverlay.style.display = 'flex';
+}
+
+// Ocultar loading
+function hideLoading() {
+loadingOverlay.style.display = 'none';
+}
+
+// Mostrar toast
+function showToast(message) {
+toast.textContent = message;
+toast.classList.add('show');
+setTimeout(() => {
+toast.classList.remove('show');
+}, 3000);
+}
+
+// Inicializar al cargar
+init();
+</script>
+</body>
+</html>
