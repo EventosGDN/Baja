@@ -398,6 +398,42 @@ height: 40px;
 font-size: 1.1rem;
 }
 }
+
+
+/* Agregar estos estilos al CSS existente, después de .message-transformed */
+
+.message-connector {
+  background: rgba(100, 100, 100, 0.6);
+  color: #fff;
+  align-self: center;
+  margin: 10px auto;
+  font-style: italic;
+  font-size: 0.9rem;
+  max-width: 70%;
+  text-align: center;
+  border-radius: 15px;
+  padding: 10px 15px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: fadeInScale 0.5s ease-out;
+}
+
+.message-connector .message-label {
+  font-size: 1rem;
+  margin-bottom: 5px;
+}
+
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 </style>
 </head>
 <body>
@@ -523,47 +559,153 @@ sendMessage();
 sendBtn.addEventListener('click', sendMessage);
 recordBtn.addEventListener('click', toggleRecording);
 
-// FUNCIÓN REAL PARA TRANSFORMAR TEXTO USANDO TU API DE VERCEL
+// FUNCIÓN ACTUALIZADA PARA TRANSFORMAR TEXTO CON MENSAJES SEPARADOS
 async function transformText(text, mode) {
-const PROMPTS = {
-formal: `Sos un experto en comunicación profesional argentina. Transformá este mensaje enojado o frustrado en algo apropiado para el ámbito laboral, pero mantené la firmeza y la intención del mensaje original. No censures la emoción, solo expresala de manera profesional. Usá un tono directo pero respetuoso. Máximo 2-3 oraciones: "${text}"`,
+  const PROMPTS = {
+    formal: `Sos un experto en comunicación profesional argentina. Transformá este mensaje enojado o frustrado en algo apropiado para el ámbito laboral, pero mantené la firmeza y la intención del mensaje original. 
 
-amigable: `Transformá este mensaje en algo más amigable y cálido, manteniendo el estilo argentino. Suavizá la forma pero no pierdas la intención ni la firmeza del mensaje original. Que se entienda el punto pero de manera más copada. Máximo 2-3 oraciones: "${text}"`,
+Si el mensaje es muy fuerte o hay varias formas de expresarlo profesionalmente, dame 2 opciones separadas por "|||". Si es simple, una sola opción.
 
-directo: `Convertí este mensaje en algo directo pero respetuoso, sin rodeos pero sin agredir innecesariamente. Mantené la claridad y la fuerza del mensaje original pero con mejor forma. Estilo argentino directo. Máximo 2-3 oraciones: "${text}"`,
+Cada opción debe ser directa pero respetuosa, máximo 2-3 oraciones. Usá un tono firme pero profesional.
 
-diplomatico: `Usá toda tu habilidad diplomática para transformar este mensaje en comunicación estratégica y táctica. Mantené la firmeza del mensaje pero usá diplomacia y psicología comunicacional. Que se entienda el mensaje pero de forma inteligente. Máximo 2-3 oraciones: "${text}"`
-};
+Mensaje: "${text}"`,
 
-try {
-console.log('Enviando a API real:', text, mode);
+    amigable: `Transformá este mensaje en algo más amigable y cálido, manteniendo el estilo argentino. Suavizá la forma pero no pierdas la intención ni la firmeza del mensaje original.
 
-const response = await fetch('/api/transform', {
-method: 'POST',
-headers: {
-'Content-Type': 'application/json',
-},
-body: JSON.stringify({
-prompt: PROMPTS[mode],
-mode: mode
-})
-});
+Si el mensaje permite diferentes enfoques amigables, dame 2 opciones separadas por "|||". Si hay una forma clara, una sola opción.
 
-if (!response.ok) {
-const errorData = await response.json().catch(() => ({}));
-throw new Error(`Error ${response.status}: ${errorData.error || response.statusText}`);
+Cada opción debe ser copada pero clara, máximo 2-3 oraciones. Que se entienda el punto pero de manera más friendly.
+
+Mensaje: "${text}"`,
+
+    directo: `Convertí este mensaje en algo directo pero respetuoso, sin rodeos pero sin agredir innecesariamente. Mantené la claridad y la fuerza del mensaje original pero con mejor forma.
+
+Si hay diferentes formas de ser directo sin ser agresivo, dame 2 opciones separadas por "|||". Si es claro, una sola opción.
+
+Cada opción debe ser directa y clara, máximo 2-3 oraciones. Estilo argentino directo pero civilizado.
+
+Mensaje: "${text}"`,
+
+    diplomatico: `Usá toda tu habilidad diplomática para transformar este mensaje en comunicación estratégica y táctica. Mantené la firmeza del mensaje pero usá diplomacia y psicología comunicacional.
+
+Si el mensaje permite diferentes estrategias diplomáticas, dame 2 opciones separadas por "|||". Si hay una estrategia clara, una sola opción.
+
+Cada opción debe ser inteligente y táctica, máximo 2-3 oraciones. Que se entienda el mensaje pero de forma muy hábil.
+
+Mensaje: "${text}"`
+  };
+
+  try {
+    console.log('Enviando a API real:', text, mode);
+    const response = await fetch('/api/transform', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        prompt: PROMPTS[mode],
+        mode: mode
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(`Error ${response.status}: ${errorData.error || response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log('Respuesta de API:', data);
+    return data;
+  } catch (error) {
+    console.error('Error llamando a la API real:', error);
+    throw new Error(`No se pudo transformar el mensaje: ${error.message}`);
+  }
 }
 
-const data = await response.json();
-console.log('Respuesta de API:', data);
-
-return data.result;
-
-} catch (error) {
-console.error('Error llamando a la API real:', error);
-throw new Error(`No se pudo transformar el mensaje: ${error.message}`);
+// FUNCIÓN ACTUALIZADA PARA PROCESAR MENSAJES CON OPCIONES MÚLTIPLES
+async function processTextMessage(text) {
+  const mode = modeSelect.value;
+  
+  // Limpiar empty state si existe
+  const emptyState = chatContainer.querySelector('.empty-state');
+  if (emptyState) {
+    emptyState.remove();
+  }
+  
+  // Agregar mensaje original
+  addMessage(text, 'original');
+  
+  // Mostrar loading
+  showLoading('Transformando mensaje...');
+  
+  try {
+    const response = await transformText(text, mode);
+    hideLoading();
+    
+    // Agregar primera transformación
+    addMessage(response.result, 'transformed');
+    
+    // Si hay segunda opción, agregar conector y segunda opción con delay
+    if (response.hasSecondOption && response.secondOption) {
+      // Delay para que se sienta más natural
+      setTimeout(() => {
+        // Agregar mensaje conector
+        addConnectorMessage(response.connector);
+        
+        // Otro pequeño delay para la segunda opción
+        setTimeout(() => {
+          addMessage(response.secondOption, 'transformed');
+        }, 800);
+      }, 1200);
+    }
+    
+  } catch (error) {
+    hideLoading();
+    showToast('❌ Error al transformar el mensaje: ' + error.message);
+    console.error(error);
+  }
 }
+
+// NUEVA FUNCIÓN PARA AGREGAR MENSAJES CONECTORES
+function addConnectorMessage(connectorText) {
+  const messageDiv = document.createElement('div');
+  messageDiv.className = 'message-bubble message-connector';
+  messageDiv.innerHTML = `
+    <div class="message-label">💭</div>
+    ${connectorText}
+  `;
+  chatContainer.appendChild(messageDiv);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
 }
+
+// FUNCIÓN ADDMESSAGE ACTUALIZADA (reemplazar la existente)
+function addMessage(text, type) {
+  const messageDiv = document.createElement('div');
+  messageDiv.className = `message-bubble message-${type}`;
+  
+  if (type === 'original') {
+    messageDiv.innerHTML = `
+      <div class="message-label">Texto original</div>
+      ${text}
+    `;
+  } else if (type === 'connector') {
+    messageDiv.innerHTML = `
+      <div class="message-label">💭</div>
+      ${text}
+    `;
+  } else {
+    messageDiv.innerHTML = `
+      <div class="message-label">Texto bajando un cambio</div>
+      ${text}
+      <button class="copy-btn" onclick="copyMessage(this)">📋</button>
+    `;
+  }
+  
+  chatContainer.appendChild(messageDiv);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+
 
 // Enviar mensaje de texto
 async function sendMessage() {
