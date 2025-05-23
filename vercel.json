@@ -1,7 +1,1 @@
-{
-  "functions": {
-    "api/transform.js": {
-      "runtime": "nodejs18.x"
-    }
-  }
-}
+{}
