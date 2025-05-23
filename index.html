@@ -572,38 +572,47 @@ sendMessage();
 sendBtn.addEventListener('click', sendMessage);
 recordBtn.addEventListener('click', toggleRecording);
 
-// Función de demostración para transformar texto
-async function transformText(text, mode) {
-// Simulación de transformación para demostración
-const transformations = {
-formal: {
-"Me cansé, váyanse a la put que los parió": "He decidido que es momento de finalizar esta colaboración. Les agradezco su comprensión.",
-"Esto es una porquería": "Considero que este proyecto necesita mejoras significativas para cumplir con los estándares esperados.",
-"No me rompan las pelotas": "Por favor, necesito concentrarme en mis tareas sin interrupciones."
-},
-amigable: {
-"Me cansé, váyanse a la put que los parió": "Che, estoy bastante agotado. ¿Podemos seguir esto mañana? Gracias por entender.",
-"Esto es una porquería": "La verdad que esto no está funcionando como esperaba. ¿Podemos intentar otro enfoque?",
-"No me rompan las pelotas": "Disculpen, pero necesito un ratito para concentrarme. ¡Gracias!"
-},
-directo: {
-"Me cansé, váyanse a la put que los parió": "Necesito un descanso. Retomamos mañana.",
-"Esto es una porquería": "Esto no funciona. Hay que cambiarlo.",
-"No me rompan las pelotas": "Necesito concentrarme. Sin interrupciones, por favor."
-},
-diplomatico: {
-"Me cansé, váyanse a la put que los parió": "Creo que sería productivo hacer una pausa estratégica y retomar con energías renovadas.",
-"Esto es una porquería": "Sugiero revisar nuestra estrategia actual para optimizar los resultados esperados.",
-"No me rompan las pelotas": "Agradecería poder mantener un ambiente de trabajo enfocado para maximizar la productividad."
-}
-};
 
-// Buscar transformación exacta o usar una genérica
-const modeTransforms = transformations[mode];
-const result = modeTransforms[text] || 
-    `Versión ${mode}: ${text.replace(/porquería|mierda|put[ao]/gi, 'problema').replace(/cansé/gi, 'necesito un descanso')}`;
-    
-return result;
+// Función REAL para transformar texto usando tu API de Vercel
+async function transformText(text, mode) {
+    const PROMPTS = {
+        formal: `Sos un experto en comunicación profesional argentina. Transformá este mensaje enojado o frustrado en algo apropiado para el ámbito laboral, pero mantené la firmeza y la intención del mensaje original. No censures la emoción, solo expresala de manera profesional. Usá un tono directo pero respetuoso. Máximo 2-3 oraciones: "${text}"`,
+        
+        amigable: `Transformá este mensaje en algo más amigable y cálido, manteniendo el estilo argentino. Suavizá la forma pero no pierdas la intención ni la firmeza del mensaje original. Que se entienda el punto pero de manera más copada. Máximo 2-3 oraciones: "${text}"`,
+        
+        directo: `Convertí este mensaje en algo directo pero respetuoso, sin rodeos pero sin agredir innecesariamente. Mantené la claridad y la fuerza del mensaje original pero con mejor forma. Estilo argentino directo. Máximo 2-3 oraciones: "${text}"`,
+        
+        diplomatico: `Usá toda tu habilidad diplomática para transformar este mensaje en comunicación estratégica y táctica. Mantené la firmeza del mensaje pero usá diplomacia y psicología comunicacional. Que se entienda el mensaje pero de forma inteligente. Máximo 2-3 oraciones: "${text}"`
+    };
+
+    try {
+        console.log('Enviando a API real:', text, mode);
+        
+        const response = await fetch('/api/transform', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                prompt: PROMPTS[mode],
+                mode: mode
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(`Error ${response.status}: ${errorData.error || response.statusText}`);
+        }
+
+        const data = await response.json();
+        console.log('Respuesta de API:', data);
+        
+        return data.result;
+        
+    } catch (error) {
+        console.error('Error llamando a la API real:', error);
+        throw new Error(`No se pudo transformar el mensaje: ${error.message}`);
+    }
 }
 
 // Enviar mensaje de texto
