@@ -12,7 +12,8 @@ padding: 0;
 box-sizing: border-box;
 }
 body {
-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+sans-serif;
 background: #000;
 min-height: 100vh;
 color: #fff;
@@ -34,7 +35,6 @@ font-weight: 700;
 color: #ffff00;
 margin-bottom: 5px;
 }
-
 .chat-container {
 flex: 1;
 padding: 20px;
@@ -66,6 +66,7 @@ align-self: flex-start;
 border-bottom-left-radius: 5px;
 font-weight: 500;
 }
+
 .message-label {
 font-size: 0.8rem;
 font-weight: 600;
@@ -101,11 +102,11 @@ font-family: inherit;
 .text-input::placeholder {
 color: #999;
 }
+
 .text-input:focus {
 outline: 2px solid #ffff00;
 background: #404040;
 }
-
 .controls {
 display: flex;
 gap: 10px;
@@ -118,11 +119,44 @@ border: none;
 border-radius: 20px;
 padding: 12px 15px;
 color: #fff;
-font-size: 1.1rem;
+font-size: 0.9rem;
 cursor: pointer;
 }
 .mode-select:focus {
 outline: 2px solid #ffff00;
+}
+.action-buttons {
+display: flex;
+gap: 8px;
+align-items: center;
+}
+.record-btn {
+background: #ff4444;
+color: #fff;
+border: none;
+border-radius: 50%;
+width: 45px;
+height: 45px;
+display: flex;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+font-size: 1.2rem;
+transition: all 0.2s ease;
+flex-shrink: 0;
+position: relative;
+}
+.record-btn:hover:not(:disabled) {
+background: #ff6666;
+transform: scale(1.05);
+}
+.record-btn.recording {
+background: #ff0000;
+animation: pulse 1s infinite;
+}
+.record-btn:disabled {
+opacity: 0.5;
+cursor: not-allowed;
 }
 .send-btn {
 background: #ffff00;
@@ -168,10 +202,18 @@ animation: loading 1.4s infinite ease-in-out;
 }
 .loading-dot:nth-child(1) { animation-delay: -0.32s; }
 .loading-dot:nth-child(2) { animation-delay: -0.16s; }
+
 @keyframes loading {
 0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
 40% { transform: scale(1); opacity: 1; }
 }
+
+@keyframes pulse {
+0% { transform: scale(1); }
+50% { transform: scale(1.1); }
+100% { transform: scale(1); }
+}
+
 .copy-btn {
 position: absolute;
 top: 10px;
@@ -207,6 +249,27 @@ z-index: 1000;
 opacity: 1;
 transform: translateX(-50%) translateY(-10px);
 }
+
+.audio-status {
+display: flex;
+align-items: center;
+gap: 8px;
+color: #ff4444;
+font-size: 0.9rem;
+margin-top: 10px;
+opacity: 0;
+transition: opacity 0.3s ease;
+}
+
+.audio-status.show {
+opacity: 1;
+}
+
+.recording-timer {
+font-weight: 600;
+color: #ffff00;
+}
+
 .empty-state {
 text-align: center;
 color: #666;
@@ -223,6 +286,14 @@ padding: 15px;
 .message-bubble {
 max-width: 90%;
 }
+.action-buttons {
+gap: 6px;
+}
+.record-btn, .send-btn {
+width: 40px;
+height: 40px;
+font-size: 1.1rem;
+}
 }
 </style>
 </head>
@@ -232,7 +303,7 @@ max-width: 90%;
 </div>
 <div class="chat-container" id="chatContainer">
 <div class="empty-state">
-Escribí tu mensaje abajo y te ayudo a "bajar un cambio" 🤝
+Escribí tu mensaje o grabá un audio y te ayudo a "bajar un cambio" 🎤🤝
 </div>
 </div>
 <div class="input-section">
@@ -240,17 +311,36 @@ Escribí tu mensaje abajo y te ayudo a "bajar un cambio" 🤝
 <textarea
 id="messageInput"
 class="text-input"
-placeholder="Me cansé, váyanse a la put que los parió..."
+placeholder="Me cansé, váyanse a la put que los parió... o grabá un audio"
 rows="1"
 ></textarea>
 <div class="controls">
 <select id="modeSelect" class="mode-select">
-<option value="formal">💼 Formal/Trabajo</option>
-<option value="amigable">😊 Amigable</option>
-<option value="directo">💬 Directo</option>
-<option value="diplomatico">🤝 Diplomático</option>
+<option value="formal">
+💼 Formal/Trabajo
+</option>
+<option value="amigable">
+😊 Amigable
+</option>
+<option value="directo">
+💬 Directo
+</option>
+<option value="diplomatico">
+🤝 Diplomático
+</option>
 </select>
-<button class="send-btn" id="sendBtn">⚡</button>
+<div class="action-buttons">
+<button class="record-btn" id="recordBtn" title="Grabar audio">
+🎤
+</button>
+<button class="send-btn" id="sendBtn" title="Enviar mensaje">
+⚡
+</button>
+</div>
+</div>
+<div class="audio-status" id="audioStatus">
+<span>🔴 Grabando...</span>
+<span class="recording-timer" id="recordingTimer">00:00</span>
 </div>
 </div>
 </div>
@@ -260,101 +350,309 @@ rows="1"
 <div class="loading-dot"></div>
 <div class="loading-dot"></div>
 </div>
-Transformando mensaje...
+<span id="loadingText">Transformando mensaje...</span>
 </div>
 <div class="toast" id="toast"></div>
-
 <script>
-// Backend endpoint - se auto-detecta según el entorno
-const BACKEND_URL = window.location.origin + '/api/transform';
+// Backend endpoints
+const TRANSFORM_URL = window.location.origin + '/api/transform';
+const TRANSCRIBE_URL = window.location.origin + '/api/transcribe';
 
 const PROMPTS = {
-    formal: "Transforma este mensaje en comunicación profesional y formal, pero mantén el mensaje corto y directo. Máximo 2-3 oraciones.",
-    amigable: "Convierte este mensaje en algo amigable y cálido, pero sin perder la firmeza. Máximo 2-3 oraciones.",
-    directo: "Haz este mensaje directo pero respetuoso, sin rodeos pero sin ofender. Máximo 2-3 oraciones.",
-    diplomatico: "Transforma en comunicación diplomática y táctica, manteniendo la firmeza. Máximo 2-3 oraciones."
+formal: "Transforma este mensaje en comunicación profesional y formal, pero mantén el mensaje corto y directo. Máximo 2-3 oraciones.",
+amigable: "Convierte este mensaje en algo amigable y cálido, pero sin perder la firmeza. Máximo 2-3 oraciones.",
+directo: "Haz este mensaje directo pero respetuoso, sin rodeos pero sin ofender. Máximo 2-3 oraciones.",
+diplomatico: "Transforma en comunicación diplomática y táctica, manteniendo la firmeza. Máximo 2-3 oraciones."
 };
 
+// Variables para grabación de audio
+let mediaRecorder = null;
+let audioChunks = [];
+let isRecording = false;
+let recordingTimer = null;
+let recordingStartTime = null;
+
+// Elementos del DOM
 const messageInput = document.getElementById('messageInput');
 const sendBtn = document.getElementById('sendBtn');
+const recordBtn = document.getElementById('recordBtn');
 const modeSelect = document.getElementById('modeSelect');
 const chatContainer = document.getElementById('chatContainer');
 const loading = document.getElementById('loading');
+const loadingText = document.getElementById('loadingText');
 const toast = document.getElementById('toast');
+const audioStatus = document.getElementById('audioStatus');
+const recordingTimerElement = document.getElementById('recordingTimer');
 
 // Auto-resize textarea
 messageInput.addEventListener('input', function() {
-    this.style.height = 'auto';
-    this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+this.style.height = 'auto';
+this.style.height = Math.min(this.scrollHeight, 120) + 'px';
 });
 
 // Enviar con Enter
 messageInput.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
-    }
+if (e.key === 'Enter' && !e.shiftKey) {
+e.preventDefault();
+sendMessage();
+}
 });
 
+// Event listeners
 sendBtn.addEventListener('click', sendMessage);
+recordBtn.addEventListener('click', toggleRecording);
 
+// Inicializar grabación de audio
+async function initializeAudioRecording() {
+try {
+const stream = await navigator.mediaDevices.getUserMedia({ 
+audio: {
+echoCancellation: true,
+noiseSuppression: true,
+sampleRate: 44100
+} 
+});
+mediaRecorder = new MediaRecorder(stream, {
+mimeType: 'audio/webm;codecs=opus'
+});
+
+mediaRecorder.ondataavailable = (event) => {
+if (event.data.size > 0) {
+audioChunks.push(event.data);
+}
+};
+
+mediaRecorder.onstop = async () => {
+const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+audioChunks = [];
+await processAudioMessage(audioBlob);
+};
+
+} catch (error) {
+console.error('Error al acceder al micrófono:', error);
+showToast('❌ No se pudo acceder al micrófono');
+recordBtn.style.display = 'none';
+}
+}
+
+// Toggle grabación
+async function toggleRecording() {
+if (!mediaRecorder) {
+await initializeAudioRecording();
+if (!mediaRecorder) return;
+}
+
+if (!isRecording) {
+startRecording();
+} else {
+stopRecording();
+}
+}
+
+// Iniciar grabación
+function startRecording() {
+if (mediaRecorder && mediaRecorder.state === 'inactive') {
+audioChunks = [];
+mediaRecorder.start();
+isRecording = true;
+recordBtn.classList.add('recording');
+audioStatus.classList.add('show');
+recordingStartTime = Date.now();
+updateRecordingTimer();
+recordingTimer = setInterval(updateRecordingTimer, 1000);
+showToast('🎤 Grabando audio...');
+}
+}
+
+// Detener grabación
+function stopRecording() {
+if (mediaRecorder && mediaRecorder.state === 'recording') {
+mediaRecorder.stop();
+isRecording = false;
+recordBtn.classList.remove('recording');
+audioStatus.classList.remove('show');
+clearInterval(recordingTimer);
+showToast('⏹️ Procesando audio...');
+}
+}
+
+// Actualizar timer de grabación
+function updateRecordingTimer() {
+if (recordingStartTime) {
+const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
+const minutes = Math.floor(elapsed / 60);
+const seconds = elapsed % 60;
+recordingTimerElement.textContent = 
+`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+}
+
+// Procesar mensaje de audio
+async function processAudioMessage(audioBlob) {
+try {
+// Limpiar empty state
+const emptyState = chatContainer.querySelector('.empty-state');
+if (emptyState) {
+emptyState.remove();
+}
+
+// Mostrar que se está procesando audio
+addMessage('🎤 Mensaje de audio grabado', 'original');
+showLoading('Transcribiendo audio...');
+
+// Transcribir audio
+const transcription = await transcribeAudio(audioBlob);
+
+if (transcription) {
+// Actualizar el mensaje original con la transcripción
+updateLastMessage(transcription, 'original');
+
+// Procesar como mensaje de texto normal
+await processTextMessage(transcription);
+} else {
+hideLoading();
+showToast('❌ No se pudo transcribir el audio');
+}
+
+} catch (error) {
+hideLoading();
+showToast('❌ Error al procesar el audio');
+console.error(error);
+}
+}
+
+// Transcribir audio usando la API
+async function transcribeAudio(audioBlob) {
+try {
+const formData = new FormData();
+formData.append('audio', audioBlob, 'audio.webm');
+
+const response = await fetch(TRANSCRIBE_URL, {
+method: 'POST',
+body: formData
+});
+
+if (!response.ok) {
+throw new Error(`Error ${response.status}: Error del servidor`);
+}
+
+const data = await response.json();
+return data.transcription;
+
+} catch (error) {
+console.error('Error transcribing audio:', error);
+// Fallback: usar Web Speech API si está disponible
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+return await transcribeWithWebSpeech();
+}
+throw error;
+}
+}
+
+// Fallback: transcripción con Web Speech API
+async function transcribeWithWebSpeech() {
+return new Promise((resolve, reject) => {
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+if (!SpeechRecognition) {
+reject(new Error('Speech recognition not supported'));
+return;
+}
+
+const recognition = new SpeechRecognition();
+recognition.lang = 'es-ES';
+recognition.continuous = false;
+recognition.interimResults = false;
+
+recognition.onresult = (event) => {
+const transcript = event.results[0][0].transcript;
+resolve(transcript);
+};
+
+recognition.onerror = (event) => {
+reject(new Error('Speech recognition error: ' + event.error));
+};
+
+recognition.start();
+});
+}
+
+// Enviar mensaje de texto
 async function sendMessage() {
-    const text = messageInput.value.trim();
-    if (!text) return;
+const text = messageInput.value.trim();
+if (!text) return;
 
-    const mode = modeSelect.value;
-
-    // Limpiar empty state
-    const emptyState = chatContainer.querySelector('.empty-state');
-    if (emptyState) {
-        emptyState.remove();
-    }
-
-    // Agregar mensaje original
-    addMessage(text, 'original');
-
-    // Limpiar input
-    messageInput.value = '';
-    messageInput.style.height = 'auto';
-
-    // Mostrar loading
-    showLoading();
-
-    try {
-        // Llamada a la API
-        const transformedText = await transformText(text, mode);
-        hideLoading();
-        addMessage(transformedText, 'transformed');
-    } catch (error) {
-        hideLoading();
-        showToast('❌ Error al transformar el mensaje');
-        console.error('Error completo:', error);
-    }
+await processTextMessage(text);
+messageInput.value = '';
+messageInput.style.height = 'auto';
 }
 
+// Procesar mensaje de texto
+async function processTextMessage(text) {
+const mode = modeSelect.value;
+
+// Limpiar empty state si existe
+const emptyState = chatContainer.querySelector('.empty-state');
+if (emptyState) {
+emptyState.remove();
+}
+
+// Agregar mensaje original si no está ya
+if (!chatContainer.querySelector('.message-original:last-child')) {
+addMessage(text, 'original');
+}
+
+// Mostrar loading
+showLoading('Transformando mensaje...');
+
+try {
+const transformedText = await transformText(text, mode);
+hideLoading();
+addMessage(transformedText, 'transformed');
+} catch (error) {
+hideLoading();
+showToast('❌ Error al transformar el mensaje');
+console.error(error);
+}
+}
+
+// Agregar mensaje al chat
 function addMessage(text, type) {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `message-bubble message-${type}`;
-    
-    if (type === 'original') {
-        messageDiv.innerHTML = `
-            <div class="message-label">Texto original</div>
-            ${text}
-        `;
-    } else {
-        messageDiv.innerHTML = `
-            <div class="message-label">Texto bajando un cambio</div>
-            ${text}
-            <button class="copy-btn" onclick="copyMessage(this)">📋</button>
-        `;
-    }
-    
-    chatContainer.appendChild(messageDiv);
-    chatContainer.scrollTop = chatContainer.scrollHistory;
+const messageDiv = document.createElement('div');
+messageDiv.className = `message-bubble message-${type}`;
+
+if (type === 'original') {
+messageDiv.innerHTML = `
+<div class="message-label">Texto original</div>
+${text}
+`;
+} else {
+messageDiv.innerHTML = `
+<div class="message-label">Texto bajando un cambio</div>
+${text}
+<button class="copy-btn" onclick="copyMessage(this)">📋</button>
+`;
 }
 
+chatContainer.appendChild(messageDiv);
+chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+// Actualizar el último mensaje
+function updateLastMessage(text, type) {
+const lastMessage = chatContainer.querySelector(`.message-${type}:last-child`);
+if (lastMessage) {
+if (type === 'original') {
+lastMessage.innerHTML = `
+<div class="message-label">Texto original</div>
+${text}
+`;
+}
+}
+}
+
+// Transformar texto usando la API
 async function transformText(text, mode) {
-    const prompt = `${PROMPTS[mode]}
+const prompt = `${PROMPTS[mode]}
 
 Texto a transformar: "${text}"
 
@@ -364,78 +662,79 @@ Instrucciones adicionales:
 - Responde SOLO con el texto transformado, sin explicaciones
 - Si el texto tiene groserías o insultos, reemplázalos por alternativas apropiadas`;
 
-    try {
-        console.log('Enviando petición a:', BACKEND_URL);
-        
-        const response = await fetch(BACKEND_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                prompt: prompt,
-                mode: mode
-            })
-        });
+try {
+const response = await fetch(TRANSFORM_URL, {
+method: 'POST',
+headers: {
+'Content-Type': 'application/json'
+},
+body: JSON.stringify({
+prompt: prompt,
+mode: mode
+})
+});
 
-        console.log('Status de respuesta:', response.status);
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Error del servidor:', errorText);
-            throw new Error(`Error ${response.status}: ${errorText}`);
-        }
-
-        const data = await response.json();
-        console.log('Respuesta del servidor:', data);
-
-        if (!data.result) {
-            throw new Error('Respuesta inválida del servidor');
-        }
-
-        return data.result.trim().replace(/^["']|["']$/g, '');
-    } catch (error) {
-        console.error('Error calling backend:', error);
-        
-        if (error.message.includes('fetch')) {
-            throw new Error('Error de conexión. Verifica que el servidor esté funcionando.');
-        }
-        
-        throw error;
-    }
+if (!response.ok) {
+throw new Error(`Error ${response.status}: Error del servidor`);
 }
 
-function showLoading() {
-    loading.style.display = 'flex';
-    sendBtn.disabled = true;
+const data = await response.json();
+if (!data.result) {
+throw new Error('Respuesta inválida del servidor');
+}
+
+return data.result.trim().replace(/^["']|["']$/g, '');
+} catch (error) {
+console.error('Error calling backend:', error);
+throw new Error('Error de conexión. Verifica tu internet.');
+}
+}
+
+// Mostrar/ocultar loading
+function showLoading(message = 'Transformando mensaje...') {
+loadingText.textContent = message;
+loading.style.display = 'flex';
+sendBtn.disabled = true;
+recordBtn.disabled = true;
 }
 
 function hideLoading() {
-    loading.style.display = 'none';
-    sendBtn.disabled = false;
+loading.style.display = 'none';
+sendBtn.disabled = false;
+recordBtn.disabled = false;
 }
 
+// Copiar mensaje
 async function copyMessage(btn) {
-    const messageText = btn.parentElement.textContent
-        .replace('Texto bajando un cambio', '')
-        .replace('📋', '')
-        .trim();
-    
-    try {
-        await navigator.clipboard.writeText(messageText);
-        showToast('📋 Copiado al portapapeles');
-    } catch (error) {
-        showToast('❌ Error al copiar');
-    }
+const messageText = btn.parentElement.textContent
+.replace('Texto bajando un cambio', '')
+.replace('📋', '')
+.trim();
+try {
+await navigator.clipboard.writeText(messageText);
+showToast('📋 Copiado al portapapeles');
+} catch (error) {
+showToast('❌ Error al copiar');
+}
 }
 
+// Mostrar toast
 function showToast(message) {
-    toast.textContent = message;
-    toast.classList.add('show');
-    setTimeout(() => {
-        toast.classList.remove('show');
-    }, 2000);
+toast.textContent = message;
+toast.classList.add('show');
+setTimeout(() => {
+toast.classList.remove('show');
+}, 2000);
 }
+
+// Inicializar cuando se carga la página
+document.addEventListener('DOMContentLoaded', () => {
+// Verificar soporte de grabación de audio
+if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+recordBtn.style.display = 'none';
+showToast('⚠️ Grabación de audio no soportada en este navegador');
+}
+});
 </script>
 </body>
 </html>
