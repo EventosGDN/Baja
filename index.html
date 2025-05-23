@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -114,7 +113,7 @@ margin: 0 auto;
 width: 100%;
 display: flex;
 flex-direction: column;
-gap: 20px;
+gap: 12px;
 position: relative;
 z-index: 10;
 }
@@ -127,7 +126,6 @@ position: relative;
 backdrop-filter: blur(5px);
 animation: slideIn 0.4s ease-out;
 }
-
 @keyframes slideIn {
 0% {
 opacity: 0;
@@ -138,7 +136,6 @@ opacity: 1;
 transform: translateY(0) scale(1);
 }
 }
-
 .message-original {
 background: rgba(51, 51, 51, 0.9);
 color: #fff;
@@ -155,51 +152,15 @@ border-bottom-left-radius: 5px;
 font-weight: 500;
 box-shadow: 0 0 20px rgba(255, 255, 0, 0.3);
 position: relative;
+margin-bottom: 8px;
 }
-
-.message-transformed.second-option {
-background: rgba(255, 255, 100, 0.95);
+.message-transformed.connector {
+background: rgba(255, 255, 100, 0.9);
 box-shadow: 0 0 15px rgba(255, 255, 100, 0.4);
-border: 2px solid rgba(255, 255, 0, 0.6);
-}
-
-.message-connector {
-background: rgba(100, 100, 100, 0.6);
-color: #fff;
-align-self: center;
-margin: 15px auto;
+border: 1px solid rgba(255, 255, 0, 0.4);
 font-style: italic;
-font-size: 0.9rem;
-max-width: 70%;
-text-align: center;
-border-radius: 15px;
-padding: 12px 18px;
-backdrop-filter: blur(8px);
-border: 1px solid rgba(255, 255, 255, 0.1);
-animation: fadeInBounce 0.6s ease-out;
+margin-bottom: 8px;
 }
-
-@keyframes fadeInBounce {
-0% {
-opacity: 0;
-transform: scale(0.8) translateY(-10px);
-}
-60% {
-transform: scale(1.05) translateY(0);
-}
-100% {
-opacity: 1;
-transform: scale(1) translateY(0);
-}
-}
-
-.message-connector .message-label {
-font-size: 1rem;
-margin-bottom: 5px;
-color: #ffff00;
-font-weight: 600;
-}
-
 .message-label {
 font-size: 0.8rem;
 font-weight: 600;
@@ -432,7 +393,6 @@ backdrop-filter: blur(5px);
 border-radius: 20px;
 border: 1px solid rgba(255, 255, 255, 0.1);
 }
-
 .typing-indicator {
 display: flex;
 align-items: center;
@@ -449,11 +409,9 @@ width: fit-content;
 opacity: 0;
 animation: fadeIn 0.3s ease-out forwards;
 }
-
 @keyframes fadeIn {
 to { opacity: 1; }
 }
-
 @media (max-width: 480px) {
 .megaphone-container {
 font-size: 80px;
@@ -511,7 +469,6 @@ rows="1"
 <option value="amigable">
 😊 Amigable
 </option>
-
 <option value="directo">
 💬 Directo
 </option>
@@ -552,7 +509,6 @@ const container = document.getElementById('fireParticles');
 const particleCount = 20;
 for (let i = 0; i < particleCount; i++) {
 const particle = document.createElement('div');
-
 particle.className = 'fire-particle';
 particle.style.left = Math.random() * 100 + '%';
 particle.style.animationDelay = Math.random() * 3 + 's';
@@ -589,7 +545,6 @@ this.style.height = Math.min(this.scrollHeight, 120) + 'px';
 // Enviar con Enter
 messageInput.addEventListener('keydown', function(e) {
 if (e.key === 'Enter' && !e.shiftKey) {
-
 e.preventDefault();
 sendMessage();
 }
@@ -597,114 +552,107 @@ sendMessage();
 // Event listeners
 sendBtn.addEventListener('click', sendMessage);
 recordBtn.addEventListener('click', toggleRecording);
-
 // FUNCIÓN ACTUALIZADA PARA TRANSFORMAR TEXTO CON MENSAJES SEPARADOS
 async function transformText(text, mode) {
-  const PROMPTS = {
-    formal: `Sos un experto en comunicación profesional argentina. Transformá este mensaje enojado o frustrado en algo apropiado para el ámbito laboral, pero mantené la firmeza y la intención del mensaje original. 
-
-Si el mensaje es muy fuerte o hay varias formas de expresarlo profesionalmente, dame 2 opciones separadas por "|||". Si es simple, una sola opción.
-
-Cada opción debe ser directa pero respetuosa, máximo 2-3 oraciones. Usá un tono firme pero profesional.
-
+const PROMPTS = {
+formal: `Sos un experto en comunicación profesional argentina.
+Transformá este mensaje enojado o frustrado en algo apropiado para el
+ámbito laboral, pero mantené la firmeza y la intención del mensaje
+original.
+Si el mensaje es muy fuerte o hay varias formas de expresarlo
+profesionalmente, dame 2 opciones separadas por "|||". Si es simple, una
+sola opción.
+Cada opción debe ser directa pero respetuosa, máximo 2-3 oraciones. Usá un
+tono firme pero profesional.
 Mensaje: "${text}"`,
-
-    amigable: `Transformá este mensaje en algo más amigable y cálido, manteniendo el estilo argentino. Suavizá la forma pero no pierdas la intención ni la firmeza del mensaje original.
-
-Si el mensaje permite diferentes enfoques amigables, dame 2 opciones separadas por "|||". Si hay una forma clara, una sola opción.
-
-Cada opción debe ser copada pero clara, máximo 2-3 oraciones. Que se entienda el punto pero de manera más friendly.
-
+amigable: `Transformá este mensaje en algo más amigable y cálido,
+manteniendo el estilo argentino. Suavizá la forma pero no pierdas la
+intención ni la firmeza del mensaje original.
+Si el mensaje permite diferentes enfoques amigables, dame 2 opciones
+separadas por "|||". Si hay una forma clara, una sola opción.
+Cada opción debe ser copada pero clara, máximo 2-3 oraciones. Que se
+entienda el punto pero de manera más friendly.
 Mensaje: "${text}"`,
-
-    directo: `Convertí este mensaje en algo directo pero respetuoso, sin rodeos pero sin agredir innecesariamente. Mantené la claridad y la fuerza del mensaje original pero con mejor forma.
-
-Si hay diferentes formas de ser directo sin ser agresivo, dame 2 opciones separadas por "|||". Si es claro, una sola opción.
-
-Cada opción debe ser directa y clara, máximo 2-3 oraciones. Estilo argentino directo pero civilizado.
-
+directo: `Convertí este mensaje en algo directo pero respetuoso, sin
+rodeos pero sin agredir innecesariamente. Mantené la claridad y la fuerza
+del mensaje original pero con mejor forma.
+Si hay diferentes formas de ser directo sin ser agresivo, dame 2 opciones
+separadas por "|||". Si es claro, una sola opción.
+Cada opción debe ser directa y clara, máximo 2-3 oraciones. Estilo
+argentino directo pero civilizado.
 Mensaje: "${text}"`,
-
-    diplomatico: `Usá toda tu habilidad diplomática para transformar este mensaje en comunicación estratégica y táctica. Mantené la firmeza del mensaje pero usá diplomacia y psicología comunicacional.
-
-Si el mensaje permite diferentes estrategias diplomáticas, dame 2 opciones separadas por "|||". Si hay una estrategia clara, una sola opción.
-
-Cada opción debe ser inteligente y táctica, máximo 2-3 oraciones. Que se entienda el mensaje pero de forma muy hábil.
-
+diplomatico: `Usá toda tu habilidad diplomática para transformar este
+mensaje en comunicación estratégica y táctica. Mantené la firmeza del
+mensaje pero usá diplomacia y psicología comunicacional.
+Si el mensaje permite diferentes estrategias diplomáticas, dame 2 opciones
+separadas por "|||". Si hay una estrategia clara, una sola opción.
+Cada opción debe ser inteligente y táctica, máximo 2-3 oraciones. Que se
+entienda el mensaje pero de forma muy hábil.
 Mensaje: "${text}"`
-  };
-
-  try {
-    console.log('Enviando a API real:', text, mode);
-    const response = await fetch('/api/transform', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        prompt: PROMPTS[mode],
-        mode: mode
-      })
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(`Error ${response.status}: ${errorData.error || response.statusText}`);
-    }
-
-    const data = await response.json();
-    console.log('Respuesta de API:', data);
-    return data;
-  } catch (error) {
-    console.error('Error llamando a la API real:', error);
-    throw new Error(`No se pudo transformar el mensaje: ${error.message}`);
-  }
+};
+try {
+console.log('Enviando a API real:', text, mode);
+const response = await fetch('/api/transform', {
+method: 'POST',
+headers: {
+'Content-Type': 'application/json',
+},
+body: JSON.stringify({
+prompt: PROMPTS[mode],
+mode: mode
+})
+});
+if (!response.ok) {
+const errorData = await response.json().catch(() => ({}));
+throw new Error(`Error ${response.status}: ${errorData.error ||
+response.statusText}`);
 }
-
+const data = await response.json();
+console.log('Respuesta de API:', data);
+return data;
+} catch (error) {
+console.error('Error llamando a la API real:', error);
+throw new Error(`No se pudo transformar el mensaje:
+${error.message}`);
+}
+}
 // FUNCIÓN ACTUALIZADA PARA PROCESAR MENSAJES CON OPCIONES MÚLTIPLES
 async function processTextMessage(text) {
-  const mode = modeSelect.value;
-  
-  // Limpiar empty state si existe
-  const emptyState = chatContainer.querySelector('.empty-state');
-  if (emptyState) {
-    emptyState.remove();
-  }
-  
-  // Agregar mensaje original
-  addMessage(text, 'original');
-  
-  // Mostrar loading
-  showLoading('Transformando mensaje...');
-  
-  try {
-    const response = await transformText(text, mode);
-    hideLoading();
-    
-    // Agregar primera transformación
-    addMessage(response.result, 'transformed');
-    
-    // Si hay segunda opción, agregar conector y segunda opción con delay
-    if (response.hasSecondOption && response.secondOption) {
-      // Delay para que se sienta más natural
-      setTimeout(() => {
-        // Agregar mensaje conector
-        addConnectorMessage(response.connector);
-        
-        // Otro pequeño delay para la segunda opción
-        setTimeout(() => {
-          addMessage(response.secondOption, 'transformed');
-        }, 800);
-      }, 1200);
-    }
-    
-  } catch (error) {
-    hideLoading();
-    showToast('❌ Error al transformar el mensaje: ' + error.message);
-    console.error(error);
-  }
+const mode = modeSelect.value;
+// Limpiar empty state si existe
+const emptyState = chatContainer.querySelector('.empty-state');
+if (emptyState) {
+emptyState.remove();
 }
-
+// Agregar mensaje original
+addMessage(text, 'original');
+// Mostrar loading
+showLoading('Transformando mensaje...');
+try {
+const response = await transformText(text, mode);
+hideLoading();
+// Agregar primera transformación
+addMessage(response.result, 'transformed');
+// Si hay segunda opción, agregar conector y segunda opción con delay
+if (response.hasSecondOption && response.secondOption) {
+// Delay para que se sienta más natural
+setTimeout(() => {
+// Agregar mensaje conector (ahora como mensaje transformado)
+addMessage(response.connector, 'connector');
+// Otro pequeño delay para la segunda opción
+setTimeout(() => {
+addMessage(response.secondOption, 'transformed');
+}, 800);
+}, 1200);
+}
+} catch (error) {
+hideLoading();
+showToast(
+'❌ Error al transformar el mensaje: ' 
++ error.message);
+console.error(error);
+}
+}
 // Enviar mensaje de texto
 async function sendMessage() {
 const text = messageInput.value.trim();
@@ -713,50 +661,36 @@ await processTextMessage(text);
 messageInput.value = '';
 messageInput.style.height = 'auto';
 }
-
-// NUEVA FUNCIÓN PARA AGREGAR MENSAJES CONECTORES
-function addConnectorMessage(connectorText) {
-  const messageDiv = document.createElement('div');
-  messageDiv.className = 'message-bubble message-connector';
-  messageDiv.innerHTML = `
-    <div class="message-label">💭</div>
-    ${connectorText}
-  `;
-  chatContainer.appendChild(messageDiv);
-  chatContainer.scrollTop = chatContainer.scrollHeight;
-}
-
-// FUNCIÓN ADDMESSAGE ACTUALIZADA
+// FUNCIÓN ADDMESSAGE ACTUALIZADA - SIN ETIQUETAS "OPCIÓN 1", "OPCIÓN 2"
 function addMessage(text, type) {
-  const messageDiv = document.createElement('div');
-  messageDiv.className = `message-bubble message-${type}`;
-  
-  if (type === 'original') {
-    messageDiv.innerHTML = `
-      <div class="message-label">Texto original</div>
-      ${text}
-    `;
-  } else if (type === 'connector') {
-    messageDiv.innerHTML = `
-      <div class="message-label">💭</div>
-      ${text}
-    `;
-  } else {
-    messageDiv.innerHTML = `
-      <div class="message-label">Texto bajando un cambio</div>
-      ${text}
-      <button class="copy-btn" onclick="copyMessage(this)">📋</button>
-    `;
-  }
-  
-  chatContainer.appendChild(messageDiv);
-  chatContainer.scrollTop = chatContainer.scrollHeight;
+const messageDiv = document.createElement('div');
+if (type === 'original') {
+messageDiv.className = 'message-bubble message-original';
+messageDiv.innerHTML = `
+<div class="message-label">Texto original</div>
+${text}
+`;
+} else if (type === 'connector') {
+// El conector ahora es un mensaje transformado como los otros
+messageDiv.className = 'message-bubble message-transformed connector';
+messageDiv.innerHTML = `
+${text}
+`;
+} else {
+// Mensaje transformado sin etiquetas "Opción 1", "Opción 2"
+messageDiv.className = 'message-bubble message-transformed';
+messageDiv.innerHTML = `
+<div class="message-label">Texto bajando un cambio</div>
+${text}
+<button class="copy-btn" onclick="copyMessage(this)">📋</button>
+`;
 }
-
+chatContainer.appendChild(messageDiv);
+chatContainer.scrollTop = chatContainer.scrollHeight;
+}
 // Mostrar/ocultar loading
 function showLoading(message = 'Transformando mensaje...') {
 loadingText.textContent = message;
-
 loading.style.display = 'flex';
 sendBtn.disabled = true;
 recordBtn.disabled = true;
@@ -770,19 +704,13 @@ recordBtn.disabled = false;
 async function copyMessage(btn) {
 const messageText = btn.parentElement.textContent
 .replace('Texto bajando un cambio', '')
-.replace(
-'📋'
-, '')
+.replace('📋', '')
 .trim();
 try {
 await navigator.clipboard.writeText(messageText);
-showToast(
-'📋 Copiado al portapapeles'
-);
+showToast('📋 Copiado al portapapeles');
 } catch (error) {
-showToast(
-'❌ Error al copiar'
-);
+showToast('❌ Error al copiar');
 }
 }
 // Mostrar toast
@@ -799,7 +727,6 @@ if (!isRecording) {
 try {
 const stream = await navigator.mediaDevices.getUserMedia({
 audio: {
-
 echoCancellation: true,
 noiseSuppression: true,
 sampleRate: 44100
@@ -808,9 +735,7 @@ sampleRate: 44100
 startRecording(stream);
 } catch (error) {
 console.error('Error accediendo al micrófono:', error);
-showToast(
-'❌ No se pudo acceder al micrófono'
-);
+showToast('❌ No se pudo acceder al micrófono');
 }
 } else {
 stopRecording();
@@ -838,11 +763,8 @@ const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
 await transcribeAudio(audioBlob);
 stream.getTracks().forEach(track => track.stop());
 };
-
 mediaRecorder.start();
-showToast(
-'🎤 Grabando audio...'
-);
+showToast('🎤 Grabando audio...');
 }
 // Detener grabación REAL
 function stopRecording() {
@@ -852,9 +774,7 @@ recordBtn.classList.remove('recording');
 audioStatus.classList.remove('show');
 clearInterval(recordingTimer);
 mediaRecorder.stop();
-showToast(
-'⏹ Procesando audio...'
-);
+showToast('⏹ Procesando audio...');
 }
 }
 // Transcribir audio REAL usando tu API
@@ -875,20 +795,15 @@ response.statusText}`);
 const data = await response.json();
 console.log('Transcripción recibida:', data);
 hideLoading();
-
 if (data.transcription && data.transcription.trim()) {
 await processTextMessage(data.transcription.trim());
 } else {
-showToast(
-'❌ No se pudo transcribir el audio'
-);
+showToast('❌ No se pudo transcribir el audio');
 }
 } catch (error) {
 hideLoading();
 console.error('Error transcribiendo audio:', error);
-showToast(
-'❌ Error al transcribir audio: ' 
-+ error.message);
+showToast('❌ Error al transcribir audio: ' + error.message);
 }
 }
 // Actualizar timer de grabación
@@ -898,8 +813,7 @@ const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
 const minutes = Math.floor(elapsed / 60);
 const seconds = elapsed % 60;
 recordingTimerElement.textContent =
-`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2,
-'0')}`;
+`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 }
 }
 // Inicializar cuando se carga la página
@@ -907,9 +821,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Verificar soporte de grabación de audio
 if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
 recordBtn.style.display = 'none';
-showToast(
-'⚠ Grabación de audio no soportada en este navegador'
-);
+showToast('⚠ Grabación de audio no soportada en este navegador');
 }
 });
 </script>
