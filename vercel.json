@@ -1,9 +1,7 @@
 {
-    "version": 2,
-    "builds": [
-        { "src": "api/transform.js", "use": "@vercel/node" }
-    ],
-    "routes": [
-        { "src": "/api/transform", "dest": "api/transform.js" }
-    ]
+  "functions": {
+    "api/transform.js": {
+      "runtime": "nodejs18.x"
+    }
+  }
 }
