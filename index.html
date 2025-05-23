@@ -11,17 +11,93 @@ margin: 0;
 padding: 0;
 box-sizing: border-box;
 }
+
 body {
-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-sans-serif;
+font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 background: #000;
 min-height: 100vh;
 color: #fff;
 display: flex;
 flex-direction: column;
+position: relative;
+overflow-x: hidden;
 }
+
+/* Fondo animado de fuego */
+.fire-background {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+z-index: -1;
+background: radial-gradient(circle at center bottom, 
+    rgba(255, 100, 0, 0.3) 0%,
+    rgba(255, 50, 0, 0.2) 20%,
+    rgba(200, 0, 0, 0.1) 40%,
+    rgba(0, 0, 0, 0.9) 70%,
+    rgba(0, 0, 0, 1) 100%);
+}
+
+.fire-particles {
+position: absolute;
+width: 100%;
+height: 100%;
+overflow: hidden;
+}
+
+.fire-particle {
+position: absolute;
+width: 4px;
+height: 4px;
+background: radial-gradient(circle, #ff6600, #ff0000);
+border-radius: 50%;
+opacity: 0;
+animation: fireFloat 3s infinite ease-in-out;
+}
+
+@keyframes fireFloat {
+0% {
+opacity: 0;
+transform: translateY(100vh) scale(0.5);
+}
+20% {
+opacity: 1;
+}
+80% {
+opacity: 1;
+}
+100% {
+opacity: 0;
+transform: translateY(-20vh) scale(1.2);
+}
+}
+
+/* Megáfono flotante */
+.megaphone-container {
+position: fixed;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+z-index: -1;
+font-size: 120px;
+opacity: 0.1;
+animation: megaphoneFloat 4s ease-in-out infinite;
+pointer-events: none;
+}
+
+@keyframes megaphoneFloat {
+0%, 100% {
+transform: translate(-50%, -50%) rotate(-2deg) scale(1);
+}
+50% {
+transform: translate(-50%, -55%) rotate(2deg) scale(1.05);
+}
+}
+
 .header {
-background: #1a1a1a;
+background: rgba(26, 26, 26, 0.95);
+backdrop-filter: blur(10px);
 padding: 20px;
 text-align: center;
 border-bottom: 1px solid #333;
@@ -29,12 +105,15 @@ position: sticky;
 top: 0;
 z-index: 100;
 }
+
 .app-title {
 font-size: 1.5rem;
 font-weight: 700;
 color: #ffff00;
 margin-bottom: 5px;
+text-shadow: 0 0 10px rgba(255, 255, 0, 0.3);
 }
+
 .chat-container {
 flex: 1;
 padding: 20px;
@@ -44,27 +123,35 @@ width: 100%;
 display: flex;
 flex-direction: column;
 gap: 20px;
+position: relative;
+z-index: 10;
 }
+
 .message-bubble {
 padding: 15px 18px;
 border-radius: 20px;
 max-width: 85%;
 word-wrap: break-word;
 position: relative;
+backdrop-filter: blur(5px);
 }
+
 .message-original {
-background: #333;
+background: rgba(51, 51, 51, 0.9);
 color: #fff;
 align-self: flex-end;
 margin-left: auto;
 border-bottom-right-radius: 5px;
+border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
 .message-transformed {
-background: #ffff00;
+background: rgba(255, 255, 0, 0.95);
 color: #000;
 align-self: flex-start;
 border-bottom-left-radius: 5px;
 font-weight: 500;
+box-shadow: 0 0 20px rgba(255, 255, 0, 0.3);
 }
 
 .message-label {
@@ -73,13 +160,17 @@ font-weight: 600;
 margin-bottom: 8px;
 opacity: 0.8;
 }
+
 .input-section {
 position: sticky;
 bottom: 0;
-background: #1a1a1a;
+background: rgba(26, 26, 26, 0.95);
+backdrop-filter: blur(10px);
 padding: 20px;
 border-top: 1px solid #333;
+z-index: 100;
 }
+
 .input-container {
 max-width: 600px;
 margin: 0 auto;
@@ -87,9 +178,11 @@ display: flex;
 flex-direction: column;
 gap: 15px;
 }
+
 .text-input {
-background: #333;
-border: none;
+background: rgba(51, 51, 51, 0.9);
+backdrop-filter: blur(5px);
+border: 1px solid rgba(255, 255, 255, 0.1);
 border-radius: 25px;
 padding: 15px 20px;
 color: #fff;
@@ -99,39 +192,48 @@ min-height: 50px;
 max-height: 120px;
 font-family: inherit;
 }
+
 .text-input::placeholder {
 color: #999;
 }
 
 .text-input:focus {
 outline: 2px solid #ffff00;
-background: #404040;
+background: rgba(64, 64, 64, 0.9);
+box-shadow: 0 0 15px rgba(255, 255, 0, 0.2);
 }
+
 .controls {
 display: flex;
 gap: 10px;
 align-items: center;
 }
+
 .mode-select {
 flex: 1;
-background: #333;
-border: none;
+background: rgba(51, 51, 51, 0.9);
+backdrop-filter: blur(5px);
+border: 1px solid rgba(255, 255, 255, 0.1);
 border-radius: 20px;
 padding: 12px 15px;
 color: #fff;
 font-size: 0.9rem;
 cursor: pointer;
 }
+
 .mode-select:focus {
 outline: 2px solid #ffff00;
+box-shadow: 0 0 15px rgba(255, 255, 0, 0.2);
 }
+
 .action-buttons {
 display: flex;
 gap: 8px;
 align-items: center;
 }
+
 .record-btn {
-background: #ff4444;
+background: linear-gradient(135deg, #ff4444, #cc0000);
 color: #fff;
 border: none;
 border-radius: 50%;
@@ -145,21 +247,28 @@ font-size: 1.2rem;
 transition: all 0.2s ease;
 flex-shrink: 0;
 position: relative;
+box-shadow: 0 4px 15px rgba(255, 68, 68, 0.3);
 }
+
 .record-btn:hover:not(:disabled) {
-background: #ff6666;
+background: linear-gradient(135deg, #ff6666, #ff0000);
 transform: scale(1.05);
+box-shadow: 0 6px 20px rgba(255, 68, 68, 0.5);
 }
+
 .record-btn.recording {
-background: #ff0000;
+background: linear-gradient(135deg, #ff0000, #cc0000);
 animation: pulse 1s infinite;
+box-shadow: 0 0 25px rgba(255, 0, 0, 0.7);
 }
+
 .record-btn:disabled {
 opacity: 0.5;
 cursor: not-allowed;
 }
+
 .send-btn {
-background: #ffff00;
+background: linear-gradient(135deg, #ffff00, #cccc00);
 color: #000;
 border: none;
 border-radius: 50%;
@@ -172,15 +281,20 @@ cursor: pointer;
 font-size: 1.2rem;
 transition: all 0.2s ease;
 flex-shrink: 0;
+box-shadow: 0 4px 15px rgba(255, 255, 0, 0.3);
 }
+
 .send-btn:hover:not(:disabled) {
-background: #ffff66;
+background: linear-gradient(135deg, #ffff66, #ffff00);
 transform: scale(1.05);
+box-shadow: 0 6px 20px rgba(255, 255, 0, 0.5);
 }
+
 .send-btn:disabled {
 opacity: 0.5;
 cursor: not-allowed;
 }
+
 .loading {
 display: flex;
 align-items: center;
@@ -188,11 +302,18 @@ gap: 10px;
 color: #999;
 font-size: 0.9rem;
 padding: 10px 20px;
+background: rgba(0, 0, 0, 0.7);
+backdrop-filter: blur(5px);
+border-radius: 15px;
+margin: 0 auto;
+width: fit-content;
 }
+
 .loading-dots {
 display: inline-flex;
 gap: 3px;
 }
+
 .loading-dot {
 width: 6px;
 height: 6px;
@@ -200,6 +321,7 @@ background: #999;
 border-radius: 50%;
 animation: loading 1.4s infinite ease-in-out;
 }
+
 .loading-dot:nth-child(1) { animation-delay: -0.32s; }
 .loading-dot:nth-child(2) { animation-delay: -0.16s; }
 
@@ -227,16 +349,20 @@ font-size: 0.8rem;
 cursor: pointer;
 opacity: 0;
 transition: opacity 0.2s ease;
+backdrop-filter: blur(5px);
 }
+
 .message-transformed:hover .copy-btn {
 opacity: 1;
 }
+
 .toast {
 position: fixed;
 bottom: 100px;
 left: 50%;
 transform: translateX(-50%);
 background: rgba(0, 0, 0, 0.9);
+backdrop-filter: blur(10px);
 color: #fff;
 padding: 10px 20px;
 border-radius: 20px;
@@ -244,7 +370,9 @@ font-size: 0.9rem;
 opacity: 0;
 transition: all 0.3s ease;
 z-index: 1000;
+border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
 .toast.show {
 opacity: 1;
 transform: translateX(-50%) translateY(-10px);
@@ -259,6 +387,11 @@ font-size: 0.9rem;
 margin-top: 10px;
 opacity: 0;
 transition: opacity 0.3s ease;
+background: rgba(0, 0, 0, 0.7);
+backdrop-filter: blur(5px);
+padding: 8px 15px;
+border-radius: 15px;
+border: 1px solid rgba(255, 68, 68, 0.3);
 }
 
 .audio-status.show {
@@ -275,20 +408,33 @@ text-align: center;
 color: #666;
 padding: 40px 20px;
 font-size: 0.9rem;
+background: rgba(0, 0, 0, 0.3);
+backdrop-filter: blur(5px);
+border-radius: 20px;
+border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
 @media (max-width: 480px) {
+.megaphone-container {
+font-size: 80px;
+}
+
 .chat-container {
 padding: 15px;
 }
+
 .input-section {
 padding: 15px;
 }
+
 .message-bubble {
 max-width: 90%;
 }
+
 .action-buttons {
 gap: 6px;
 }
+
 .record-btn, .send-btn {
 width: 40px;
 height: 40px;
@@ -298,14 +444,26 @@ font-size: 1.1rem;
 </style>
 </head>
 <body>
+<!-- Fondo animado de fuego -->
+<div class="fire-background">
+<div class="fire-particles" id="fireParticles"></div>
+</div>
+
+<!-- Megáfono flotante -->
+<div class="megaphone-container">
+📢
+</div>
+
 <div class="header">
 <h1 class="app-title">Bajá un cambio</h1>
 </div>
+
 <div class="chat-container" id="chatContainer">
 <div class="empty-state">
 Escribí tu mensaje o grabá un audio y te ayudo a "bajar un cambio" 🎤🤝
 </div>
 </div>
+
 <div class="input-section">
 <div class="input-container">
 <textarea
@@ -314,28 +472,17 @@ class="text-input"
 placeholder="Me cansé, váyanse a la put que los parió... o grabá un audio"
 rows="1"
 ></textarea>
+
 <div class="controls">
 <select id="modeSelect" class="mode-select">
-<option value="formal">
-💼 Formal/Trabajo
-</option>
-<option value="amigable">
-😊 Amigable
-</option>
-<option value="directo">
-💬 Directo
-</option>
-<option value="diplomatico">
-🤝 Diplomático
-</option>
+<option value="formal">💼 Formal/Trabajo</option>
+<option value="amigable">😊 Amigable</option>
+<option value="directo">💬 Directo</option>
+<option value="diplomatico">🤝 Diplomático</option>
 </select>
 <div class="action-buttons">
-<button class="record-btn" id="recordBtn" title="Grabar audio">
-🎤
-</button>
-<button class="send-btn" id="sendBtn" title="Enviar mensaje">
-⚡
-</button>
+<button class="record-btn" id="recordBtn" title="Grabar audio">🎤</button>
+<button class="send-btn" id="sendBtn" title="Enviar mensaje">⚡</button>
 </div>
 </div>
 <div class="audio-status" id="audioStatus">
@@ -344,6 +491,7 @@ rows="1"
 </div>
 </div>
 </div>
+
 <div class="loading" id="loading" style="display: none;">
 <div class="loading-dots">
 <div class="loading-dot"></div>
@@ -352,11 +500,33 @@ rows="1"
 </div>
 <span id="loadingText">Transformando mensaje...</span>
 </div>
+
 <div class="toast" id="toast"></div>
+
 <script>
-// Backend endpoints
-const TRANSFORM_URL = window.location.origin + '/api/transform';
-const TRANSCRIBE_URL = window.location.origin + '/api/transcribe';
+// Crear partículas de fuego
+function createFireParticles() {
+const container = document.getElementById('fireParticles');
+const particleCount = 20;
+
+for (let i = 0; i < particleCount; i++) {
+const particle = document.createElement('div');
+particle.className = 'fire-particle';
+particle.style.left = Math.random() * 100 + '%';
+particle.style.animationDelay = Math.random() * 3 + 's';
+particle.style.animationDuration = (2 + Math.random() * 2) + 's';
+container.appendChild(particle);
+}
+}
+
+// Inicializar partículas al cargar la página
+document.addEventListener('DOMContentLoaded', () => {
+createFireParticles();
+});
+
+// Backend endpoints - Simulación para demostración
+const TRANSFORM_URL = '/api/transform';
+const TRANSCRIBE_URL = '/api/transcribe';
 
 const PROMPTS = {
 formal: "Transforma este mensaje en comunicación profesional y formal, pero mantén el mensaje corto y directo. Máximo 2-3 oraciones.",
@@ -402,178 +572,38 @@ sendMessage();
 sendBtn.addEventListener('click', sendMessage);
 recordBtn.addEventListener('click', toggleRecording);
 
-// Inicializar grabación de audio
-async function initializeAudioRecording() {
-try {
-const stream = await navigator.mediaDevices.getUserMedia({ 
-audio: {
-echoCancellation: true,
-noiseSuppression: true,
-sampleRate: 44100
-} 
-});
-mediaRecorder = new MediaRecorder(stream, {
-mimeType: 'audio/webm;codecs=opus'
-});
-
-mediaRecorder.ondataavailable = (event) => {
-if (event.data.size > 0) {
-audioChunks.push(event.data);
+// Función de demostración para transformar texto
+async function transformText(text, mode) {
+// Simulación de transformación para demostración
+const transformations = {
+formal: {
+"Me cansé, váyanse a la put que los parió": "He decidido que es momento de finalizar esta colaboración. Les agradezco su comprensión.",
+"Esto es una porquería": "Considero que este proyecto necesita mejoras significativas para cumplir con los estándares esperados.",
+"No me rompan las pelotas": "Por favor, necesito concentrarme en mis tareas sin interrupciones."
+},
+amigable: {
+"Me cansé, váyanse a la put que los parió": "Che, estoy bastante agotado. ¿Podemos seguir esto mañana? Gracias por entender.",
+"Esto es una porquería": "La verdad que esto no está funcionando como esperaba. ¿Podemos intentar otro enfoque?",
+"No me rompan las pelotas": "Disculpen, pero necesito un ratito para concentrarme. ¡Gracias!"
+},
+directo: {
+"Me cansé, váyanse a la put que los parió": "Necesito un descanso. Retomamos mañana.",
+"Esto es una porquería": "Esto no funciona. Hay que cambiarlo.",
+"No me rompan las pelotas": "Necesito concentrarme. Sin interrupciones, por favor."
+},
+diplomatico: {
+"Me cansé, váyanse a la put que los parió": "Creo que sería productivo hacer una pausa estratégica y retomar con energías renovadas.",
+"Esto es una porquería": "Sugiero revisar nuestra estrategia actual para optimizar los resultados esperados.",
+"No me rompan las pelotas": "Agradecería poder mantener un ambiente de trabajo enfocado para maximizar la productividad."
 }
 };
 
-mediaRecorder.onstop = async () => {
-const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-audioChunks = [];
-await processAudioMessage(audioBlob);
-};
-
-} catch (error) {
-console.error('Error al acceder al micrófono:', error);
-showToast('❌ No se pudo acceder al micrófono');
-recordBtn.style.display = 'none';
-}
-}
-
-// Toggle grabación
-async function toggleRecording() {
-if (!mediaRecorder) {
-await initializeAudioRecording();
-if (!mediaRecorder) return;
-}
-
-if (!isRecording) {
-startRecording();
-} else {
-stopRecording();
-}
-}
-
-// Iniciar grabación
-function startRecording() {
-if (mediaRecorder && mediaRecorder.state === 'inactive') {
-audioChunks = [];
-mediaRecorder.start();
-isRecording = true;
-recordBtn.classList.add('recording');
-audioStatus.classList.add('show');
-recordingStartTime = Date.now();
-updateRecordingTimer();
-recordingTimer = setInterval(updateRecordingTimer, 1000);
-showToast('🎤 Grabando audio...');
-}
-}
-
-// Detener grabación
-function stopRecording() {
-if (mediaRecorder && mediaRecorder.state === 'recording') {
-mediaRecorder.stop();
-isRecording = false;
-recordBtn.classList.remove('recording');
-audioStatus.classList.remove('show');
-clearInterval(recordingTimer);
-showToast('⏹️ Procesando audio...');
-}
-}
-
-// Actualizar timer de grabación
-function updateRecordingTimer() {
-if (recordingStartTime) {
-const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
-const minutes = Math.floor(elapsed / 60);
-const seconds = elapsed % 60;
-recordingTimerElement.textContent = 
-`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-}
-}
-
-// Procesar mensaje de audio
-async function processAudioMessage(audioBlob) {
-try {
-// Limpiar empty state
-const emptyState = chatContainer.querySelector('.empty-state');
-if (emptyState) {
-emptyState.remove();
-}
-
-// Mostrar que se está procesando audio
-addMessage('🎤 Mensaje de audio grabado', 'original');
-showLoading('Transcribiendo audio...');
-
-// Transcribir audio
-const transcription = await transcribeAudio(audioBlob);
-
-if (transcription) {
-// Actualizar el mensaje original con la transcripción
-updateLastMessage(transcription, 'original');
-
-// Procesar como mensaje de texto normal
-await processTextMessage(transcription);
-} else {
-hideLoading();
-showToast('❌ No se pudo transcribir el audio');
-}
-
-} catch (error) {
-hideLoading();
-showToast('❌ Error al procesar el audio');
-console.error(error);
-}
-}
-
-// Transcribir audio usando la API
-async function transcribeAudio(audioBlob) {
-try {
-const formData = new FormData();
-formData.append('audio', audioBlob, 'audio.webm');
-
-const response = await fetch(TRANSCRIBE_URL, {
-method: 'POST',
-body: formData
-});
-
-if (!response.ok) {
-throw new Error(`Error ${response.status}: Error del servidor`);
-}
-
-const data = await response.json();
-return data.transcription;
-
-} catch (error) {
-console.error('Error transcribing audio:', error);
-// Fallback: usar Web Speech API si está disponible
-if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-return await transcribeWithWebSpeech();
-}
-throw error;
-}
-}
-
-// Fallback: transcripción con Web Speech API
-async function transcribeWithWebSpeech() {
-return new Promise((resolve, reject) => {
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-if (!SpeechRecognition) {
-reject(new Error('Speech recognition not supported'));
-return;
-}
-
-const recognition = new SpeechRecognition();
-recognition.lang = 'es-ES';
-recognition.continuous = false;
-recognition.interimResults = false;
-
-recognition.onresult = (event) => {
-const transcript = event.results[0][0].transcript;
-resolve(transcript);
-};
-
-recognition.onerror = (event) => {
-reject(new Error('Speech recognition error: ' + event.error));
-};
-
-recognition.start();
-});
+// Buscar transformación exacta o usar una genérica
+const modeTransforms = transformations[mode];
+const result = modeTransforms[text] || 
+    `Versión ${mode}: ${text.replace(/porquería|mierda|put[ao]/gi, 'problema').replace(/cansé/gi, 'necesito un descanso')}`;
+    
+return result;
 }
 
 // Enviar mensaje de texto
@@ -596,15 +626,15 @@ if (emptyState) {
 emptyState.remove();
 }
 
-// Agregar mensaje original si no está ya
-if (!chatContainer.querySelector('.message-original:last-child')) {
+// Agregar mensaje original
 addMessage(text, 'original');
-}
 
 // Mostrar loading
 showLoading('Transformando mensaje...');
 
 try {
+// Simular delay de API
+await new Promise(resolve => setTimeout(resolve, 1500));
 const transformedText = await transformText(text, mode);
 hideLoading();
 addMessage(transformedText, 'transformed');
@@ -637,59 +667,6 @@ chatContainer.appendChild(messageDiv);
 chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
-// Actualizar el último mensaje
-function updateLastMessage(text, type) {
-const lastMessage = chatContainer.querySelector(`.message-${type}:last-child`);
-if (lastMessage) {
-if (type === 'original') {
-lastMessage.innerHTML = `
-<div class="message-label">Texto original</div>
-${text}
-`;
-}
-}
-}
-
-// Transformar texto usando la API
-async function transformText(text, mode) {
-const prompt = `${PROMPTS[mode]}
-
-Texto a transformar: "${text}"
-
-Instrucciones adicionales:
-- Mantén el mensaje corto (máximo 2-3 oraciones)
-- Conserva la intención original pero con mejor tono
-- Responde SOLO con el texto transformado, sin explicaciones
-- Si el texto tiene groserías o insultos, reemplázalos por alternativas apropiadas`;
-
-try {
-const response = await fetch(TRANSFORM_URL, {
-method: 'POST',
-headers: {
-'Content-Type': 'application/json'
-},
-body: JSON.stringify({
-prompt: prompt,
-mode: mode
-})
-});
-
-if (!response.ok) {
-throw new Error(`Error ${response.status}: Error del servidor`);
-}
-
-const data = await response.json();
-if (!data.result) {
-throw new Error('Respuesta inválida del servidor');
-}
-
-return data.result.trim().replace(/^["']|["']$/g, '');
-} catch (error) {
-console.error('Error calling backend:', error);
-throw new Error('Error de conexión. Verifica tu internet.');
-}
-}
-
 // Mostrar/ocultar loading
 function showLoading(message = 'Transformando mensaje...') {
 loadingText.textContent = message;
@@ -710,6 +687,7 @@ const messageText = btn.parentElement.textContent
 .replace('Texto bajando un cambio', '')
 .replace('📋', '')
 .trim();
+
 try {
 await navigator.clipboard.writeText(messageText);
 showToast('📋 Copiado al portapapeles');
@@ -727,12 +705,58 @@ toast.classList.remove('show');
 }, 2000);
 }
 
+// Toggle grabación (simulado)
+async function toggleRecording() {
+if (!isRecording) {
+startRecording();
+} else {
+stopRecording();
+}
+}
+
+// Iniciar grabación (simulado)
+function startRecording() {
+isRecording = true;
+recordBtn.classList.add('recording');
+audioStatus.classList.add('show');
+recordingStartTime = Date.now();
+updateRecordingTimer();
+recordingTimer = setInterval(updateRecordingTimer, 1000);
+showToast('🎤 Grabando audio...');
+}
+
+// Detener grabación (simulado)
+function stopRecording() {
+isRecording = false;
+recordBtn.classList.remove('recording');
+audioStatus.classList.remove('show');
+clearInterval(recordingTimer);
+showToast('⏹ Procesando audio...');
+
+// Simular transcripción después de 2 segundos
+setTimeout(() => {
+const simulatedTranscription = "Este es un ejemplo de transcripción de audio";
+processTextMessage(simulatedTranscription);
+}, 2000);
+}
+
+// Actualizar timer de grabación
+function updateRecordingTimer() {
+if (recordingStartTime) {
+const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
+const minutes = Math.floor(elapsed / 60);
+const seconds = elapsed % 60;
+recordingTimerElement.textContent = 
+`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+}
+
 // Inicializar cuando se carga la página
 document.addEventListener('DOMContentLoaded', () => {
 // Verificar soporte de grabación de audio
 if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
 recordBtn.style.display = 'none';
-showToast('⚠️ Grabación de audio no soportada en este navegador');
+showToast('⚠ Grabación de audio no soportada en este navegador');
 }
 });
 </script>
