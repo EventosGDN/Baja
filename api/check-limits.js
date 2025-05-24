@@ -15,7 +15,7 @@ module.exports = async function handler(req, res) {
     }
 
     try {
-        const { userId, action } = req.body;
+        const { userId, action, adminKey } = req.body;
 
         if (!userId) {
             return res.status(400).json({ error: 'userId requerido' });
@@ -128,8 +128,66 @@ module.exports = async function handler(req, res) {
                 subscriptionStatus: 'free'
             });
 
+        } else if (action === 'reset') {
+            // NUEVA FUNCIÓN: REINICIAR USUARIO
+            // Verificar clave de administrador para seguridad
+            if (adminKey !== 'admin123') {
+                return res.status(403).json({ error: 'Clave de administrador incorrecta' });
+            }
+
+            // Verificar si el usuario existe
+            const userDoc = await userRef.get();
+            
+            if (!userDoc.exists) {
+                // Si no existe, crear usuario nuevo
+                await userRef.set({
+                    usesLeft: 3,
+                    subscriptionStatus: 'free',
+                    subscriptionExpiry: null,
+                    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                    totalUses: 0,
+                    resetAt: admin.firestore.FieldValue.serverTimestamp(),
+                    resetCount: 1
+                });
+
+                console.log(`Usuario creado y configurado: ${userId}`);
+                
+                return res.status(200).json({
+                    success: true,
+                    message: 'Usuario creado con 3 usos disponibles',
+                    usesLeft: 3,
+                    subscriptionStatus: 'free',
+                    isNewUser: true
+                });
+            } else {
+                // Si existe, reiniciar sus usos
+                const userData = userDoc.data();
+                const currentResetCount = userData.resetCount || 0;
+
+                await userRef.update({
+                    usesLeft: 3,
+                    subscriptionStatus: 'free',
+                    subscriptionExpiry: null,
+                    resetAt: admin.firestore.FieldValue.serverTimestamp(),
+                    resetCount: currentResetCount + 1
+                });
+
+                console.log(`Usuario reiniciado: ${userId} (Reset #${currentResetCount + 1})`);
+
+                return res.status(200).json({
+                    success: true,
+                    message: 'Usuario reiniciado exitosamente',
+                    usesLeft: 3,
+                    subscriptionStatus: 'free',
+                    resetCount: currentResetCount + 1,
+                    isNewUser: false
+                });
+            }
+
         } else {
-            return res.status(400).json({ error: 'Acción no válida. Usar "check" o "consume"' });
+            return res.status(400).json({ 
+                error: 'Acción no válida. Usar "check", "consume" o "reset"' 
+            });
         }
 
     } catch (error) {
