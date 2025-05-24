@@ -5,12 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#1a1a1a">
 <link rel="icon" type="image/x-icon" href="imagenes/favicom.ico">
-<!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js"></script>
-<script>
-// Configuración Firebase
-const firebaseConfig = {
+<!-- Reemplazar TODOS los scripts de Firebase existentes por esto: -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
+  
+  // Firebase configuration
+  const firebaseConfig = {
     apiKey: "AIzaSyDQmJDJmGBpvmB2-pOcGsD6sJgLqaLNC68",
     authDomain: "baja-un-cambio-bfdb4.firebaseapp.com",
     projectId: "baja-un-cambio-bfdb4",
@@ -18,16 +20,26 @@ const firebaseConfig = {
     messagingSenderId: "968738580875",
     appId: "1:968738580875:web:026beaab323759d0cde78e",
     measurementId: "G-E5MECG1KV1"
-};
+  };
 
-// Initialize Firebase
-const app = firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const provider = new firebase.auth.GoogleAuthProvider();
-
-// Configurar el provider
-provider.addScope('email');
-provider.addScope('profile');
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+  const analytics = getAnalytics(app);
+  
+  // Configurar provider
+  provider.addScope('email');
+  provider.addScope('profile');
+  
+  // Hacer las funciones disponibles globalmente
+  window.firebaseAuth = {
+    auth,
+    provider,
+    signInWithPopup,
+    signOut,
+    onAuthStateChanged
+  };
 </script>
 <title>Bajá un cambio</title>
 <style>
@@ -933,24 +945,50 @@ const userName = document.getElementById('userName');
 
 // Login con Google
 async function loginWithGoogle() {
-  try {
-    const result = await auth.signInWithPopup(provider);
-    console.log('Login exitoso:', result.user);
-  } catch (error) {
-    console.error('Error en login:', error);
-    showToast('❌ Error al iniciar sesión');
-  }
+    try {
+        const result = await window.firebaseAuth.signInWithPopup(window.firebaseAuth.auth, window.firebaseAuth.provider);
+        console.log('Login exitoso:', result.user);
+    } catch (error) {
+        console.error('Error en login:', error);
+        showToast('❌ Error al iniciar sesión');
+    }
 }
 
 // Logout
 async function logout() {
-  try {
-    await auth.signOut();
-    console.log('Logout exitoso');
-  } catch (error) {
-    console.error('Error en logout:', error);
-  }
+    try {
+        await window.firebaseAuth.signOut(window.firebaseAuth.auth);
+        console.log('Logout exitoso');
+    } catch (error) {
+        console.error('Error en logout:', error);
+    }
 }
+
+// Listener del estado de autenticación
+window.firebaseAuth.onAuthStateChanged(window.firebaseAuth.auth, (user) => {
+    if (user) {
+        // Usuario logueado
+        currentUser = user;
+        loginBtn.style.display = 'none';
+        userInfo.style.display = 'flex';
+        userName.textContent = user.displayName;
+        userPhoto.src = user.photoURL;
+        
+        if (chatContainer.children.length === 0) {
+            const emptyState = document.createElement('div');
+            emptyState.className = 'empty-state';
+            emptyState.textContent = 'Escribí tu mensaje o grabá un audio y te ayudo a "bajar un cambio"';
+            chatContainer.appendChild(emptyState);
+        }
+        showToast(`¡Hola ${user.displayName}! 👋`);
+    } else {
+        // Usuario no logueado
+        currentUser = null;
+        loginBtn.style.display = 'block';
+        userInfo.style.display = 'none';
+        chatContainer.innerHTML = `<div class="empty-state">Iniciá sesión para usar "Bajá un cambio"</div>`;
+    }
+});
 
 // Listener del estado de autenticación
 auth.onAuthStateChanged((user) => {
