@@ -924,14 +924,7 @@ recordingTimerElement.textContent =
 `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 }
 }
-// Inicializar cuando se carga la página
-document.addEventListener('DOMContentLoaded', () => {
-// Verificar soporte de grabación de audio
-if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-recordBtn.style.display = 'none';
-showToast('⚠ Grabación de audio no soportada en este navegador');
-}
-});
+
 // Variables de autenticación
 let currentUser = null;
 
@@ -942,6 +935,20 @@ const logoutBtn = document.getElementById('logoutBtn');
 const userInfo = document.getElementById('userInfo');
 const userPhoto = document.getElementById('userPhoto');
 const userName = document.getElementById('userName');
+
+// Función para inicializar autenticación cuando Firebase esté listo
+function initializeAuth() {
+    if (!window.firebaseAuth) {
+        // Si Firebase no está listo, intentar de nuevo en 100ms
+        setTimeout(initializeAuth, 100);
+        return;
+    }
+    
+    console.log('Firebase Auth inicializado');
+    setupAuthListeners();
+}
+
+function setupAuthListeners() {
 
 // Login con Google
 async function loginWithGoogle() {
@@ -968,45 +975,57 @@ async function logout() {
     }
 }
 
-// Listener del estado de autenticación (SOLO UNA VEZ)
-window.firebaseAuth.onAuthStateChanged(window.firebaseAuth.auth, (user) => {
-    if (user) {
-        // Usuario logueado
-        currentUser = user;
-        loginBtn.style.display = 'none';
-        userInfo.style.display = 'flex';
-        userName.textContent = user.displayName;
-        userPhoto.src = user.photoURL;
-        
-        // Mostrar empty state si no hay mensajes
-        if (chatContainer.children.length === 0 || 
-            chatContainer.querySelector('.empty-state')) {
-            chatContainer.innerHTML = '';
-            const emptyState = document.createElement('div');
-            emptyState.className = 'empty-state';
-            emptyState.textContent = 'Escribí tu mensaje o grabá un audio y te ayudo a "bajar un cambio"';
-            chatContainer.appendChild(emptyState);
+    // Listener del estado de autenticación
+    window.firebaseAuth.onAuthStateChanged(window.firebaseAuth.auth, (user) => {
+        if (user) {
+            // Usuario logueado
+            currentUser = user;
+            loginBtn.style.display = 'none';
+            userInfo.style.display = 'flex';
+            userName.textContent = user.displayName;
+            userPhoto.src = user.photoURL;
+            
+            // Mostrar empty state si no hay mensajes
+            if (chatContainer.children.length === 0 || 
+                chatContainer.querySelector('.empty-state')) {
+                chatContainer.innerHTML = '';
+                const emptyState = document.createElement('div');
+                emptyState.className = 'empty-state';
+                emptyState.textContent = 'Escribí tu mensaje o grabá un audio y te ayudo a "bajar un cambio"';
+                chatContainer.appendChild(emptyState);
+            }
+            
+            showToast(`¡Hola ${user.displayName}! 👋`);
+        } else {
+            // Usuario no logueado
+            currentUser = null;
+            loginBtn.style.display = 'block';
+            userInfo.style.display = 'none';
+            
+            // Limpiar chat y mostrar mensaje de login
+            chatContainer.innerHTML = `
+                <div class="empty-state">
+                    Iniciá sesión para usar "Bajá un cambio"
+                </div>
+            `;
         }
-        
-        showToast(`¡Hola ${user.displayName}! 👋`);
-    } else {
-        // Usuario no logueado
-        currentUser = null;
-        loginBtn.style.display = 'block';
-        userInfo.style.display = 'none';
-        
-        // Limpiar chat y mostrar mensaje de login
-        chatContainer.innerHTML = `
-            <div class="empty-state">
-                Iniciá sesión para usar "Bajá un cambio"
-            </div>
-        `;
+    });
+    
+    // Event listeners para auth
+    loginBtn.addEventListener('click', loginWithGoogle);
+    logoutBtn.addEventListener('click', logout);
+}
+
+// Inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', () => {
+    initializeAuth();
+    
+    // Verificar soporte de grabación de audio
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        recordBtn.style.display = 'none';
+        showToast('⚠ Grabación de audio no soportada en este navegador');
     }
 });
-
-// Event listeners para auth
-loginBtn.addEventListener('click', loginWithGoogle);
-logoutBtn.addEventListener('click', logout);
 </script>
 </body>
 </html>
