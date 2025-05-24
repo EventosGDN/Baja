@@ -964,35 +964,9 @@ async function logout() {
     }
 }
 
-// Listener del estado de autenticación
+// Listener del estado de autenticación (ÚNICO)
 window.firebaseAuth.onAuthStateChanged(window.firebaseAuth.auth, (user) => {
-    if (user) {
-        // Usuario logueado
-        currentUser = user;
-        loginBtn.style.display = 'none';
-        userInfo.style.display = 'flex';
-        userName.textContent = user.displayName;
-        userPhoto.src = user.photoURL;
-        
-        if (chatContainer.children.length === 0) {
-            const emptyState = document.createElement('div');
-            emptyState.className = 'empty-state';
-            emptyState.textContent = 'Escribí tu mensaje o grabá un audio y te ayudo a "bajar un cambio"';
-            chatContainer.appendChild(emptyState);
-        }
-        showToast(`¡Hola ${user.displayName}! 👋`);
-    } else {
-        // Usuario no logueado
-        currentUser = null;
-        loginBtn.style.display = 'block';
-        userInfo.style.display = 'none';
-        chatContainer.innerHTML = `<div class="empty-state">Iniciá sesión para usar "Bajá un cambio"</div>`;
-    }
-});
-
-// Listener del estado de autenticación
-auth.onAuthStateChanged((user) => {
-  if (user) {
+if (user) {
     // Usuario logueado
     currentUser = user;
     loginBtn.style.display = 'none';
@@ -1000,29 +974,22 @@ auth.onAuthStateChanged((user) => {
     userName.textContent = user.displayName;
     userPhoto.src = user.photoURL;
     
-    // Mostrar empty state si no hay mensajes
     if (chatContainer.children.length === 0) {
-      const emptyState = document.createElement('div');
-      emptyState.className = 'empty-state';
-      emptyState.textContent = 'Escribí tu mensaje o grabá un audio y te ayudo a "bajar un cambio"';
-      chatContainer.appendChild(emptyState);
+        const emptyState = document.createElement('div');
+        emptyState.className = 'empty-state';
+        emptyState.textContent = 'Escribí tu mensaje o grabá un audio y te ayudo a "bajar un cambio"';
+        chatContainer.appendChild(emptyState);
     }
-    
     showToast(`¡Hola ${user.displayName}! 👋`);
-  } else {
+} else {
     // Usuario no logueado
     currentUser = null;
     loginBtn.style.display = 'block';
     userInfo.style.display = 'none';
-    
-    // Limpiar chat y mostrar mensaje de login
-    chatContainer.innerHTML = `
-      <div class="empty-state">
-        Iniciá sesión para usar "Bajá un cambio"
-      </div>
-    `;
-  }
+    chatContainer.innerHTML = `<div class="empty-state">Iniciá sesión para usar "Bajá un cambio"</div>`;
+}
 });
+
 
 // Event listeners para auth
 loginBtn.addEventListener('click', loginWithGoogle);
