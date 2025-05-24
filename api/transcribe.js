@@ -18,102 +18,129 @@ module.exports = async function handler(req, res) {
 
   try {
     const API_KEY = process.env.GEMINI_API_KEY;
+    
     if (!API_KEY) {
       console.error('GEMINI_API_KEY no encontrada en variables de entorno');
       return res.status(500).json({ error: 'API Key no configurada' });
     }
 
-    // Parsear el audio usando formidable
-    const form = new formidable.IncomingForm();
-    form.parse(req, async (err, fields, files) => {
-      if (err) {
-        console.error('Error parseando archivo:', err);
-        return res.status(500).json({ error: 'Error procesando archivo de audio' });
-      }
+    // Configurar formidable con límites apropiados
+    const form = formidable({
+      maxFileSize: 10 * 1024 * 1024, // 10MB
+      keepExtensions: true,
+      multiples: false
+    });
 
-      const audioFile = files.audio;
-      if (!audioFile) {
-        return res.status(400).json({ error: 'Archivo de audio requerido' });
-      }
+    // Promisificar form.parse
+    const parseForm = () => {
+      return new Promise((resolve, reject) => {
+        form.parse(req, (err, fields, files) => {
+          if (err) reject(err);
+          else resolve({ fields, files });
+        });
+      });
+    };
 
-      try {
-        // Leer el archivo de audio
-        const audioBuffer = fs.readFileSync(audioFile.filepath);
-        const base64Audio = audioBuffer.toString('base64');
+    const { fields, files } = await parseForm();
+    
+    // Verificar que el archivo existe
+    const audioFile = files.audio;
+    if (!audioFile) {
+      return res.status(400).json({ error: 'Archivo de audio requerido' });
+    }
 
-        console.log('Transcribiendo audio con Gemini...');
+    // Verificar que el archivo tiene una ruta válida
+    const audioPath = Array.isArray(audioFile) ? audioFile[0].filepath : audioFile.filepath;
+    
+    if (!fs.existsSync(audioPath)) {
+      return res.status(400).json({ error: 'Archivo de audio no válido' });
+    }
 
-        // Llamar a Gemini para transcripción
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            contents: [{
-              parts: [
-                {
-                  text: "Transcribí este audio a texto. Devolvé solo el texto transcrito, sin explicaciones adicionales."
-                },
-                {
-                  inline_data: {
-                    mime_type: "audio/webm",
-                    data: base64Audio
-                  }
-                }
-              ]
-            }],
-            generationConfig: {
-              temperature: 0.1,
-              maxOutputTokens: 500,
-              topP: 0.8,
-              topK: 40
+    // Leer el archivo de audio
+    const audioBuffer = fs.readFileSync(audioPath);
+    const base64Audio = audioBuffer.toString('base64');
+    
+    console.log('Transcribiendo audio con Gemini...', {
+      fileSize: audioBuffer.length,
+      fileName: Array.isArray(audioFile) ? audioFile[0].originalFilename : audioFile.originalFilename
+    });
+
+    // Llamar a Gemini para transcripción
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contents: [{
+          parts: [
+            {
+              text: "Transcribí este audio a texto en español argentino. Devolvé solo el texto transcrito, sin explicaciones adicionales. Si detectás palabras fuertes o malas palabras, transcribí exactamente lo que escuchás."
+            },
+            {
+              inline_data: {
+                mime_type: "audio/webm",
+                data: base64Audio
+              }
             }
-          })
-        });
-
-        console.log('Status de transcripción:', response.status);
-
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          console.error('Error de Gemini API:', errorData);
-          return res.status(response.status).json({
-            error: `Error de transcripción: ${errorData.error?.message || 'Error desconocido'}`
-          });
+          ]
+        }],
+        generationConfig: {
+          temperature: 0.1,
+          maxOutputTokens: 500,
+          topP: 0.8,
+          topK: 40
         }
+      })
+    });
 
-        const data = await response.json();
-        console.log('Respuesta de transcripción:', JSON.stringify(data, null, 2));
+    console.log('Status de transcripción:', response.status);
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      console.error('Error de Gemini API:', errorData);
+      return res.status(response.status).json({
+        error: `Error de transcripción: ${errorData.error?.message || 'Error desconocido'}`
+      });
+    }
 
-        if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-          console.error('Respuesta inválida de Gemini:', data);
-          return res.status(500).json({ error: 'Respuesta inválida de la API de transcripción' });
-        }
+    const data = await response.json();
+    console.log('Respuesta de transcripción recibida');
 
-        const transcription = data.candidates[0].content.parts[0].text.trim();
-        console.log('Transcripción exitosa:', transcription);
+    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+      console.error('Respuesta inválida de Gemini:', data);
+      return res.status(500).json({ error: 'Respuesta inválida de la API de transcripción' });
+    }
 
-        // Limpiar archivo temporal
-        fs.unlinkSync(audioFile.filepath);
+    const transcription = data.candidates[0].content.parts[0].text.trim();
+    console.log('Transcripción exitosa:', transcription);
 
-        res.status(200).json({
-          transcription: transcription
-        });
+    // Limpiar archivo temporal
+    try {
+      fs.unlinkSync(audioPath);
+    } catch (cleanupError) {
+      console.warn('No se pudo limpiar archivo temporal:', cleanupError);
+    }
 
-      } catch (error) {
-        console.error('Error en transcripción:', error);
-        res.status(500).json({
-          error: 'Error interno del servidor',
-          details: error.message
-        });
-      }
+    res.status(200).json({
+      transcription: transcription
     });
 
   } catch (error) {
-    console.error('Error en la función:', error);
+    console.error('Error en transcripción:', error);
+    
+    // Intentar limpiar cualquier archivo temporal que pueda existir
+    if (error.audioPath && fs.existsSync(error.audioPath)) {
+      try {
+        fs.unlinkSync(error.audioPath);
+      } catch (cleanupError) {
+        console.warn('No se pudo limpiar archivo en error:', cleanupError);
+      }
+    }
+
     res.status(500).json({
       error: 'Error interno del servidor',
       details: error.message
     });
   }
-}
+};
