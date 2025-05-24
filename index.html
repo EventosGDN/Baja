@@ -714,6 +714,8 @@ ${error.message}`);
 }
 // FUNCIÓN ACTUALIZADA PARA PROCESAR MENSAJES CON OPCIONES MÚLTIPLES
 async function processTextMessage(text) {
+  const canUse = await consumeUse();
+    if (!canUse) return;
 const mode = modeSelect.value;
 // Limpiar empty state si existe
 const emptyState = chatContainer.querySelector('.empty-state');
@@ -749,11 +751,124 @@ showToast(
 console.error(error);
 }
 }
+// Verificar límites del usuario
+async function checkUserLimits() {
+    if (isCheckingLimits || !currentUser) return;
+    
+    isCheckingLimits = true;
+    try {
+        const response = await fetch('/api/check-limits', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                userId: currentUser.uid,
+                action: 'check'
+            })
+        });
+
+        if (response.ok) {
+            userLimits = await response.json();
+            updateUIForLimits();
+        } else {
+            console.error('Error checking limits:', response.status);
+            userLimits = { canUse: false, usesLeft: 0, subscriptionStatus: 'free' };
+        }
+    } catch (error) {
+        console.error('Error verificando límites:', error);
+        userLimits = { canUse: false, usesLeft: 0, subscriptionStatus: 'free' };
+    } finally {
+        isCheckingLimits = false;
+    }
+}
+
+// Actualizar UI según los límites
+function updateUIForLimits() {
+    if (!userLimits) return;
+
+    const emptyState = chatContainer.querySelector('.empty-state');
+    if (emptyState) {
+        if (userLimits.canUse) {
+            if (userLimits.subscriptionStatus === 'premium') {
+                emptyState.innerHTML = '💎 Usuario Premium - Escribí tu mensaje o grabá un audio y te ayudo a "bajar un cambio"';
+            } else {
+                emptyState.innerHTML = `✨ Tenés ${userLimits.usesLeft} usos gratis - Escribí tu mensaje o grabá un audio`;
+            }
+        } else {
+            emptyState.innerHTML = `
+                <div style="text-align: center;">
+                    <div style="font-size: 1.2rem; margin-bottom: 15px;">🚫 Sin usos disponibles</div>
+                    <div style="margin-bottom: 15px;">Te quedan 0 transformaciones gratuitas</div>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">
+                        Suscribite por $1999/mes para uso ilimitado
+                    </div>
+                </div>
+            `;
+        }
+    }
+}
+
+// Consumir un uso
+async function consumeUse() {
+    if (!currentUser || !userLimits) return false;
+
+    if (userLimits.subscriptionStatus === 'premium') return true;
+    
+    if (userLimits.usesLeft <= 0) {
+        showToast('🚫 Sin usos disponibles. Suscribite para continuar');
+        return false;
+    }
+
+    try {
+        const response = await fetch('/api/check-limits', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                userId: currentUser.uid,
+                action: 'consume'
+            })
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            userLimits.usesLeft = result.usesLeft;
+            updateUIForLimits();
+            
+            if (result.usesLeft === 0) {
+                setTimeout(() => {
+                    showToast('🎯 ¡Último uso gratis! Suscribite para continuar');
+                }, 2000);
+            } else if (typeof result.usesLeft === 'number') {
+                setTimeout(() => {
+                    showToast(`✨ Te quedan ${result.usesLeft} usos gratis`);
+                }, 1500);
+            }
+            
+            return true;
+        } else {
+            const error = await response.json();
+            showToast(`❌ ${error.error}`);
+            return false;
+        }
+    } catch (error) {
+        console.error('Error consumiendo uso:', error);
+        showToast('❌ Error verificando límites');
+        return false;
+    }
+}
 // Enviar mensaje de texto
 async function sendMessage() {
     if (!currentUser) {
-  showToast('🔐 Iniciá sesión para usar la app');
-  return;
+    showToast('🔐 Iniciá sesión para usar la app');
+    return;
+}
+
+if (!userLimits?.canUse) {
+    showToast('🚫 Sin usos disponibles. Suscribite para continuar');
+    return;
 }
 const text = messageInput.value.trim();
 if (!text) return;
@@ -824,8 +939,13 @@ toast.classList.remove('show');
 // Toggle grabación
 async function toggleRecording() {
     if (!currentUser) {
-  showToast('🔐 Iniciá sesión para grabar audio');
-  return;
+    showToast('🔐 Iniciá sesión para grabar audio');
+    return;
+}
+
+if (!userLimits?.canUse) {
+    showToast('🚫 Sin usos disponibles. Suscribite para continuar');
+    return;
 }
 if (!isRecording) {
 try {
@@ -922,7 +1042,8 @@ recordingTimerElement.textContent =
 }
 
 // Variables de autenticación
-let currentUser = null;
+let userLimits = null;
+let isCheckingLimits = false;
 
 // Elementos de auth
 const authSection = document.getElementById('authSection');
@@ -972,40 +1093,33 @@ async function logout() {
 }
 
     // Listener del estado de autenticación
-    window.firebaseAuth.onAuthStateChanged(window.firebaseAuth.auth, (user) => {
-        if (user) {
-            // Usuario logueado
-            currentUser = user;
-            loginBtn.style.display = 'none';
-            userInfo.style.display = 'flex';
-            userName.textContent = user.displayName;
-            userPhoto.src = user.photoURL;
-            
-            // Mostrar empty state si no hay mensajes
-            if (chatContainer.children.length === 0 || 
-                chatContainer.querySelector('.empty-state')) {
-                chatContainer.innerHTML = '';
-                const emptyState = document.createElement('div');
-                emptyState.className = 'empty-state';
-                emptyState.textContent = 'Escribí tu mensaje o grabá un audio y te ayudo a "bajar un cambio"';
-                chatContainer.appendChild(emptyState);
-            }
-            
-            showToast(`¡Hola ${user.displayName}! 👋`);
-        } else {
-            // Usuario no logueado
-            currentUser = null;
-            loginBtn.style.display = 'block';
-            userInfo.style.display = 'none';
-            
-            // Limpiar chat y mostrar mensaje de login
-            chatContainer.innerHTML = `
-                <div class="empty-state">
-                    Iniciá sesión para usar "Bajá un cambio"
-                </div>
-            `;
-        }
-    });
+    window.firebaseAuth.onAuthStateChanged(window.firebaseAuth.auth, async (user) => {
+    if (user) {
+        // Usuario logueado
+        currentUser = user;
+        loginBtn.style.display = 'none';
+        userInfo.style.display = 'flex';
+        userName.textContent = user.displayName;
+        userPhoto.src = user.photoURL;
+
+        // NUEVO: Verificar límites del usuario
+        await checkUserLimits();
+
+        showToast(`¡Hola ${user.displayName}! 👋`);
+    } else {
+        // Usuario no logueado
+        currentUser = null;
+        userLimits = null;
+        loginBtn.style.display = 'block';
+        userInfo.style.display = 'none';
+        
+        chatContainer.innerHTML = `
+            <div class="empty-state">
+                Iniciá sesión para usar "Bajá un cambio"
+            </div>
+        `;
+    }
+});
     
     // Event listeners para auth
     loginBtn.addEventListener('click', loginWithGoogle);
