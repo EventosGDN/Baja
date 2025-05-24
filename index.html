@@ -8,23 +8,28 @@
 <!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
-<script>
-// Configuración de Firebase (convertida a v8 compatible)
-const firebaseConfig = {
-  apiKey: "AIzaSyCqWrEJwnBMCXgAJjE51I7Aztw2gJJ-iT4",
-  authDomain: "registro-f6d53.firebaseapp.com",
-  databaseURL: "https://registro-f6d53.firebaseio.com",
-  projectId: "registro-f6d53",
-  storageBucket: "registro-f6d53.firebasestorage.app",
-  messagingSenderId: "791248783244",
-  appId: "1:791248783244:web:43c5dc9b77b7e9296538a9",
-  measurementId: "G-L46MEC3BVL"
-};
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
 
-// Inicializar Firebase (versión v8 compatible)
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const provider = new firebase.auth.GoogleAuthProvider();
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyDQmJDJmGBpvmB2-pOcGsD6sJgLqaLNC68",
+    authDomain: "baja-un-cambio-bfdb4.firebaseapp.com",
+    projectId: "baja-un-cambio-bfdb4",
+    storageBucket: "baja-un-cambio-bfdb4.firebasestorage.app",
+    messagingSenderId: "968738580875",
+    appId: "1:968738580875:web:026beaab323759d0cde78e",
+    measurementId: "G-E5MECG1KV1"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
 </script>
 <title>Bajá un cambio</title>
 <style>
