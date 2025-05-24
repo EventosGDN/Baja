@@ -946,7 +946,10 @@ const userName = document.getElementById('userName');
 // Login con Google
 async function loginWithGoogle() {
     try {
-        const result = await window.firebaseAuth.signInWithPopup(window.firebaseAuth.auth, window.firebaseAuth.provider);
+        const result = await window.firebaseAuth.signInWithPopup(
+            window.firebaseAuth.auth,
+            window.firebaseAuth.provider
+        );
         console.log('Login exitoso:', result.user);
     } catch (error) {
         console.error('Error en login:', error);
@@ -961,35 +964,45 @@ async function logout() {
         console.log('Logout exitoso');
     } catch (error) {
         console.error('Error en logout:', error);
+        showToast('❌ Error al cerrar sesión');
     }
 }
 
-// Listener del estado de autenticación (ÚNICO)
+// Listener del estado de autenticación (SOLO UNA VEZ)
 window.firebaseAuth.onAuthStateChanged(window.firebaseAuth.auth, (user) => {
-if (user) {
-    // Usuario logueado
-    currentUser = user;
-    loginBtn.style.display = 'none';
-    userInfo.style.display = 'flex';
-    userName.textContent = user.displayName;
-    userPhoto.src = user.photoURL;
-    
-    if (chatContainer.children.length === 0) {
-        const emptyState = document.createElement('div');
-        emptyState.className = 'empty-state';
-        emptyState.textContent = 'Escribí tu mensaje o grabá un audio y te ayudo a "bajar un cambio"';
-        chatContainer.appendChild(emptyState);
+    if (user) {
+        // Usuario logueado
+        currentUser = user;
+        loginBtn.style.display = 'none';
+        userInfo.style.display = 'flex';
+        userName.textContent = user.displayName;
+        userPhoto.src = user.photoURL;
+        
+        // Mostrar empty state si no hay mensajes
+        if (chatContainer.children.length === 0 || 
+            chatContainer.querySelector('.empty-state')) {
+            chatContainer.innerHTML = '';
+            const emptyState = document.createElement('div');
+            emptyState.className = 'empty-state';
+            emptyState.textContent = 'Escribí tu mensaje o grabá un audio y te ayudo a "bajar un cambio"';
+            chatContainer.appendChild(emptyState);
+        }
+        
+        showToast(`¡Hola ${user.displayName}! 👋`);
+    } else {
+        // Usuario no logueado
+        currentUser = null;
+        loginBtn.style.display = 'block';
+        userInfo.style.display = 'none';
+        
+        // Limpiar chat y mostrar mensaje de login
+        chatContainer.innerHTML = `
+            <div class="empty-state">
+                Iniciá sesión para usar "Bajá un cambio"
+            </div>
+        `;
     }
-    showToast(`¡Hola ${user.displayName}! 👋`);
-} else {
-    // Usuario no logueado
-    currentUser = null;
-    loginBtn.style.display = 'block';
-    userInfo.style.display = 'none';
-    chatContainer.innerHTML = `<div class="empty-state">Iniciá sesión para usar "Bajá un cambio"</div>`;
-}
 });
-
 
 // Event listeners para auth
 loginBtn.addEventListener('click', loginWithGoogle);
