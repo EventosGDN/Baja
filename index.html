@@ -69,26 +69,6 @@ opacity: 0;
 transform: translateY(-20vh) scale(1.2);
 }
 }
-/* Megáfono flotante */
-.megaphone-container {
-position: fixed;
-top: 50%;
-left: 50%;
-transform: translate(-50%, -50%);
-z-index: -1;
-font-size: 120px;
-opacity: 0.1;
-animation: megaphoneFloat 4s ease-in-out infinite;
-pointer-events: none;
-}
-@keyframes megaphoneFloat {
-0%, 100% {
-transform: translate(-50%, -50%) rotate(-2deg) scale(1);
-}
-50% {
-transform: translate(-50%, -55%) rotate(2deg) scale(1.05);
-}
-}
 .header {
 background: rgba(26, 26, 26, 0.95);
 backdrop-filter: blur(10px);
@@ -449,10 +429,6 @@ font-size: 1.1rem;
 <!-- Fondo animado de fuego -->
 <div class="fire-background">
 <div class="fire-particles" id="fireParticles"></div>
-</div>
-<!-- Megáfono flotante -->
-<div class="megaphone-container">
-📢
 </div>
 <div class="header">
 <img src="imagenes/logo.png" alt="Bajá un cambio" class="app-title-img">
