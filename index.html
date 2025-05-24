@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#1a1a1a">
 <link rel="icon" type="image/x-icon" href="imagenes/favicom.ico">
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
 <title>Bajá un cambio</title>
 <style>
 * {
@@ -68,6 +72,72 @@ opacity: 1;
 opacity: 0;
 transform: translateY(-20vh) scale(1.2);
 }
+}
+.auth-section {
+  background: rgba(26, 26, 26, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  border-bottom: 1px solid #333;
+  position: sticky;
+  top: 80px;
+  z-index: 99;
+}
+
+.auth-content {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-btn {
+  background: linear-gradient(135deg, #4285f4, #1a73e8);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(66, 133, 244, 0.3);
+}
+
+.login-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(66, 133, 244, 0.5);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-photo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #ffff00;
+}
+
+.user-name {
+  color: #fff;
+  font-weight: 500;
+}
+
+.logout-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 .header {
 background: rgba(26, 26, 26, 0.95);
@@ -433,6 +503,19 @@ font-size: 1.1rem;
 <div class="header">
 <img src="imagenes/logo.png" alt="Bajá un cambio" class="app-title-img">
 </div>
+<!-- Auth section -->
+<div id="authSection" class="auth-section">
+  <div class="auth-content">
+    <button id="loginBtn" class="login-btn">
+      🔐 Entrar con Google
+    </button>
+    <div id="userInfo" class="user-info" style="display: none;">
+      <img id="userPhoto" class="user-photo" src="" alt="Usuario">
+      <span id="userName" class="user-name"></span>
+      <button id="logoutBtn" class="logout-btn">Salir</button>
+    </div>
+  </div>
+</div>
 <div class="chat-container" id="chatContainer">
 <div class="empty-state">
 Escribí tu mensaje o grabá un audio y te ayudo a "bajar un cambio"
@@ -640,6 +723,10 @@ console.error(error);
 }
 // Enviar mensaje de texto
 async function sendMessage() {
+    if (!currentUser) {
+  showToast('🔐 Iniciá sesión para usar la app');
+  return;
+}
 const text = messageInput.value.trim();
 if (!text) return;
 await processTextMessage(text);
@@ -708,6 +795,10 @@ toast.classList.remove('show');
 }
 // Toggle grabación
 async function toggleRecording() {
+    if (!currentUser) {
+  showToast('🔐 Iniciá sesión para grabar audio');
+  return;
+}
 if (!isRecording) {
 try {
 const stream = await navigator.mediaDevices.getUserMedia({
@@ -809,6 +900,75 @@ recordBtn.style.display = 'none';
 showToast('⚠ Grabación de audio no soportada en este navegador');
 }
 });
+// Variables de autenticación
+let currentUser = null;
+
+// Elementos de auth
+const authSection = document.getElementById('authSection');
+const loginBtn = document.getElementById('loginBtn');
+const logoutBtn = document.getElementById('logoutBtn');
+const userInfo = document.getElementById('userInfo');
+const userPhoto = document.getElementById('userPhoto');
+const userName = document.getElementById('userName');
+
+// Login con Google
+async function loginWithGoogle() {
+  try {
+    const result = await auth.signInWithPopup(provider);
+    console.log('Login exitoso:', result.user);
+  } catch (error) {
+    console.error('Error en login:', error);
+    showToast('❌ Error al iniciar sesión');
+  }
+}
+
+// Logout
+async function logout() {
+  try {
+    await auth.signOut();
+    console.log('Logout exitoso');
+  } catch (error) {
+    console.error('Error en logout:', error);
+  }
+}
+
+// Listener del estado de autenticación
+auth.onAuthStateChanged((user) => {
+  if (user) {
+    // Usuario logueado
+    currentUser = user;
+    loginBtn.style.display = 'none';
+    userInfo.style.display = 'flex';
+    userName.textContent = user.displayName;
+    userPhoto.src = user.photoURL;
+    
+    // Mostrar empty state si no hay mensajes
+    if (chatContainer.children.length === 0) {
+      const emptyState = document.createElement('div');
+      emptyState.className = 'empty-state';
+      emptyState.textContent = 'Escribí tu mensaje o grabá un audio y te ayudo a "bajar un cambio"';
+      chatContainer.appendChild(emptyState);
+    }
+    
+    showToast(`¡Hola ${user.displayName}! 👋`);
+  } else {
+    // Usuario no logueado
+    currentUser = null;
+    loginBtn.style.display = 'block';
+    userInfo.style.display = 'none';
+    
+    // Limpiar chat y mostrar mensaje de login
+    chatContainer.innerHTML = `
+      <div class="empty-state">
+        Iniciá sesión para usar "Bajá un cambio"
+      </div>
+    `;
+  }
+});
+
+// Event listeners para auth
+loginBtn.addEventListener('click', loginWithGoogle);
+logoutBtn.addEventListener('click', logout);
 </script>
 </body>
 </html>
