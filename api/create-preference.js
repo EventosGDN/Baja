@@ -1,8 +1,12 @@
-const { MercadoPagoConfig } = require("mercadopago");
+const { MercadoPagoConfig, Preference } = require("mercadopago");
 
-const mercadopago = new MercadoPagoConfig({
+// Configurar Mercado Pago
+const mp = new MercadoPagoConfig({
   accessToken: process.env.MERCADO_PAGO_ACCESS_TOKEN,
 });
+
+// Crear una instancia del recurso Preference
+const preference = new Preference(mp);
 
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
@@ -16,7 +20,7 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: "userId es requerido" });
     }
 
-    const preference = {
+    const preferenceData = {
       items: [
         {
           title: "Suscripción Premium - Bajá un cambio",
@@ -33,7 +37,8 @@ module.exports = async function handler(req, res) {
       auto_return: "approved",
     };
 
-    const result = await mercadopago.preferences.create({ body: preference });
+    const result = await preference.create({ body: preferenceData });
+
     res.status(200).json({ id: result.id });
   } catch (error) {
     console.error("Error al crear preferencia:", error);
