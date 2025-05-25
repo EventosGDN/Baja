@@ -657,7 +657,7 @@ imagoSticky.addEventListener('click', () => {
 
 chatContainer.addEventListener('scroll', () => {
   // Si scrolleás un poquito, pero no lo suficiente para ocultar el header
-  if (chatContainer.scrollTop > 8 && chatContainer.scrollTop <= 40) {
+  if (chatContainer.scrollTop > 8 && chatContainer.scrollTop <= 80) {
     header.classList.add('glass');
   } else {
     header.classList.remove('glass');
