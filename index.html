@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#1a1a1a">
 <link rel="icon" type="image/x-icon" href="imagenes/favicom.ico">
 <link rel="stylesheet" href="estilos.css">
-<script src="main.js"></script>
+
 <!-- Reemplazar TODOS los scripts de Firebase existentes por esto: -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
@@ -53,8 +53,9 @@
 <div class="fire-particles" id="fireParticles"></div>
 </div>
 <div class="header" id="appHeader">
+  <img src="imagenes/imago.png" id="imagoSticky" style="display: none; position: fixed; top: 10px; left: 10px; z-index: 10000; width: 48px; height: 48px; border-radius: 14px; box-shadow: 0 0 12px #0008;">
+
   <img src="imagenes/logo.png" alt="Bajá un cambio" class="header-logo" id="headerLogo" />
-  <img src="imagenes/imago.png" alt="Imago" id="imagoFloating" class="imago-floating" style="display: none;">
   <div id="authSection" class="auth-section">
     <!-- Si el usuario no está logueado -->
     <button id="loginBtn" class="login-btn" style="display: none;">🔐 Entrar con Google</button>
@@ -132,6 +133,6 @@
     <button onclick="iniciarPago()" class="btn-suscripcion">💳 Suscribirme ahora</button>
   </div>
 </div>
-
+<script src="main.js"></script>
 </body>
 </html>

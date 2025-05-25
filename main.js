@@ -613,31 +613,6 @@ function cerrarModalSuscripcion() {
 }
 const header = document.getElementById('appHeader');
 const headerLogo = document.getElementById('headerLogo');
-const imagoFloating = document.getElementById('imagoFloating');
-
-// Mostrar/ocultar Imago según colapso del header
-function toggleImago() {
-  if (header.classList.contains('collapsed')) {
-    imagoFloating.style.display = 'block';
-    headerLogo.style.visibility = 'hidden'; // Oculta el logo viejo, NO ocupa espacio extra
-  } else {
-    imagoFloating.style.display = 'none';
-    headerLogo.style.visibility = 'visible'; // Muestra el logo clásico
-  }
-}
-
-// Asegurate de que la imagen Imago arranque oculta (por si acaso)
-if(imagoFloating) imagoFloating.style.display = 'none';
-
-// Cada vez que colapsa o expande el header, actualizá Imago:
-chatArea.addEventListener('scroll', () => {
-  handleScroll();
-  toggleImago();
-});
-
-// También chequealo al cargar por si el header ya está colapsado:
-document.addEventListener('DOMContentLoaded', toggleImago);
-
 const chatArea = document.querySelector('.main-chat-area');
 
 let isCollapsed = false;
