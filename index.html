@@ -189,17 +189,20 @@ margin-bottom: 5px;
 text-shadow: 0 0 10px rgba(255, 255, 0, 0.3);
 }
 .chat-container {
-flex: 1;
-padding: 20px;
-max-width: 600px;
-margin: 0 auto;
-width: 100%;
-display: flex;
-flex-direction: column;
-gap: 12px;
-position: relative;
-z-index: 10;
+  flex: 1;
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  z-index: 10;
+  max-height: 70vh;
+  overflow-y: auto;
 }
+
 .message-bubble {
 padding: 15px 18px;
 border-radius: 20px;
@@ -943,31 +946,28 @@ messageInput.style.height = 'auto';
 }
 // FUNCIÓN ADDMESSAGE ACTUALIZADA - SIN ETIQUETAS "OPCIÓN 1", "OPCIÓN 2"
 function addMessage(text, type) {
-const messageDiv = document.createElement('div');
-if (type === 'original') {
-messageDiv.className = 'message-bubble message-original';
-messageDiv.innerHTML = `
-<div class="message-label">Texto original</div>
-${text}
-`;
-} else if (type === 'connector') {
-// El conector ahora es un mensaje transformado como los otros
-messageDiv.className = 'message-bubble message-transformed connector';
-messageDiv.innerHTML = `
-${text}
-`;
-} else {
-// Mensaje transformado sin etiquetas "Opción 1", "Opción 2"
-messageDiv.className = 'message-bubble message-transformed';
-messageDiv.innerHTML = `
-<div class="message-label">Texto bajando un cambio</div>
-${text}
-<button class="copy-btn" onclick="copyMessage(this)">📋</button>
-`;
+  const messageDiv = document.createElement('div');
+  if (type === 'original') {
+    messageDiv.className = 'message-bubble message-original';
+    messageDiv.innerHTML = `
+      <div class="message-label">Texto original</div>
+      ${text}
+    `;
+  } else if (type === 'connector') {
+    messageDiv.className = 'message-bubble message-transformed connector';
+    messageDiv.innerHTML = `${text}`;
+  } else {
+    messageDiv.className = 'message-bubble message-transformed';
+    messageDiv.innerHTML = `
+      <div class="message-label">Texto bajando un cambio</div>
+      ${text}
+      <button class="copy-btn" onclick="copyMessage(this)">📋</button>
+    `;
+  }
+  chatContainer.appendChild(messageDiv);
+  scrollChatToBottom(); // LLAMÁ SOLO ESTA (evitá la doble línea)
 }
-chatContainer.appendChild(messageDiv);
-chatContainer.scrollTop = chatContainer.scrollHeight;
-}
+
 // Mostrar/ocultar loading
 function showLoading(message = 'Transformando mensaje...') {
 loadingText.textContent = message;
