@@ -20,12 +20,15 @@ body, html {
 }
 
 #imagoSticky {
-  opacity: 0;
   transition: opacity 0.4s;
+  opacity: 0;
+  pointer-events: auto;
 }
-#imagoSticky.show {
+#imagoSticky.visible {
   opacity: 1;
+  display: block !important;
 }
+
 
 
 .chat-container {

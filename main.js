@@ -612,53 +612,55 @@ function cerrarModalSuscripcion() {
   document.getElementById("suscripcionModal").style.display = "none";
 }
 const header = document.getElementById('appHeader');
-const headerLogo = document.getElementById('headerLogo');
-const chatArea = document.querySelector('.main-chat-area');
 const imagoSticky = document.getElementById('imagoSticky');
 
-let isCollapsed = false;
-let collapseTimeout = null;
+// Para controlar el estado
+let headerHidden = false;
 
-function handleScroll() {
-  if (chatArea.scrollTop > 40 && !isCollapsed) {
-    // Oculta el header, muestra el circulito de imago
+// Función para ocultar header y mostrar la imagen
+function hideHeaderShowImago() {
+  if (!headerHidden) {
     header.style.display = 'none';
-    imagoSticky.style.display = 'block';
-    isCollapsed = true;
-  } else if (chatArea.scrollTop <= 10 && isCollapsed) {
-    // Vuelve a mostrar el header, oculta el circulito
+    imagoSticky.classList.add('visible');
+    headerHidden = true;
+  }
+}
+// Función para mostrar header y ocultar la imagen
+function showHeaderHideImago() {
+  if (headerHidden) {
     header.style.display = 'flex';
-    imagoSticky.style.display = 'none';
-    isCollapsed = false;
+    imagoSticky.classList.remove('visible');
+    headerHidden = false;
   }
 }
 
-// OJO: Usá el evento de scroll en el área principal del chat
-chatArea.addEventListener('scroll', handleScroll);
+// Detección de scroll: usamos el .chat-container, porque es donde se da el scroll real
+chatContainer.addEventListener('scroll', () => {
+  if (chatContainer.scrollTop > 40) {
+    hideHeaderShowImago();
+  } else {
+    showHeaderHideImago();
+  }
+});
 
-// También colapsa si hay mensajes nuevos y baja solo
+// Si se agregan mensajes y el scroll es automático, chequeamos igual
 function scrollChatToBottom() {
   if (chatContainer) {
     chatContainer.scrollTop = chatContainer.scrollHeight;
-    // Verifica si debe ocultar el header por scroll automático
-    handleScroll();
+    // Nueva línea:
+    if (chatContainer.scrollTop > 40) hideHeaderShowImago();
+    else showHeaderHideImago();
   }
 }
 
-// Si tocás la imagen imagoSticky, podés mostrar el header de nuevo (opcional)
+// Si tocás la imagen "imago", vuelve a mostrar el header 5 segundos y se esconde de nuevo si hace falta
 imagoSticky.addEventListener('click', () => {
-  header.style.display = 'flex';
-  imagoSticky.style.display = 'none';
-  isCollapsed = false;
-  // Volvé a colapsar si vuelve a bajar
+  showHeaderHideImago();
   setTimeout(() => {
-    if (chatArea.scrollTop > 40) {
-      header.style.display = 'none';
-      imagoSticky.style.display = 'block';
-      isCollapsed = true;
-    }
+    if (chatContainer.scrollTop > 40) hideHeaderShowImago();
   }, 5000);
 });
+
 
 imagoSticky.classList.add('show'); // para mostrar
 imagoSticky.classList.remove('show'); // para ocultar
