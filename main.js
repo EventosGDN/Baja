@@ -657,6 +657,7 @@ imagoSticky.addEventListener('click', () => {
 
 
 
+
 document.addEventListener('DOMContentLoaded', () => {
   // Esto mete 10 mensajes de prueba al chat para que scrollee
   for (let i = 0; i < 10; i++) {
