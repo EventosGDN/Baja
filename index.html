@@ -785,39 +785,46 @@ async function checkUserLimits() {
 
 // Actualizar UI según los límites
 function updateUIForLimits() {
-    if (!userLimits) return;
+  if (!userLimits) return;
 
-    const emptyState = chatContainer.querySelector('.empty-state');
-    if (emptyState) {
-        if (userLimits.canUse) {
-            if (userLimits.subscriptionStatus === 'premium') {
-                emptyState.innerHTML = '💎 Usuario Premium - Escribí tu mensaje o grabá un audio y te ayudo a "bajar un cambio"';
-            } else {
-                emptyState.innerHTML = `✨ Tenés ${userLimits.usesLeft} usos gratis - Escribí tu mensaje o grabá un audio`;
-            }
-        } else {
-            emptyState.innerHTML = `
-                <div style="text-align: center;">
-                    <div style="font-size: 1.2rem; margin-bottom: 15px;">🚫 Sin usos disponibles</div>
-                    <div style="margin-bottom: 15px;">Te quedan 0 transformaciones gratuitas</div>
-                    <div style="font-size: 0.9rem; opacity: 0.8;">
-                        Suscribite por $1999/mes para uso ilimitado
-                    </div>
-                    <button onclick="iniciarPago()" style="
-            margin-top: 15px;
-            padding: 10px 20px;
-            border-radius: 25px;
-            background: #00c853;
-            color: white;
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
-          ">💳 Suscribirme ahora</button>
-                </div>
-            `;
-        }
+  let emptyState = chatContainer.querySelector('.empty-state');
+
+  // Si no existe, crearla de nuevo
+  if (!emptyState) {
+    emptyState = document.createElement('div');
+    emptyState.className = 'empty-state';
+    chatContainer.appendChild(emptyState);
+  }
+
+  if (userLimits.canUse) {
+    if (userLimits.subscriptionStatus === 'premium') {
+      emptyState.innerHTML = '💎 Usuario Premium - Escribí tu mensaje o grabá un audio y te ayudo a "bajar un cambio"';
+    } else {
+      emptyState.innerHTML = `✨ Tenés ${userLimits.usesLeft} usos gratis - Escribí tu mensaje o grabá un audio`;
     }
+  } else {
+    emptyState.innerHTML = `
+      <div style="text-align: center;">
+        <div style="font-size: 1.2rem; margin-bottom: 15px;">🚫 Sin usos disponibles</div>
+        <div style="margin-bottom: 15px;">Te quedan 0 transformaciones gratuitas</div>
+        <div style="font-size: 0.9rem; opacity: 0.8;">
+          Suscribite por $1999/mes para uso ilimitado
+        </div>
+        <button onclick="iniciarPago()" style="
+          margin-top: 15px;
+          padding: 10px 20px;
+          border-radius: 25px;
+          background: #00c853;
+          color: white;
+          border: none;
+          font-weight: bold;
+          cursor: pointer;
+        ">💳 Suscribirme ahora</button>
+      </div>
+    `;
+  }
 }
+
 
 // Consumir un uso
 async function consumeUse() {
