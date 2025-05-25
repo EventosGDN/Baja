@@ -668,6 +668,15 @@ chatContainer.addEventListener('scroll', () => {
 
 
 
+// Asegura que la caja de input nunca quede tapada por el teclado
+messageInput.addEventListener('focus', () => {
+  setTimeout(() => {
+    // Hace scroll para que el textarea quede visible y arriba del teclado
+    messageInput.scrollIntoView({ behavior: "smooth", block: "center" });
+    // O directamente scrollea el chat hacia abajo
+    scrollChatToBottom();
+  }, 350); // Espera un toque por el lag del teclado
+});
 
 
 //document.addEventListener('DOMContentLoaded', () => {
