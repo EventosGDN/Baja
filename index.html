@@ -90,7 +90,7 @@ body, html {
 
 @media (max-width: 600px) {
   .chat-container {
-    padding-bottom: 90px !important; /* suficiente para que nunca quede pegado */
+    padding-bottom: 40px !important; /* suficiente para que nunca quede pegado */
   }
   .input-section {
     padding-bottom: env(safe-area-inset-bottom, 16px); /* por si hay “notch” o barra */
@@ -155,14 +155,13 @@ opacity: 0;
 transform: translateY(-20vh) scale(1.2);
 }
 }
+.app-title-img {
+  height: 40px;
+}
 .auth-section {
-  background: rgba(26, 26, 26, 0.95);
-  backdrop-filter: blur(10px);
-  padding: 20px;
-  border-bottom: 1px solid #333;
-  position: sticky;
-  top: 80px;
-  z-index: 99;
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
 
 .auth-content {
@@ -173,16 +172,15 @@ transform: translateY(-20vh) scale(1.2);
   align-items: center;
 }
 
-.login-btn {
-  background: linear-gradient(135deg, #4285f4, #1a73e8);
-  color: white;
+.login-btn, .logout-btn {
+  background: #333;
+  color: #fff;
   border: none;
-  padding: 12px 24px;
-  border-radius: 25px;
-  font-size: 1rem;
+  border-radius: 16px;
+  padding: 7px 14px;
+  font-size: 1em;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(66, 133, 244, 0.3);
+  font-weight: bold;
 }
 
 .login-btn:hover {
@@ -197,15 +195,15 @@ transform: translateY(-20vh) scale(1.2);
 }
 
 .user-photo {
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  border: 2px solid #ffff00;
 }
 
 .user-name {
-  color: #fff;
-  font-weight: 500;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 1.05em;
 }
 
 .logout-btn {
@@ -222,14 +220,12 @@ transform: translateY(-20vh) scale(1.2);
   background: rgba(255, 255, 255, 0.2);
 }
 .header {
-background: rgba(26, 26, 26, 0.95);
-backdrop-filter: blur(10px);
-padding: 20px;
-text-align: center;
-border-bottom: 1px solid #333;
-position: sticky;
-top: 0;
-z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background: #232323;
+  min-height: 54px;
 }
 .app-title {
 font-size: 1.5rem;
@@ -521,6 +517,11 @@ border: 1px solid rgba(255, 68, 68, 0.3);
 .audio-status.show {
 opacity: 1;
 }
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 .recording-timer {
 font-weight: 600;
 color: #ffff00;
@@ -611,21 +612,19 @@ font-size: 1.1rem;
 <div class="fire-particles" id="fireParticles"></div>
 </div>
 <div class="header">
-<img src="imagenes/logo.png" alt="Bajá un cambio" class="app-title-img">
-</div>
-<!-- Auth section -->
-<div id="authSection" class="auth-section">
-  <div class="auth-content">
-    <button id="loginBtn" class="login-btn">
-      🔐 Entrar con Google
-    </button>
+  <img src="imagenes/logo.png" alt="Bajá un cambio" class="app-title-img" />
+  <div id="authSection" class="auth-section">
+    <!-- Si el usuario no está logueado -->
+    <button id="loginBtn" class="login-btn">🔐 Entrar con Google</button>
+    <!-- Si el usuario está logueado -->
     <div id="userInfo" class="user-info" style="display: none;">
-      <img id="userPhoto" class="user-photo" src="" alt="Usuario">
+      <img id="userPhoto" class="user-photo" src="" alt="Usuario" />
       <span id="userName" class="user-name"></span>
       <button id="logoutBtn" class="logout-btn">Salir</button>
     </div>
   </div>
 </div>
+
 <div class="main-chat-area">
   <div class="chat-container" id="chatContainer">
     <div class="empty-state">
