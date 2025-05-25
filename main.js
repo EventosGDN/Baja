@@ -614,32 +614,51 @@ function cerrarModalSuscripcion() {
 const header = document.getElementById('appHeader');
 const headerLogo = document.getElementById('headerLogo');
 const chatArea = document.querySelector('.main-chat-area');
+const imagoSticky = document.getElementById('imagoSticky');
 
 let isCollapsed = false;
 let collapseTimeout = null;
 
 function handleScroll() {
   if (chatArea.scrollTop > 40 && !isCollapsed) {
-    header.classList.add('collapsed');
+    // Oculta el header, muestra el circulito de imago
+    header.style.display = 'none';
+    imagoSticky.style.display = 'block';
     isCollapsed = true;
   } else if (chatArea.scrollTop <= 10 && isCollapsed) {
-    header.classList.remove('collapsed');
+    // Vuelve a mostrar el header, oculta el circulito
+    header.style.display = 'flex';
+    imagoSticky.style.display = 'none';
     isCollapsed = false;
   }
 }
 
+// OJO: Usá el evento de scroll en el área principal del chat
 chatArea.addEventListener('scroll', handleScroll);
 
-headerLogo.addEventListener('click', () => {
-  if (isCollapsed) {
-    header.classList.remove('collapsed');
-    isCollapsed = false;
-    clearTimeout(collapseTimeout);
-    collapseTimeout = setTimeout(() => {
-      if (!isCollapsed && chatArea.scrollTop > 40) {
-        header.classList.add('collapsed');
-        isCollapsed = true;
-      }
-    }, 5000);
+// También colapsa si hay mensajes nuevos y baja solo
+function scrollChatToBottom() {
+  if (chatContainer) {
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+    // Verifica si debe ocultar el header por scroll automático
+    handleScroll();
   }
+}
+
+// Si tocás la imagen imagoSticky, podés mostrar el header de nuevo (opcional)
+imagoSticky.addEventListener('click', () => {
+  header.style.display = 'flex';
+  imagoSticky.style.display = 'none';
+  isCollapsed = false;
+  // Volvé a colapsar si vuelve a bajar
+  setTimeout(() => {
+    if (chatArea.scrollTop > 40) {
+      header.style.display = 'none';
+      imagoSticky.style.display = 'block';
+      isCollapsed = true;
+    }
+  }, 5000);
 });
+
+imagoSticky.classList.add('show'); // para mostrar
+imagoSticky.classList.remove('show'); // para ocultar
