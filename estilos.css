@@ -661,18 +661,6 @@ font-size: 1.1rem;
     height: 32px;
   }
 }
-#imagoSticky {
-  transition: opacity 0.4s;
-  opacity: 0;
-  pointer-events: auto;
-  display: none;
-}
-#imagoSticky.visible {
-  opacity: 1;
-  display: block !important;
-}
-
-
 /* Para el header que se esfuma */
 .header {
   transition: opacity 0.4s;
@@ -688,7 +676,6 @@ font-size: 1.1rem;
 #imagoSticky {
   opacity: 0;
   transition: opacity 0.4s;
-  display: block; /* siempre block, controlamos solo opacity */
   pointer-events: auto;
 }
 
