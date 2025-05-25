@@ -803,6 +803,16 @@ function updateUIForLimits() {
                     <div style="font-size: 0.9rem; opacity: 0.8;">
                         Suscribite por $1999/mes para uso ilimitado
                     </div>
+                    <button onclick="iniciarPago()" style="
+            margin-top: 15px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            background: #00c853;
+            color: white;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+          ">💳 Suscribirme ahora</button>
                 </div>
             `;
         }
@@ -1136,6 +1146,27 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast('⚠ Grabación de audio no soportada en este navegador');
     }
 });
+
+async function iniciarPago() {
+  try {
+    const response = await fetch('/api/create-preference', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: currentUser.uid }),
+    });
+
+    const data = await response.json();
+    if (data.id) {
+      window.location.href = `https://www.mercadopago.com.ar/checkout/v1/redirect?preference_id=${data.id}`;
+    } else {
+      showToast('❌ No se pudo iniciar el pago');
+    }
+  } catch (error) {
+    showToast('❌ Error al iniciar el pago');
+    console.error(error);
+  }
+}
+
 </script>
 </body>
 </html>
