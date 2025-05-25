@@ -48,6 +48,46 @@ margin: 0;
 padding: 0;
 box-sizing: border-box;
 }
+body, html {
+  height: 100vh;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-chat-area {
+  flex: 1 1 0%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.chat-container {
+  flex: 1 1 0%;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 20px;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  z-index: 10;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.input-section {
+  background: rgba(26,26,26,0.95);
+  border-top: 1px solid #333;
+  z-index: 100;
+  width: 100%;
+  position: relative;
+}
+
 body {
 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
 sans-serif;
@@ -576,43 +616,44 @@ font-size: 1.1rem;
     </div>
   </div>
 </div>
-<div class="chat-container" id="chatContainer">
-<div class="empty-state">
-Escribí tu mensaje o grabá un audio y te ayudo a "bajar un cambio"
+<div class="main-chat-area">
+  <div class="chat-container" id="chatContainer">
+    <div class="empty-state">
+      Escribí tu mensaje o grabá un audio y te ayudo a "bajar un cambio"
+    </div>
+  </div>
+  <div class="input-section">
+    <div class="input-container">
+      <textarea
+        id="messageInput"
+        class="text-input"
+        placeholder="Me cansé, váyanse a la put que los parió... o grabá un audio"
+        rows="1"
+      ></textarea>
+      <div class="controls">
+        <select id="modeSelect" class="mode-select">
+          <option value="formal">💼 Formal/Trabajo</option>
+          <option value="amigable">😊 Amigable</option>
+          <option value="directo">💬 Directo</option>
+          <option value="diplomatico">🤝 Diplomático</option>
+        </select>
+        <div class="action-buttons">
+          <button class="record-btn" id="recordBtn" title="Grabar audio">
+            🎙
+          </button>
+          <button class="send-btn" id="sendBtn" title="Enviar mensaje">
+            ⚡
+          </button>
+        </div>
+      </div>
+      <div class="audio-status" id="audioStatus">
+        <span>🔴 Grabando...</span>
+        <span class="recording-timer" id="recordingTimer">00:00</span>
+      </div>
+    </div>
+  </div>
 </div>
-</div>
-<div class="input-section">
-<div class="input-container">
-<textarea
-id="messageInput"
-class="text-input"
-placeholder="Me cansé, váyanse a la put que los parió... o grabá un audio"
-rows="1"
-></textarea>
-<div class="controls">
-<select id="modeSelect" class="mode-select">
-<option value="formal">
-💼 Formal/Trabajo
-</option>
-<option value="amigable">
-😊 Amigable
-</option>
-<option value="directo">
-💬 Directo
-</option>
-<option value="diplomatico">
-🤝 Diplomático
-</option>
-</select>
-<div class="action-buttons">
-<button class="record-btn" id="recordBtn" title="Grabar audio">
-🎙
-</button>
-<button class="send-btn" id="sendBtn" title="Enviar mensaje">
-⚡
-</button>
-</div>
-</div>
+
 <div class="audio-status" id="audioStatus">
 <span>
 🔴 Grabando...
