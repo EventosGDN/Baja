@@ -930,20 +930,22 @@ async function consumeUse() {
 // Enviar mensaje de texto
 async function sendMessage() {
     if (!currentUser) {
-    showToast('🔐 Iniciá sesión para usar la app');
-    return;
+        showToast('🔐 Iniciá sesión para usar la app');
+        return;
+    }
+
+    if (!userLimits?.canUse) {
+        showToast('🚫 Sin usos disponibles. Suscribite para continuar');
+        updateUIForLimits(); // <-- ¡SIEMPRE refrescar!
+        return;
+    }
+    const text = messageInput.value.trim();
+    if (!text) return;
+    await processTextMessage(text);
+    messageInput.value = '';
+    messageInput.style.height = 'auto';
 }
 
-if (!userLimits?.canUse) {
-    showToast('🚫 Sin usos disponibles. Suscribite para continuar');
-    return;
-}
-const text = messageInput.value.trim();
-if (!text) return;
-await processTextMessage(text);
-messageInput.value = '';
-messageInput.style.height = 'auto';
-}
 // FUNCIÓN ADDMESSAGE ACTUALIZADA - SIN ETIQUETAS "OPCIÓN 1", "OPCIÓN 2"
 function addMessage(text, type) {
   const messageDiv = document.createElement('div');
@@ -965,8 +967,9 @@ function addMessage(text, type) {
     `;
   }
   chatContainer.appendChild(messageDiv);
-  scrollChatToBottom(); // LLAMÁ SOLO ESTA (evitá la doble línea)
+  scrollChatToBottom();
 }
+
 
 // Mostrar/ocultar loading
 function showLoading(message = 'Transformando mensaje...') {
