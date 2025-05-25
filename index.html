@@ -831,8 +831,10 @@ async function consumeUse() {
     if (!currentUser || !userLimits) return false;
 
     if (userLimits.subscriptionStatus === 'premium') return true;
-    
+
     if (userLimits.usesLeft <= 0) {
+        // IMPORTANTE: Siempre refrescar la UI aunque no haya usos
+        updateUIForLimits();
         showToast('🚫 Sin usos disponibles. Suscribite para continuar');
         return false;
     }
@@ -840,9 +842,7 @@ async function consumeUse() {
     try {
         const response = await fetch('/api/check-limits', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 userId: currentUser.uid,
                 action: 'consume'
@@ -853,29 +853,36 @@ async function consumeUse() {
             const result = await response.json();
             userLimits.usesLeft = result.usesLeft;
             updateUIForLimits();
-            
+
             if (result.usesLeft === 0) {
                 setTimeout(() => {
                     showToast('🎯 ¡Último uso gratis! Suscribite para continuar');
                 }, 2000);
+                // REFRESCA LA UI cuando llegás a 0 usos
+                updateUIForLimits();
             } else if (typeof result.usesLeft === 'number') {
                 setTimeout(() => {
                     showToast(`✨ Te quedan ${result.usesLeft} usos gratis`);
                 }, 1500);
             }
-            
+
             return true;
         } else {
+            // Si hay error porque no quedan usos, FORZÁ la actualización
+            updateUIForLimits();
             const error = await response.json();
             showToast(`❌ ${error.error}`);
             return false;
         }
+
     } catch (error) {
         console.error('Error consumiendo uso:', error);
         showToast('❌ Error verificando límites');
+        updateUIForLimits();
         return false;
     }
 }
+
 // Enviar mensaje de texto
 async function sendMessage() {
     if (!currentUser) {
@@ -1186,7 +1193,6 @@ async function iniciarPago() {
     console.error("Error en iniciarPago:", error);
   }
 }
-
 
 </script>
 </body>
