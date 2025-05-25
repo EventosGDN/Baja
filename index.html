@@ -1162,17 +1162,29 @@ async function iniciarPago() {
       body: JSON.stringify({ userId: currentUser.uid }),
     });
 
-    const data = await response.json();
-    if (data.id) {
-      window.location.href = `https://www.mercadopago.com.ar/checkout/v1/redirect?preference_id=${data.id}`;
+    const contentType = response.headers.get("Content-Type");
+
+    // Intenta parsear como JSON solo si es JSON
+    if (contentType && contentType.includes("application/json")) {
+      const data = await response.json();
+      if (data.id) {
+        window.location.href = `https://www.mercadopago.com.ar/checkout/v1/redirect?preference_id=${data.id}`;
+      } else {
+        showToast('❌ No se pudo iniciar el pago');
+        console.error("Respuesta sin ID:", data);
+      }
     } else {
-      showToast('❌ No se pudo iniciar el pago');
+      const text = await response.text();
+      showToast("❌ Error inesperado del servidor");
+      console.error("Respuesta no JSON:", text);
     }
+
   } catch (error) {
     showToast('❌ Error al iniciar el pago');
-    console.error(error);
+    console.error("Error en iniciarPago:", error);
   }
 }
+
 
 </script>
 </body>
