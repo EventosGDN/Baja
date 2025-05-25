@@ -1,5 +1,8 @@
 // api/check-limits.js
-module.exports = async function handler(req, res) {
+import { initializeApp, getApps, cert } from 'firebase-admin/app';
+import { getFirestore, FieldValue } from 'firebase-admin/firestore';
+
+export default async function handler(req, res) {
     // Configurar CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
@@ -21,31 +24,27 @@ module.exports = async function handler(req, res) {
             return res.status(400).json({ error: 'userId requerido' });
         }
 
-        // Importar Firebase Admin (necesitamos instalarlo)
-        const admin = require('firebase-admin');
-
         // Inicializar Firebase Admin si no está inicializado
-        if (!admin.apps.length) {
-            const serviceAccount = {
-                type: "service_account",
-                project_id: process.env.FIREBASE_PROJECT_ID,
-                private_key_id: process.env.FIREBASE_PRIVATE_KEY_ID,
-                private_key: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-                client_email: process.env.FIREBASE_CLIENT_EMAIL,
-                client_id: process.env.FIREBASE_CLIENT_ID,
-                auth_uri: "https://accounts.google.com/o/oauth2/auth",
-                token_uri: "https://oauth2.googleapis.com/token",
-                auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
-                client_x509_cert_url: `https://www.googleapis.com/robot/v1/metadata/x509/${process.env.FIREBASE_CLIENT_EMAIL}`
-            };
-
-            admin.initializeApp({
-                credential: admin.credential.cert(serviceAccount),
-                databaseURL: `https://${process.env.FIREBASE_PROJECT_ID}.firebaseio.com`
-            });
+        if (!getApps().length) {
+            try {
+                initializeApp({
+                    credential: cert({
+                        projectId: process.env.FIREBASE_PROJECT_ID,
+                        privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+                        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+                    }),
+                });
+                console.log('Firebase Admin inicializado correctamente');
+            } catch (initError) {
+                console.error('Error inicializando Firebase:', initError);
+                return res.status(500).json({
+                    error: 'Error de configuración de Firebase',
+                    details: initError.message
+                });
+            }
         }
 
-        const db = admin.firestore();
+        const db = getFirestore();
         const userRef = db.collection('users').doc(userId);
 
         if (action === 'check') {
@@ -58,7 +57,7 @@ module.exports = async function handler(req, res) {
                     usesLeft: 3,
                     subscriptionStatus: 'free',
                     subscriptionExpiry: null,
-                    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                    createdAt: FieldValue.serverTimestamp(),
                     totalUses: 0
                 });
 
@@ -94,8 +93,8 @@ module.exports = async function handler(req, res) {
             // Si es premium, no consumir usos
             if (userData.subscriptionStatus === 'premium') {
                 await userRef.update({
-                    totalUses: admin.firestore.FieldValue.increment(1),
-                    lastUsed: admin.firestore.FieldValue.serverTimestamp()
+                    totalUses: FieldValue.increment(1),
+                    lastUsed: FieldValue.serverTimestamp()
                 });
 
                 return res.status(200).json({
@@ -118,8 +117,8 @@ module.exports = async function handler(req, res) {
             const newUsesLeft = userData.usesLeft - 1;
             await userRef.update({
                 usesLeft: newUsesLeft,
-                totalUses: admin.firestore.FieldValue.increment(1),
-                lastUsed: admin.firestore.FieldValue.serverTimestamp()
+                totalUses: FieldValue.increment(1),
+                lastUsed: FieldValue.serverTimestamp()
             });
 
             return res.status(200).json({
@@ -131,7 +130,7 @@ module.exports = async function handler(req, res) {
         } else if (action === 'reset') {
             // NUEVA FUNCIÓN: REINICIAR USUARIO
             // Verificar clave de administrador para seguridad
-            if (adminKey !== 'admin123') {
+            if (adminKey !== 'admin123' && adminKey !== process.env.ADMIN_KEY) {
                 return res.status(403).json({ error: 'Clave de administrador incorrecta' });
             }
 
@@ -144,9 +143,9 @@ module.exports = async function handler(req, res) {
                     usesLeft: 3,
                     subscriptionStatus: 'free',
                     subscriptionExpiry: null,
-                    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                    createdAt: FieldValue.serverTimestamp(),
                     totalUses: 0,
-                    resetAt: admin.firestore.FieldValue.serverTimestamp(),
+                    resetAt: FieldValue.serverTimestamp(),
                     resetCount: 1
                 });
 
@@ -168,7 +167,7 @@ module.exports = async function handler(req, res) {
                     usesLeft: 3,
                     subscriptionStatus: 'free',
                     subscriptionExpiry: null,
-                    resetAt: admin.firestore.FieldValue.serverTimestamp(),
+                    resetAt: FieldValue.serverTimestamp(),
                     resetCount: currentResetCount + 1
                 });
 
@@ -197,4 +196,4 @@ module.exports = async function handler(req, res) {
             details: error.message
         });
     }
-};
+}
