@@ -1,23 +1,21 @@
 const { MercadoPagoConfig, Preference } = require("mercadopago");
 
-// Configurar Mercado Pago
+// Configurar Mercado Pago con token de prueba
 const mp = new MercadoPagoConfig({
-  accessToken: process.env.MERCADO_PAGO_ACCESS_TOKEN,
+  accessToken: process.env.MERCADO_PAGO_ACCESS_TOKEN, // debe empezar con TEST-
 });
 
-// Crear instancia del recurso Preference
+// Crear instancia de preferencia
 const preference = new Preference(mp);
 
 module.exports = async function handler(req, res) {
-  // CORS Headers
+  // CORS headers
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  // Manejo de preflight request
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
+  // Manejar preflight
+  if (req.method === "OPTIONS") return res.status(200).end();
 
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Método no permitido" });
@@ -31,6 +29,9 @@ module.exports = async function handler(req, res) {
     }
 
     const preferenceData = {
+      payer: {
+        email: "test_user_123456@testuser.com", // evita que Mercado Pago te bloquee por intentar pagarte a vos mismo
+      },
       items: [
         {
           title: "Suscripción Premium - Bajá un cambio",
