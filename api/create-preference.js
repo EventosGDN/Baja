@@ -30,7 +30,7 @@ module.exports = async function handler(req, res) {
 
     const preferenceData = {
       payer: {
-        email: "test_user_123456@testuser.com", // evita que Mercado Pago te bloquee por intentar pagarte a vos mismo
+        email: "eventosgdn@gmail.com", // evita que Mercado Pago te bloquee por intentar pagarte a vos mismo
       },
       items: [
         {
