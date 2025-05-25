@@ -860,6 +860,11 @@ function updateUIForLimits() {
   }
 }
 
+function scrollChatToBottom() {
+  if (chatContainer) {
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  }
+}
 
 
 // Consumir un uso
