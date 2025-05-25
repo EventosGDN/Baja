@@ -615,52 +615,44 @@ const header = document.getElementById('appHeader');
 const imagoSticky = document.getElementById('imagoSticky');
 let headerHidden = false;
 
-// Detecta scroll en chatContainer
-chatContainer.addEventListener('scroll', () => {
+function handleHeaderAndImagoOnScroll() {
   if (chatContainer.scrollTop > 40) {
     if (!headerHidden) {
-      header.style.display = 'none';
+      header.classList.add('oculto');
       imagoSticky.classList.add('visible');
       headerHidden = true;
     }
   } else {
     if (headerHidden) {
-      header.style.display = 'flex';
-      imagoSticky.classList.remove('visible');
-      headerHidden = false;
-    }
-  }
-});
-
-// Modificá tu función scrollChatToBottom para actualizar la visibilidad:
-function scrollChatToBottom() {
-  if (chatContainer) {
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-    if (chatContainer.scrollTop > 40) {
-      header.style.display = 'none';
-      imagoSticky.classList.add('visible');
-      headerHidden = true;
-    } else {
-      header.style.display = 'flex';
+      header.classList.remove('oculto');
       imagoSticky.classList.remove('visible');
       headerHidden = false;
     }
   }
 }
 
-// (Opcional) Si tocás imagoSticky, muestra el header por 5 segundos:
+chatContainer.addEventListener('scroll', handleHeaderAndImagoOnScroll);
+
+function scrollChatToBottom() {
+  if (chatContainer) {
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+    handleHeaderAndImagoOnScroll();
+  }
+}
+
 imagoSticky.addEventListener('click', () => {
-  header.style.display = 'flex';
+  header.classList.remove('oculto');
   imagoSticky.classList.remove('visible');
   headerHidden = false;
   setTimeout(() => {
     if (chatContainer.scrollTop > 40) {
-      header.style.display = 'none';
+      header.classList.add('oculto');
       imagoSticky.classList.add('visible');
       headerHidden = true;
     }
   }, 5000);
 });
+
 
 
 
