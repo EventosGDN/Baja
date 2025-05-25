@@ -572,7 +572,9 @@ font-size: 1.1rem;
   position: sticky;
   top: 0;
   z-index: 1000;
-  transition: background 0.4s, opacity 0.4s;
+   transition: background 0.6s cubic-bezier(.44,1.6,.53,.83), 
+              opacity 0.6s cubic-bezier(.44,1.6,.53,.83), 
+              backdrop-filter 0.6s cubic-bezier(.44,1.6,.53,.83);
   box-shadow: 0 2px 8px rgba(0,0,0,0.07);
 }
 
