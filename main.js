@@ -656,9 +656,6 @@ imagoSticky.addEventListener('click', () => {
 
 
 
-imagoSticky.classList.add('visible');   // para mostrar
-imagoSticky.classList.remove('visible'); // para ocultar
-
 
 document.addEventListener('DOMContentLoaded', () => {
   // Esto mete 10 mensajes de prueba al chat para que scrollee
