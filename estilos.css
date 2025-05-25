@@ -19,16 +19,6 @@ body, html {
   min-height: 0;
 }
 
-#imagoSticky {
-  transition: opacity 0.4s;
-  opacity: 0;
-  pointer-events: auto;
-}
-#imagoSticky.visible {
-  opacity: 1;
-  display: block !important;
-}
-
 
 
 .chat-container {
@@ -670,4 +660,14 @@ font-size: 1.1rem;
     width: 32px;
     height: 32px;
   }
+}
+#imagoSticky {
+  transition: opacity 0.4s;
+  opacity: 0;
+  pointer-events: auto;
+  display: none;
+}
+#imagoSticky.visible {
+  opacity: 1;
+  display: block !important;
 }

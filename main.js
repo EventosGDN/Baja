@@ -613,54 +613,56 @@ function cerrarModalSuscripcion() {
 }
 const header = document.getElementById('appHeader');
 const imagoSticky = document.getElementById('imagoSticky');
-
-// Para controlar el estado
 let headerHidden = false;
 
-// Función para ocultar header y mostrar la imagen
-function hideHeaderShowImago() {
-  if (!headerHidden) {
-    header.style.display = 'none';
-    imagoSticky.classList.add('visible');
-    headerHidden = true;
-  }
-}
-// Función para mostrar header y ocultar la imagen
-function showHeaderHideImago() {
-  if (headerHidden) {
-    header.style.display = 'flex';
-    imagoSticky.classList.remove('visible');
-    headerHidden = false;
-  }
-}
-
-// Detección de scroll: usamos el .chat-container, porque es donde se da el scroll real
+// Detecta scroll en chatContainer
 chatContainer.addEventListener('scroll', () => {
   if (chatContainer.scrollTop > 40) {
-    hideHeaderShowImago();
+    if (!headerHidden) {
+      header.style.display = 'none';
+      imagoSticky.classList.add('visible');
+      headerHidden = true;
+    }
   } else {
-    showHeaderHideImago();
+    if (headerHidden) {
+      header.style.display = 'flex';
+      imagoSticky.classList.remove('visible');
+      headerHidden = false;
+    }
   }
 });
 
-// Si se agregan mensajes y el scroll es automático, chequeamos igual
+// Modificá tu función scrollChatToBottom para actualizar la visibilidad:
 function scrollChatToBottom() {
   if (chatContainer) {
     chatContainer.scrollTop = chatContainer.scrollHeight;
-    // Nueva línea:
-    if (chatContainer.scrollTop > 40) hideHeaderShowImago();
-    else showHeaderHideImago();
+    if (chatContainer.scrollTop > 40) {
+      header.style.display = 'none';
+      imagoSticky.classList.add('visible');
+      headerHidden = true;
+    } else {
+      header.style.display = 'flex';
+      imagoSticky.classList.remove('visible');
+      headerHidden = false;
+    }
   }
 }
 
-// Si tocás la imagen "imago", vuelve a mostrar el header 5 segundos y se esconde de nuevo si hace falta
+// (Opcional) Si tocás imagoSticky, muestra el header por 5 segundos:
 imagoSticky.addEventListener('click', () => {
-  showHeaderHideImago();
+  header.style.display = 'flex';
+  imagoSticky.classList.remove('visible');
+  headerHidden = false;
   setTimeout(() => {
-    if (chatContainer.scrollTop > 40) hideHeaderShowImago();
+    if (chatContainer.scrollTop > 40) {
+      header.style.display = 'none';
+      imagoSticky.classList.add('visible');
+      headerHidden = true;
+    }
   }, 5000);
 });
 
 
-imagoSticky.classList.add('show'); // para mostrar
-imagoSticky.classList.remove('show'); // para ocultar
+
+imagoSticky.classList.add('visible');   // para mostrar
+imagoSticky.classList.remove('visible'); // para ocultar
