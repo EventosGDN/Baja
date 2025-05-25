@@ -180,12 +180,10 @@ transform: translateY(-20vh) scale(1.2);
 }
 
 .login-btn, .logout-btn {
-  background: #333;
-  color: #fff;
+  background: #ffd600;
   border: none;
-  border-radius: 16px;
-  padding: 7px 14px;
-  font-size: 1em;
+  padding: 0.5rem 1rem;
+  border-radius: 30px;
   cursor: pointer;
   font-weight: bold;
 }
@@ -198,7 +196,7 @@ transform: translateY(-20vh) scale(1.2);
 .user-info {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 8px;
 }
 
 .user-photo {
@@ -228,11 +226,14 @@ transform: translateY(-20vh) scale(1.2);
 }
 .header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 12px 20px;
+  padding: 0 1rem;
   background: #232323;
-  min-height: 54px;
+  height: 70px;
+  transition: height 0.3s, padding 0.3s;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 .app-title {
 font-size: 1.5rem;
@@ -620,20 +621,17 @@ font-size: 1.1rem;
 }
 
 .header-logo {
-  width: 190px;
-  max-width: 160px;
-  height: auto;
+  height: 50px;
+  width: auto;
   border-radius: 12px;
-  transition: all 0.28s cubic-bezier(.44,1.6,.53,.83);
-  cursor: pointer;
-  object-fit: contain;
-  box-shadow: 0 1px 6px #0002;
+  transition: height 0.3s, border-radius 0.3s, box-shadow 0.3s;
 }
 
 .auth-section {
+  margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 12px;
+  transition: opacity 0.2s, width 0.2s;
 }
 
 .user-info {
@@ -666,30 +664,43 @@ font-size: 1.1rem;
   font-weight: bold;
 }
 
-/* MODO COLAPSADO: solo logo, todo lo demás desaparece */
+/* Colapsado */
 .header.collapsed {
-  padding: 6px 12px;
-  min-height: 40px;
-  background: #232323d8;
+  height: 44px;
+  padding-top: 2px;
+  padding-bottom: 2px;
 }
 
-.header.collapsed .header-logo {
-  width: 38px;
-  height: 38px;
+ .header.collapsed .header-logo {
+  height: 36px;
+  width: 36px;
   border-radius: 50%;
-  box-shadow: 0 0 10px 0 #0004;
-  object-fit: cover;
+  box-shadow: 0 0 10px #0004;
+}
+.header.collapsed .auth-section {
+  opacity: 0;
+  pointer-events: none;
+  width: 0 !important;
+  min-width: 0 !important;
+  overflow: hidden;
 }
 
-.header.collapsed .auth-section,
-.header.collapsed .user-info,
-.header.collapsed .login-btn {
+.header.collapsed .user-info {
   opacity: 0;
   pointer-events: none;
   width: 0;
   overflow: hidden;
   transition: opacity 0.2s, width 0.2s;
 }
+.header.collapsed .login-btn {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  width: auto !important;
+  overflow: visible !important;
+  transition: none !important;
+  display: inline-block !important;
+}
+
 
 /* Mobile ajuste */
 @media (max-width: 600px) {
@@ -705,6 +716,7 @@ font-size: 1.1rem;
   }
 }
 
+
 </style>
 
 </head>
@@ -718,7 +730,7 @@ font-size: 1.1rem;
   <img src="imagenes/logo.png" alt="Bajá un cambio" class="header-logo" id="headerLogo" />
   <div id="authSection" class="auth-section">
     <!-- Si el usuario no está logueado -->
-    <button id="loginBtn" class="login-btn" style="display: none;">🔐 Entrar con Google</button>
+    <button id="loginBtn" class="login-btn" ;>🔐 Entrar con Google</button>
     <!-- Si el usuario está logueado -->
     <div id="userInfo" class="user-info" style="display: none;">
       <img id="userPhoto" class="user-photo" src="" alt="Usuario" />
@@ -1401,7 +1413,7 @@ function cerrarModalSuscripcion() {
 const header = document.getElementById('appHeader');
 const headerLogo = document.getElementById('headerLogo');
 const chatArea = document.querySelector('.main-chat-area');
-
+const messageInput = document.getElementById('messageInput');
 let isCollapsed = false;
 let collapseTimeout = null;
 
@@ -1430,6 +1442,21 @@ headerLogo.addEventListener('click', () => {
     }, 5000);
   }
 });
+
+// Colapsar header al enfocar input
+messageInput.addEventListener('focus', () => {
+  if (!isCollapsed) {
+    header.classList.add('collapsed');
+    isCollapsed = true;
+  }
+});
+messageInput.addEventListener('blur', () => {
+  if (isCollapsed && chatArea.scrollTop <= 10) {
+    header.classList.remove('collapsed');
+    isCollapsed = false;
+  }
+});
+
 
 
 </script>
