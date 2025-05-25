@@ -17,7 +17,7 @@ module.exports = async function handler(req, res) {
     }
 
     if (!process.env.MERCADO_PAGO_ACCESS_TOKEN) {
-      return res.status(500).json({ error: "Access token de MP no configurado" });
+      return res.status(500).json({ error: "Access token no configurado" });
     }
 
     const preference = {
@@ -38,9 +38,7 @@ module.exports = async function handler(req, res) {
     };
 
     const result = await mercadopago.preferences.create(preference);
-    console.log("Preferencia creada:", result.body.id);
     res.status(200).json({ id: result.body.id });
-
   } catch (error) {
     console.error("Error al crear preferencia:", error);
     res.status(500).json({ error: error.message || "Error desconocido" });
