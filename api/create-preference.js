@@ -1,4 +1,3 @@
-// /api/create-preference.js
 const mercadopago = require("mercadopago");
 
 mercadopago.configure({
@@ -13,6 +12,14 @@ module.exports = async function handler(req, res) {
   const { userId } = req.body;
 
   try {
+    if (!userId) {
+      return res.status(400).json({ error: "userId es requerido" });
+    }
+
+    if (!process.env.MERCADO_PAGO_ACCESS_TOKEN) {
+      return res.status(500).json({ error: "Access token de MP no configurado" });
+    }
+
     const preference = {
       items: [
         {
@@ -23,17 +30,19 @@ module.exports = async function handler(req, res) {
         },
       ],
       back_urls: {
-        success: `${process.env.BASE_URL}/api/payment-success?user_id=${userId}`,
-        failure: `${process.env.BASE_URL}/?status=failure`,
-        pending: `${process.env.BASE_URL}/?status=pending`,
+        success: `https://baja-jade.vercel.app/api/payment-success?user_id=${userId}`,
+        failure: `https://baja-jade.vercel.app/?status=failure`,
+        pending: `https://baja-jade.vercel.app/?status=pending`,
       },
       auto_return: "approved",
     };
 
     const result = await mercadopago.preferences.create(preference);
+    console.log("Preferencia creada:", result.body.id);
     res.status(200).json({ id: result.body.id });
+
   } catch (error) {
     console.error("Error al crear preferencia:", error);
-    res.status(500).json({ error: "No se pudo crear el pago" });
+    res.status(500).json({ error: error.message || "Error desconocido" });
   }
 };
