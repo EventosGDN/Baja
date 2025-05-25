@@ -653,6 +653,18 @@ imagoSticky.addEventListener('click', () => {
   }, 5000);
 });
 
+// --- LOGICA PARA GLASS HEADER SEGUN SCROLL ---
+
+chatContainer.addEventListener('scroll', () => {
+  // Si scrolleás un poquito, pero no lo suficiente para ocultar el header
+  if (chatContainer.scrollTop > 8 && chatContainer.scrollTop <= 40) {
+    header.classList.add('glass');
+  } else {
+    header.classList.remove('glass');
+  }
+  // Esta es la lógica para ocultar el header y mostrar imagoSticky, no la dupliques si ya la tenés:
+  handleHeaderAndImagoOnScroll();
+});
 
 
 

@@ -567,14 +567,15 @@ font-size: 1.1rem;
   align-items: center;
   justify-content: space-between;
   padding: 10px 20px;
-  background: #232323;
+  background: #232323; /* Fondo sólido, default */
   min-height: 54px;
   position: sticky;
   top: 0;
   z-index: 1000;
-  transition: all 0.28s cubic-bezier(.44,1.6,.53,.83);
+  transition: background 0.4s, opacity 0.4s;
   box-shadow: 0 2px 8px rgba(0,0,0,0.07);
 }
+
 
 .header-logo {
   width: 190px;
@@ -671,6 +672,13 @@ font-size: 1.1rem;
   opacity: 0;
   pointer-events: none;
 }
+
+.header.glass {
+  background: rgba(34, 34, 34, 0.7);
+  backdrop-filter: blur(12px) saturate(150%);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
 
 /* Para la imagen imagoSticky que aparece suave */
 #imagoSticky {
