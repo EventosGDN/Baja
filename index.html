@@ -1168,7 +1168,9 @@ async function iniciarPago() {
     if (contentType && contentType.includes("application/json")) {
       const data = await response.json();
       if (data.id) {
-        window.location.href = `https://www.mercadopago.com.ar/checkout/v1/redirect?preference_id=${data.id}`;
+        //window.location.href = `https://www.mercadopago.com.ar/checkout/v1/redirect?preference_id=${data.id}`;
+        window.location.href = `https://sandbox.mercadopago.com.ar/checkout/v1/redirect?preference_id=${data.id}`;
+
       } else {
         showToast('❌ No se pudo iniciar el pago');
         console.error("Respuesta sin ID:", data);
