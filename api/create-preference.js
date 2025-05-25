@@ -1,7 +1,7 @@
-const mercadopago = require("mercadopago");
+const { MercadoPagoConfig } = require("mercadopago");
 
-mercadopago.configure({
-  access_token: process.env.MERCADO_PAGO_ACCESS_TOKEN,
+const mercadopago = new MercadoPagoConfig({
+  accessToken: process.env.MERCADO_PAGO_ACCESS_TOKEN,
 });
 
 module.exports = async function handler(req, res) {
@@ -14,10 +14,6 @@ module.exports = async function handler(req, res) {
   try {
     if (!userId) {
       return res.status(400).json({ error: "userId es requerido" });
-    }
-
-    if (!process.env.MERCADO_PAGO_ACCESS_TOKEN) {
-      return res.status(500).json({ error: "Access token no configurado" });
     }
 
     const preference = {
@@ -37,8 +33,8 @@ module.exports = async function handler(req, res) {
       auto_return: "approved",
     };
 
-    const result = await mercadopago.preferences.create(preference);
-    res.status(200).json({ id: result.body.id });
+    const result = await mercadopago.preferences.create({ body: preference });
+    res.status(200).json({ id: result.id });
   } catch (error) {
     console.error("Error al crear preferencia:", error);
     res.status(500).json({ error: error.message || "Error desconocido" });
