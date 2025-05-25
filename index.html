@@ -613,6 +613,103 @@ font-size: 1.1rem;
   cursor: pointer; font-weight: bold;
 }
 
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background: #232323;
+  min-height: 54px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  transition: all 0.28s cubic-bezier(.44,1.6,.53,.83);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+.header-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  transition: width 0.25s, height 0.25s;
+  cursor: pointer;
+}
+
+.auth-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: opacity 0.25s;
+}
+
+.user-photo {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.user-name {
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 1.05em;
+}
+
+.login-btn, .logout-btn {
+  background: #333;
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  padding: 7px 14px;
+  font-size: 1em;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* MODO COLAPSADO: solo logo, todo lo demás desaparece */
+.header.collapsed {
+  padding: 6px 12px;
+  min-height: 40px;
+  background: #232323d8;
+}
+
+.header.collapsed .header-logo {
+  width: 36px;
+  height: 36px;
+  box-shadow: 0 0 7px 2px #0003;
+}
+
+.header.collapsed .auth-section,
+.header.collapsed .user-info,
+.header.collapsed .login-btn {
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  overflow: hidden;
+  transition: opacity 0.2s, width 0.2s;
+}
+
+/* Mobile ajuste */
+@media (max-width: 600px) {
+  .header {
+    padding: 6px 7px;
+    min-height: 36px;
+  }
+  .header-logo {
+    width: 36px;
+    height: 36px;
+  }
+  .header.collapsed .header-logo {
+    width: 32px;
+    height: 32px;
+  }
+}
+
 </style>
 
 </head>
@@ -622,11 +719,11 @@ font-size: 1.1rem;
 <div class="fire-background">
 <div class="fire-particles" id="fireParticles"></div>
 </div>
-<div class="header">
-  <img src="imagenes/logo.png" alt="Bajá un cambio" class="app-title-img" />
+<div class="header" id="appHeader">
+  <img src="imagenes/logo.png" alt="Bajá un cambio" class="header-logo" id="headerLogo" />
   <div id="authSection" class="auth-section">
     <!-- Si el usuario no está logueado -->
-    <button id="loginBtn" class="login-btn">🔐 Entrar con Google</button>
+    <button id="loginBtn" class="login-btn" style="display: none;">🔐 Entrar con Google</button>
     <!-- Si el usuario está logueado -->
     <div id="userInfo" class="user-info" style="display: none;">
       <img id="userPhoto" class="user-photo" src="" alt="Usuario" />
@@ -635,6 +732,7 @@ font-size: 1.1rem;
     </div>
   </div>
 </div>
+
 
 <div class="main-chat-area">
   <div class="chat-container" id="chatContainer">
@@ -1305,6 +1403,39 @@ function mostrarModalSuscripcion() {
 function cerrarModalSuscripcion() {
   document.getElementById("suscripcionModal").style.display = "none";
 }
+const header = document.getElementById('appHeader');
+const headerLogo = document.getElementById('headerLogo');
+const chatArea = document.querySelector('.main-chat-area');
+
+let isCollapsed = false;
+let collapseTimeout = null;
+
+function handleScroll() {
+  if (chatArea.scrollTop > 40 && !isCollapsed) {
+    header.classList.add('collapsed');
+    isCollapsed = true;
+  } else if (chatArea.scrollTop <= 10 && isCollapsed) {
+    header.classList.remove('collapsed');
+    isCollapsed = false;
+  }
+}
+
+chatArea.addEventListener('scroll', handleScroll);
+
+headerLogo.addEventListener('click', () => {
+  if (isCollapsed) {
+    header.classList.remove('collapsed');
+    isCollapsed = false;
+    clearTimeout(collapseTimeout);
+    collapseTimeout = setTimeout(() => {
+      if (!isCollapsed && chatArea.scrollTop > 40) {
+        header.classList.add('collapsed');
+        isCollapsed = true;
+      }
+    }, 5000);
+  }
+});
+
 
 </script>
 <div id="suscripcionModal" class="modal-suscripcion" style="display: none;">
