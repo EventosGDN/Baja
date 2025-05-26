@@ -453,23 +453,25 @@ opacity: 1;
 transform: translateX(-50%) translateY(-10px);
 }
 .audio-status {
-display: flex;
-align-items: center;
-gap: 8px;
-color: #ff4444;
-font-size: 0.9rem;
-margin-top: 10px;
-opacity: 0;
-transition: opacity 0.3s ease;
-background: rgba(0, 0, 0, 0.7);
-backdrop-filter: blur(5px);
-padding: 8px 15px;
-border-radius: 15px;
-border: 1px solid rgba(255, 68, 68, 0.3);
+  display: none;        /* No ocupa espacio cuando está oculto */
+  opacity: 0;
+  transition: opacity 0.3s;
+  align-items: center;
+  gap: 8px;
+  color: #ff4444;
+  font-size: 0.9rem;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(5px);
+  padding: 8px 15px;
+  border-radius: 15px;
+  border: 1px solid rgba(255,68,68,0.3);
+  margin-top: 10px;
 }
 .audio-status.show {
-opacity: 1;
+  display: flex !important; /* Solo ocupa espacio cuando está visible */
+  opacity: 1;
 }
+
 .user-info {
   display: flex;
   align-items: center;
