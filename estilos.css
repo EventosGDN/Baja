@@ -453,7 +453,7 @@ opacity: 1;
 transform: translateX(-50%) translateY(-10px);
 }
 .audio-status {
-display: flex;
+display: none;
 align-items: center;
 gap: 8px;
 color: #ff4444;
@@ -468,6 +468,7 @@ border-radius: 15px;
 border: 1px solid rgba(255, 68, 68, 0.3);
 }
 .audio-status.show {
+display: flex !important;
 opacity: 1;
 }
 .user-info {
