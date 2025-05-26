@@ -201,7 +201,7 @@ function updateUIForLimits() {
       if (botonSuscripcion) botonSuscripcion.style.display = 'none';
     } else {
       // Tiene usos gratis
-      emptyState.innerHTML = `✨ Tenés ${userLimits.usesLeft} usos gratis - Escribí tu mensaje o grabá un audio`;
+      emptyState.innerHTML = `✨ Tenés ${userLimits.usesLeft} usos gratis`;
       if (botonSuscripcion) botonSuscripcion.style.display = 'none';
     }
     // Si vuelve a tener usos o premium, asegurate de cerrar el modal si está abierto
