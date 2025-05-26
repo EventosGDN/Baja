@@ -202,25 +202,13 @@ function updateUIForLimits() {
     if (userLimits.subscriptionStatus === 'premium') {
       emptyState.innerHTML = '💎 Usuario Premium - Escribí tu mensaje o grabá un audio y te ayudo a "bajar un cambio"';
       if (botonSuscripcion) botonSuscripcion.style.display = 'none';
-      } else {
-    // No tiene usos: mensaje completo con botón e info
-    emptyState.innerHTML = `
-      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 36px 0 20px 0;">
-        <div style="font-size: 1.2rem; margin-bottom: 6px;">🚫 Sin usos disponibles</div>
-        <div style="margin-bottom: 14px;">Te quedan 0 transformaciones gratuitas</div>
-        <button onclick="iniciarPago()" class="boton-flotante-suscripcion" style="position:static; margin:12px auto 0 auto;">
-          <img src="imagenes/mercadopago.png" class="img-boton-suscripcion" alt="Suscribite con Mercado Pago">
-          Suscribirme ahora
-        </button>
-        <div style="margin-top:14px;font-size:0.96rem;opacity:0.7;">Suscribite por $1999/mes para uso ilimitado</div>
-      </div>
-    `;
-    if (botonSuscripcion) botonSuscripcion.style.display = 'none';
-    setTimeout(() => {
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    }, 60);
-  }
-
+    } else {
+      // Tiene usos gratis
+      emptyState.innerHTML = `✨ Tenés ${userLimits.usesLeft} usos gratis`;
+      
+      if (botonSuscripcion) botonSuscripcion.style.display = 'none';
+      
+    }
     
     // Si vuelve a tener usos o premium, asegurate de cerrar el modal si está abierto
     if (typeof cerrarModalSuscripcion === "function") cerrarModalSuscripcion();
@@ -555,9 +543,10 @@ async function logout() {
         userInfo.style.display = 'flex';
         userName.textContent = user.displayName;
         userPhoto.src = user.photoURL;
-        document.getElementById('inputSection').style.display = 'flex';
+
         // NUEVO: Verificar límites del usuario
         await checkUserLimits();
+
         showToast(`¡Hola ${user.displayName}! 👋`);
     } else {
         // Usuario no logueado
