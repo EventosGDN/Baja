@@ -1,20 +1,19 @@
 // Crear partículas de fuego
 function createFireParticles() {
-const container = document.getElementById('fireParticles');
-const particleCount = 20;
-for (let i = 0; i < particleCount; i++) {
-const particle = document.createElement('div');
-particle.className = 'fire-particle';
-particle.style.left = Math.random() * 100 + '%';
-particle.style.animationDelay = Math.random() * 3 + 's';
-particle.style.animationDuration = (2 + Math.random() * 2) + 's';
-container.appendChild(particle);
+  const container = document.getElementById('fireParticles');
+  if (!container) return; // Siempre chequeá que existe
+  const particleCount = 20;
+  for (let i = 0; i < particleCount; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'fire-particle';
+    particle.style.left = Math.random() * 100 + '%';
+    particle.style.animationDelay = Math.random() * 3 + 's';
+    particle.style.animationDuration = (2 + Math.random() * 2) + 's';
+    container.appendChild(particle);
+  }
 }
-}
-// Inicializar partículas al cargar la página
-document.addEventListener('DOMContentLoaded', () => {
-createFireParticles();
-});
+window.addEventListener('DOMContentLoaded', createFireParticles);
+
 // Variables para grabación de audio
 let mediaRecorder = null;
 let audioChunks = [];
