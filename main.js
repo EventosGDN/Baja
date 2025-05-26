@@ -193,44 +193,33 @@ function updateUIForLimits() {
     emptyState.className = 'empty-state';
     chatContainer.appendChild(emptyState);
     setTimeout(() => {
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    }, 50);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  }, 50);
   }
 
   if (userLimits.canUse) {
-    // ... lo mismo que antes ...
-  } else {
-    // Si el modal está abierto, NO mostrar el cartel embebido todavía
-    if (document.getElementById("suscripcionModal").style.display === "flex") {
-      emptyState.innerHTML = ""; // No muestres nada en el chat
-    } else {
-      // Si el modal está cerrado, recién ahí poné el cartel embebido con el botón
-      emptyState.innerHTML = `
-        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 36px 0 20px 0;">
-          <div style="font-size: 1.2rem; margin-bottom: 6px;">🚫 Sin usos disponibles</div>
-          <div style="margin-bottom: 14px;">Te quedan 0 transformaciones gratuitas</div>
-          <button onclick="iniciarPago()" class="boton-flotante-suscripcion" style="position:static; margin:12px auto 0 auto;">
-            <img src="imagenes/mercadopago.png" class="img-boton-suscripcion" alt="Suscribite con Mercado Pago">
-            Suscribirme ahora
-          </button>
-          <div style="margin-top:14px;font-size:0.96rem;opacity:0.7;">Suscribite por $1999/mes para uso ilimitado</div>
-        </div>
-      `;
-    }
+    // Usuario premium
+    if (userLimits.subscriptionStatus === 'premium') {
+      emptyState.innerHTML = '💎 Usuario Premium - Escribí tu mensaje o grabá un audio y te ayudo a "bajar un cambio"';
+      if (botonSuscripcion) botonSuscripcion.style.display = 'none';
+      } else {
+    // No tiene usos: mensaje completo con botón e info
+    emptyState.innerHTML = `
+      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 36px 0 20px 0;">
+        <div style="font-size: 1.2rem; margin-bottom: 6px;">🚫 Sin usos disponibles</div>
+        <div style="margin-bottom: 14px;">Te quedan 0 transformaciones gratuitas</div>
+        <button onclick="iniciarPago()" class="boton-flotante-suscripcion" style="position:static; margin:12px auto 0 auto;">
+          <img src="imagenes/mercadopago.png" class="img-boton-suscripcion" alt="Suscribite con Mercado Pago">
+          Suscribirme ahora
+        </button>
+        <div style="margin-top:14px;font-size:0.96rem;opacity:0.7;">Suscribite por $1999/mes para uso ilimitado</div>
+      </div>
+    `;
     if (botonSuscripcion) botonSuscripcion.style.display = 'none';
     setTimeout(() => {
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }, 60);
   }
-}
-
-function cerrarModalSuscripcion() {
-  document.getElementById("suscripcionModal").style.display = "none";
-  // Cuando se cierra el modal, mostrá el cartel embebido
-  updateUIForLimits();
-}
-
-
 
     
     // Si vuelve a tener usos o premium, asegurate de cerrar el modal si está abierto
@@ -566,10 +555,9 @@ async function logout() {
         userInfo.style.display = 'flex';
         userName.textContent = user.displayName;
         userPhoto.src = user.photoURL;
-
+        document.getElementById('inputSection').style.display = 'flex';
         // NUEVO: Verificar límites del usuario
         await checkUserLimits();
-
         showToast(`¡Hola ${user.displayName}! 👋`);
     } else {
         // Usuario no logueado
@@ -577,6 +565,7 @@ async function logout() {
         userLimits = null;
         loginBtn.style.display = 'block';
         userInfo.style.display = 'none';
+        document.getElementById('inputSection').style.display = 'none';
         
         chatContainer.innerHTML = `
             <div class="empty-state">
