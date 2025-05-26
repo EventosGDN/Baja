@@ -1,54 +1,140 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>App Chat Demo</title>
-  <link rel="stylesheet" href="estilos.css">
-</head>
-<body>
-  <div class="fire-background"></div>
-  <div class="header" id="appHeader">
-    <img src="imagenes/logo.png" alt="Bajá un cambio" class="header-logo" id="headerLogo" />
-    <div id="authSection" class="auth-section">
-      <button id="loginBtn" class="login-btn" style="display: none;">🔐 Entrar con Google</button>
-      <div id="userInfo" class="user-info" style="display: none;">
-        <img id="userPhoto" class="user-photo" src="" alt="Usuario" />
-        <span id="userName" class="user-name"></span>
-        <button id="logoutBtn" class="logout-btn">Salir</button>
-      </div>
-    </div>
-  </div>
-  <img id="imagoSticky" src="imagenes/imago.png" alt="Imago" />
-  <div class="main-chat-area">
-    <div class="chat-container" id="chatContainer">
-      <div class="empty-state">Iniciá sesión para usar el chat...</div>
-      <!-- <div class="message-bubble ...">...</div> -->
-    </div>
-    <div class="input-section">
-      <div class="input-container">
-        <textarea id="messageInput" class="text-input" placeholder="Escribí un mensaje o grabá un audio..." rows="1"></textarea>
-        <div class="controls">
-          <select id="modeSelect" class="mode-select">
-            <option value="formal">💼 Formal/Trabajo</option>
-            <option value="amigable">😊 Amigable</option>
-            <option value="directo">💬 Directo</option>
-            <option value="diplomatico">🤝 Diplomático</option>
-          </select>
-          <div class="action-buttons">
-            <button class="record-btn" id="recordBtn" title="Grabar audio">🎙</button>
-            <button class="send-btn" id="sendBtn" title="Enviar mensaje">⚡</button>
-          </div>
-        </div>
-        <div class="audio-status" id="audioStatus">
-          <span>🔴 Grabando...</span>
-          <span class="recording-timer" id="recordingTimer">00:00</span>
-        </div>
-      </div>
-    </div>
-  </div>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1a1a1a">
+<link rel="icon" type="image/x-icon" href="imagenes/favicom.ico">
+<link rel="stylesheet" href="estilos.css">
+
+<!-- Reemplazar TODOS los scripts de Firebase existentes por esto: -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
   
-  <script src="main.js"></script>
+  // Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyDQmJDJmGBpvmB2-pOcGsD6sJgLqaLNC68",
+    authDomain: "baja-un-cambio-bfdb4.firebaseapp.com",
+    projectId: "baja-un-cambio-bfdb4",
+    storageBucket: "baja-un-cambio-bfdb4.firebasestorage.app",
+    messagingSenderId: "968738580875",
+    appId: "1:968738580875:web:026beaab323759d0cde78e",
+    measurementId: "G-E5MECG1KV1"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+  const analytics = getAnalytics(app);
+  
+  // Configurar provider
+  provider.addScope('email');
+  provider.addScope('profile');
+  
+  // Hacer las funciones disponibles globalmente
+  window.firebaseAuth = {
+    auth,
+    provider,
+    signInWithPopup,
+    signOut,
+    onAuthStateChanged
+  };
+</script>
+<title>Bajá un cambio</title>
+
+</head>
+
+<body>
+<!-- Fondo animado de fuego -->
+<div class="fire-background">
+<div class="fire-particles" id="fireParticles"></div>
+</div>
+<div class="header" id="appHeader">
+ 
+
+  <img src="imagenes/logo.png" alt="Bajá un cambio" class="header-logo" id="headerLogo" />
+  <div id="authSection" class="auth-section">
+    <!-- Si el usuario no está logueado -->
+    <button id="loginBtn" class="login-btn" style="display: none;">🔐 Entrar con Google</button>
+    <!-- Si el usuario está logueado -->
+    <div id="userInfo" class="user-info" style="display: none;">
+      <img id="userPhoto" class="user-photo" src="" alt="Usuario" />
+      <span id="userName" class="user-name"></span>
+      <button id="logoutBtn" class="logout-btn">Salir</button>
+    </div>
+  </div>
+</div>
+ <img src="imagenes/imago.png" id="imagoSticky" style="position: fixed; top: 10px; left: 10px; z-index: 10000; width: 48px; height: 48px; border-radius: 14px; box-shadow: 0 0 12px #0008;">
+
+
+
+<div class="main-chat-area">
+  <div class="chat-container" id="chatContainer">
+    <div class="empty-state">
+      Escribí tu mensaje o grabá un audio y te ayudo a "bajar un cambio"
+    </div>
+  </div>
+  <div class="input-section">
+    <div class="input-container">
+      <textarea
+        id="messageInput"
+        class="text-input"
+        placeholder="Me cansé, váyanse a la put que los parió... o grabá un audio"
+        rows="1"
+      ></textarea>
+      <div class="controls">
+        <select id="modeSelect" class="mode-select">
+          <option value="formal">💼 Formal/Trabajo</option>
+          <option value="amigable">😊 Amigable</option>
+          <option value="directo">💬 Directo</option>
+          <option value="diplomatico">🤝 Diplomático</option>
+        </select>
+        <div class="action-buttons">
+          <button class="record-btn" id="recordBtn" title="Grabar audio">
+            🎙
+          </button>
+          <button class="send-btn" id="sendBtn" title="Enviar mensaje">
+            ⚡
+          </button>
+        </div>
+      </div>
+      <div class="audio-status" id="audioStatus">
+        <span>🔴 Grabando...</span>
+        <span class="recording-timer" id="recordingTimer">00:00</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="audio-status" id="audioStatus">
+<span>
+🔴 Grabando...
+</span>
+<span class="recording-timer" id="recordingTimer">00:00</span>
+</div>
+</div>
+</div>
+<div class="loading" id="loading" style="display: none;">
+<div class="loading-dots">
+<div class="loading-dot"></div>
+<div class="loading-dot"></div>
+<div class="loading-dot"></div>
+</div>
+<span id="loadingText">Transformando mensaje...</span>
+</div>
+<div class="toast" id="toast"></div>
+
+<div id="suscripcionModal" class="modal-suscripcion" style="display: none;">
+  <div class="modal-content">
+    <span class="close-btn" onclick="cerrarModalSuscripcion()">&times;</span>
+    <h2>¡Sin usos disponibles!</h2>
+    <p>Para seguir usando la app, suscribite por solo $1999/mes.</p>
+    <button onclick="iniciarPago()" class="btn-suscripcion">💳 Suscribirme ahora</button>
+  </div>
+</div>
+<script src="main.js"></script>
 </body>
 </html>
