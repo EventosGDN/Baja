@@ -668,6 +668,16 @@ chatContainer.addEventListener('scroll', () => {
 
 
 
+// --- Parche mobile para asegurar que el input nunca quede tapado ---
+const messageInput = document.getElementById('messageInput');
+if (messageInput) {
+  messageInput.addEventListener('focus', () => {
+    setTimeout(() => {
+      messageInput.scrollIntoView({ behavior: "smooth", block: "center" });
+      if (typeof scrollChatToBottom === 'function') scrollChatToBottom();
+    }, 350);
+  });
+}
 
 
 //document.addEventListener('DOMContentLoaded', () => {

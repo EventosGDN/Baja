@@ -694,3 +694,20 @@ font-size: 1.1rem;
 #imagoSticky.visible {
   opacity: 1;
 }
+
+
+
+@media (max-width: 600px) {
+  body, html {
+    min-height: 100dvh;
+    min-height: -webkit-fill-available;
+    height: 100dvh;
+    height: -webkit-fill-available;
+  }
+  .main-chat-area, .chat-container {
+    max-height: 100dvh;
+  }
+  .input-section {
+    padding-bottom: env(safe-area-inset-bottom, 10px);
+  }
+}
