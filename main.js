@@ -630,10 +630,14 @@ async function iniciarPago() {
 }
 
 function mostrarModalSuscripcion() {
-  document.getElementById("suscripcionModal").style.display = "flex";
+  const inputSection = document.getElementById('inputSection');
+if (inputSection) inputSection.style.display = 'flex';
+
 }
 function cerrarModalSuscripcion() {
   document.getElementById("suscripcionModal").style.display = "none";
+  if (inputSection) inputSection.style.display = 'none';
+
 }
 const header = document.getElementById('appHeader');
 const imagoSticky = document.getElementById('imagoSticky');
