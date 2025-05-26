@@ -257,6 +257,15 @@ async function consumeUse() {
         updateUIForLimits();
         showToast('🚫 Sin usos disponibles. Suscribite para continuar');
         return false;
+        if (result.usesLeft === 0) {
+  setTimeout(() => {
+    showToast('🎯 ¡Último uso gratis! Suscribite para continuar');
+    updateUIForLimits(); // <-- asegurate de refrescar la UI
+  }, 2000);
+  // Refresca también al instante por si el usuario manda mensaje rápido
+  updateUIForLimits();
+}
+        
     }
 
     try {
