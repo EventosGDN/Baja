@@ -555,7 +555,9 @@ async function logout() {
         userInfo.style.display = 'flex';
         userName.textContent = user.displayName;
         userPhoto.src = user.photoURL;
-        document.getElementById('inputSection').style.display = 'flex';
+        const inputSection = document.getElementById('inputSection');
+if (inputSection) inputSection.style.display = 'flex';
+
         // NUEVO: Verificar límites del usuario
         await checkUserLimits();
         showToast(`¡Hola ${user.displayName}! 👋`);
