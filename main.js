@@ -1,7 +1,6 @@
-// Crear partículas de fuego
 function createFireParticles() {
   const container = document.getElementById('fireParticles');
-  if (!container) return; // Siempre chequeá que existe
+  if (!container) return;
   const particleCount = 20;
   for (let i = 0; i < particleCount; i++) {
     const particle = document.createElement('div');
@@ -12,8 +11,10 @@ function createFireParticles() {
     container.appendChild(particle);
   }
 }
-window.addEventListener('DOMContentLoaded', createFireParticles);
 
+document.addEventListener('DOMContentLoaded', () => {
+  createFireParticles();
+});
 // Variables para grabación de audio
 let mediaRecorder = null;
 let audioChunks = [];
