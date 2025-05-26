@@ -557,7 +557,8 @@ async function logout() {
         userName.textContent = user.displayName;
         userPhoto.src = user.photoURL;
         const inputSection = document.getElementById('inputSection');
-if (inputSection) inputSection.style.display = 'flex';
+        if (inputSection) inputSection.style.display = 'flex';
+
 
         // NUEVO: Verificar límites del usuario
         await checkUserLimits();
@@ -579,8 +580,8 @@ if (inputSection) inputSection.style.display = 'flex';
 });
     
 const inputSection = document.getElementById('inputSection');
-if (inputSection) {
-  inputSection.style.display = 'flex';
+if (inputSection) inputSection.style.display = 'flex';
+
 }
 
     // Event listeners para auth
@@ -635,6 +636,7 @@ async function iniciarPago() {
 function mostrarModalSuscripcion() {
   const inputSection = document.getElementById('inputSection');
 if (inputSection) inputSection.style.display = 'flex';
+
 
 }
 function cerrarModalSuscripcion() {
