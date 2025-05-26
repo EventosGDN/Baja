@@ -185,6 +185,7 @@ function updateUIForLimits() {
   if (!userLimits) return;
 
   let emptyState = chatContainer.querySelector('.empty-state');
+  const botonSuscripcion = document.getElementById('botonSuscripcion');
 
   // Si no existe, crearla de nuevo
   if (!emptyState) {
@@ -194,15 +195,20 @@ function updateUIForLimits() {
   }
 
   if (userLimits.canUse) {
+    // Usuario premium
     if (userLimits.subscriptionStatus === 'premium') {
       emptyState.innerHTML = '💎 Usuario Premium - Escribí tu mensaje o grabá un audio y te ayudo a "bajar un cambio"';
+      if (botonSuscripcion) botonSuscripcion.style.display = 'none';
     } else {
+      // Tiene usos gratis
       emptyState.innerHTML = `✨ Tenés ${userLimits.usesLeft} usos gratis - Escribí tu mensaje o grabá un audio`;
+      if (botonSuscripcion) botonSuscripcion.style.display = 'none';
     }
-    // Cierra el modal y resetea el control si vuelve a tener usos o premium
-    cerrarModalSuscripcion && cerrarModalSuscripcion();
+    // Si vuelve a tener usos o premium, asegurate de cerrar el modal si está abierto
+    if (typeof cerrarModalSuscripcion === "function") cerrarModalSuscripcion();
     modalMostrado = false;
   } else {
+    // No tiene usos: mostrar mensaje y botón flotante
     emptyState.innerHTML = `
       <div style="text-align: center;">
         <div style="font-size: 1.2rem; margin-bottom: 15px;">🚫 Sin usos disponibles</div>
@@ -222,13 +228,16 @@ function updateUIForLimits() {
         ">💳 Suscribirme ahora</button>
       </div>
     `;
-    // MOSTRAR MODAL SOLO UNA VEZ mientras esté sin usos
+    if (botonSuscripcion) botonSuscripcion.style.display = 'flex';
+
+    // Mostrar el modal automáticamente solo la primera vez
     if (!modalMostrado && typeof mostrarModalSuscripcion === "function") {
       mostrarModalSuscripcion();
       modalMostrado = true;
     }
   }
 }
+
 
 function scrollChatToBottom() {
   if (chatContainer) {
