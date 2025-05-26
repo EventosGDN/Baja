@@ -193,8 +193,8 @@ function updateUIForLimits() {
     emptyState.className = 'empty-state';
     chatContainer.appendChild(emptyState);
     setTimeout(() => {
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    }, 50);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  }, 50);
   }
 
   if (userLimits.canUse) {
@@ -205,43 +205,30 @@ function updateUIForLimits() {
     } else {
       // Tiene usos gratis
       emptyState.innerHTML = `✨ Tenés ${userLimits.usesLeft} usos gratis`;
-      // Si NO querés mostrar el botón de Mercado Pago cuando todavía hay usos, dejalo así:
+      <button onclick="iniciarPago()" class="boton-flotante-suscripcion">
+        <img src="ruta/logo-mercadopago.png" alt="Mercado Pago" class="img-boton-suscripcion" />
+        <span>Suscribirme ahora</span>
+      </button>
+      setTimeout(() => {
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }, 50);
       if (botonSuscripcion) botonSuscripcion.style.display = 'none';
     }
     // Si vuelve a tener usos o premium, asegurate de cerrar el modal si está abierto
     if (typeof cerrarModalSuscripcion === "function") cerrarModalSuscripcion();
     modalMostrado = false;
   } else {
-    // No tiene usos: mostrar mensaje y botón de Mercado Pago integrado (NO flotante)
-    emptyState.innerHTML = `
-      <div style="text-align: center;">
-        <div style="font-size: 1.2rem; margin-bottom: 15px;">🚫 Sin usos disponibles</div>
-        <div style="margin-bottom: 15px;">Te quedan 0 transformaciones gratuitas</div>
-        <div style="font-size: 0.9rem; opacity: 0.8;">
-          Suscribite por $1999/mes para uso ilimitado
-        </div>
-        <button onclick="iniciarPago()" class="btn-suscripcion-integrado" style="margin-top:14px;">
-          <img src="imagenes/mercadopago.png" alt="Mercado Pago">
-          Suscribirme ahora
-        </button>
-      </div>
-    `;
-    // OCULTÁ el botón flotante
-    if (botonSuscripcion) botonSuscripcion.style.display = 'none';
+    // No tiene usos: mostrar mensaje y botón flotante
+    emptyState.innerHTML = "";
+    if (botonSuscripcion) botonSuscripcion.style.display = 'flex';
 
-    // Mostramos el modal automáticamente solo la primera vez (opcional, podés comentar esto si no querés modal)
+    // Mostrar el modal automáticamente solo la primera vez
     if (!modalMostrado && typeof mostrarModalSuscripcion === "function") {
       mostrarModalSuscripcion();
       modalMostrado = true;
     }
-
-    // Empujá el chat abajo para que se vea bien el mensaje y el botón
-    setTimeout(() => {
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    }, 50);
   }
 }
-
 
 
 function scrollChatToBottom() {
