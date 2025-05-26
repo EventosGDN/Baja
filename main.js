@@ -209,25 +209,7 @@ function updateUIForLimits() {
     modalMostrado = false;
   } else {
     // No tiene usos: mostrar mensaje y botón flotante
-    emptyState.innerHTML = `
-      <div style="text-align: center;">
-        <div style="font-size: 1.2rem; margin-bottom: 15px;">🚫 Sin usos disponibles</div>
-        <div style="margin-bottom: 15px;">Te quedan 0 transformaciones gratuitas</div>
-        <div style="font-size: 0.9rem; opacity: 0.8;">
-          Suscribite por $1999/mes para uso ilimitado
-        </div>
-        <button onclick="iniciarPago()" style="
-          margin-top: 15px;
-          padding: 10px 20px;
-          border-radius: 25px;
-          background: #00c853;
-          color: white;
-          border: none;
-          font-weight: bold;
-          cursor: pointer;
-        ">💳 Suscribirme ahora</button>
-      </div>
-    `;
+    emptyState.innerHTML = "";
     if (botonSuscripcion) botonSuscripcion.style.display = 'flex';
 
     // Mostrar el modal automáticamente solo la primera vez
