@@ -205,15 +205,10 @@ function updateUIForLimits() {
     } else {
       // Tiene usos gratis
       emptyState.innerHTML = `✨ Tenés ${userLimits.usesLeft} usos gratis`;
-      <button onclick="iniciarPago()" class="boton-flotante-suscripcion">
-        <img src="ruta/logo-mercadopago.png" alt="Mercado Pago" class="img-boton-suscripcion" />
-        <span>Suscribirme ahora</span>
-      </button>
-      setTimeout(() => {
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    }, 50);
       if (botonSuscripcion) botonSuscripcion.style.display = 'none';
+      
     }
+    
     // Si vuelve a tener usos o premium, asegurate de cerrar el modal si está abierto
     if (typeof cerrarModalSuscripcion === "function") cerrarModalSuscripcion();
     modalMostrado = false;
