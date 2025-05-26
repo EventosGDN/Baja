@@ -676,3 +676,36 @@ document.addEventListener('DOMContentLoaded', () => {
     addMessage('Mensaje de prueba ' + (i+1), 'original');
   }
 });
+
+
+// Ajuste automático para visibilidad del input en mobile
+const adjustForKeyboard = () => {
+  // Pequeño timeout para esperar el resize real (algunos browsers lo retrasan)
+  setTimeout(() => {
+    // Fuerza scroll al bottom del chat (dentro del contenedor)
+    if (chatContainer) {
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+    // Si se puede, también hace scroll en la ventana
+    window.scrollTo(0, document.body.scrollHeight);
+  }, 120);
+};
+
+// Detectar cuando el textarea gana foco (probable aparición del teclado)
+messageInput.addEventListener('focus', adjustForKeyboard);
+
+// Si querés que también lo haga cuando se escribe, descomentá esto:
+// messageInput.addEventListener('input', adjustForKeyboard);
+
+// Opcional: cuando se envía el mensaje, también asegurate de que baja al bottom
+sendBtn.addEventListener('click', () => {
+  setTimeout(adjustForKeyboard, 180);
+});
+
+messageInput.addEventListener('focus', () => {
+  document.querySelector('.input-section').classList.add('keyboard-open');
+  adjustForKeyboard();
+});
+messageInput.addEventListener('blur', () => {
+  document.querySelector('.input-section').classList.remove('keyboard-open');
+});

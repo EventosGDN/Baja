@@ -766,3 +766,6 @@ font-size: 1.1rem;
   box-sizing: border-box;
 }
 
+.input-section.keyboard-open {
+  padding-bottom: 80px !important; /* ajustá según lo que veas en tu dispositivo */
+}
