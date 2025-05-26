@@ -192,6 +192,9 @@ function updateUIForLimits() {
     emptyState = document.createElement('div');
     emptyState.className = 'empty-state';
     chatContainer.appendChild(emptyState);
+    setTimeout(() => {
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  }, 50);
   }
 
   if (userLimits.canUse) {

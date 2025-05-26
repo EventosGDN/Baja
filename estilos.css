@@ -759,7 +759,7 @@ font-size: 1.1rem;
 .empty-state {
   flex: 0 0 auto !important;   /* No crecer, no estirar */
   align-self: center !important; /* Centrado pero no ocupa todo */
-  margin: 24px 0 0 0 !important; /* Solo espacio arriba */
+  margin: 20px 0 8px 0 !important; /* margen arriba para que no quede pegado al último mensaje */
   width: auto !important;
   max-width: 90%;
   min-height: unset !important;
