@@ -680,9 +680,9 @@ if (messageInput) {
 }
 
 
-document.addEventListener('DOMContentLoaded', () => {
+//document.addEventListener('DOMContentLoaded', () => {
   // Esto mete 10 mensajes de prueba al chat para que scrollee
-  for (let i = 0; i < 10; i++) {
-    addMessage('Mensaje de prueba ' + (i+1), 'original');
-  }
-});
+  //for (let i = 0; i < 10; i++) {
+    //addMessage('Mensaje de prueba ' + (i+1), 'original');
+  //}
+//});
