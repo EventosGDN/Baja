@@ -281,6 +281,7 @@ async function consumeUse() {
 
         if (response.ok) {
             const result = await response.json();
+            console.log("userLimits desde backend:", userLimits); // <--- AGREGÁ ESTO
             userLimits.usesLeft = result.usesLeft;
             updateUIForLimits();
 
