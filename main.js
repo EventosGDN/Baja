@@ -575,6 +575,11 @@ async function logout() {
     }
 });
     
+const inputSection = document.getElementById('inputSection');
+if (inputSection) {
+  inputSection.style.display = 'flex';
+}
+
     // Event listeners para auth
     loginBtn.addEventListener('click', loginWithGoogle);
     logoutBtn.addEventListener('click', logout);
