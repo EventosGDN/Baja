@@ -787,11 +787,20 @@ font-size: 1.1rem;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 14px;
   transition: opacity 0.3s, transform 0.2s;
   opacity: 0.92;
 }
 .boton-flotante-suscripcion:hover {
   opacity: 1;
   transform: scale(1.08);
+}
+
+
+.img-boton-suscripcion {
+  height: 32px;     /* Subí la altura si la querés más grande, ej: 32-38px */
+  width: auto;      /* Para que mantenga la proporción horizontal */
+  max-width: 80px;  /* O aumentalo si tu logo es más ancho (ej: 120px) */
+  object-fit: contain; /* No la deforma */
+  display: block;
 }
