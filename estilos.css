@@ -769,3 +769,29 @@ font-size: 1.1rem;
 .input-section.keyboard-open {
   padding-bottom: 80px !important; /* ajustá según lo que veas en tu dispositivo */
 }
+
+
+.boton-flotante-suscripcion {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #00c853;
+  color: #fff;
+  border: none;
+  border-radius: 32px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.23);
+  padding: 10px 22px 10px 12px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  z-index: 9999;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: opacity 0.3s, transform 0.2s;
+  opacity: 0.92;
+}
+.boton-flotante-suscripcion:hover {
+  opacity: 1;
+  transform: scale(1.08);
+}
