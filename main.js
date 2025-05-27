@@ -307,20 +307,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Ajuste visual para teclado móvil
 if ('visualViewport' in window) {
-  const chatContainer = document.getElementById('chatContainer');
+  const mainArea = document.querySelector('.main-chat-area');
 
-  visualViewport.addEventListener('resize', () => {
-    const offset = window.innerHeight - visualViewport.height;
-
-    // En vez de mover la caja, ajustamos el espacio visible del chat
-    if (chatContainer) {
-      chatContainer.style.paddingBottom = `${140 + offset}px`;
-      setTimeout(() => {
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-      }, 100);
+  function resizeForKeyboard() {
+    const heightDisponible = visualViewport.height;
+    if (mainArea) {
+      mainArea.style.height = `${heightDisponible}px`;
     }
-  });
+
+    const chatContainer = document.getElementById('chatContainer');
+    if (chatContainer) {
+      setTimeout(() => {
+        chatContainer.scrollTop = chatContainer.scrollHeight + 100;
+      }, 150);
+    }
+  }
+
+  visualViewport.addEventListener('resize', resizeForKeyboard);
+  resizeForKeyboard(); // ejecutarlo también al cargar
 }
+if ('visualViewport' in window) {
+  const mainArea = document.querySelector('.main-chat-area');
+
+  function resizeForKeyboard() {
+    const heightDisponible = visualViewport.height;
+    if (mainArea) {
+      mainArea.style.height = `${heightDisponible}px`;
+    }
+
+    const chatContainer = document.getElementById('chatContainer');
+    if (chatContainer) {
+      setTimeout(() => {
+        chatContainer.scrollTop = chatContainer.scrollHeight + 100;
+      }, 150);
+    }
+  }
+
+  visualViewport.addEventListener('resize', resizeForKeyboard);
+  resizeForKeyboard(); // ejecutarlo también al cargar
+}
+
 
 
 
