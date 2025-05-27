@@ -17,6 +17,7 @@
 body, html {
   background: #000 !important;
   position: relative !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 .fire-background {
