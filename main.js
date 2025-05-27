@@ -12,12 +12,18 @@ function hideLoading() {
 
 function scrollToLastMessage() {
   const chatContainer = document.getElementById('chatContainer');
-  if (chatContainer) {
-    requestAnimationFrame(() => {
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    });
+  const anchor = document.getElementById('scrollAnchor');
+
+  if (!chatContainer || !anchor) return;
+
+  const needsScroll = chatContainer.scrollHeight > chatContainer.clientHeight + 20;
+
+  if (needsScroll) {
+    anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }
+
+
 
 
 
