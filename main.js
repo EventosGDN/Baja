@@ -26,13 +26,14 @@ function addMessage(text, type, container) {
 
   container.appendChild(div);
 
-  // Esperá al próximo ciclo de renderizado y luego hacé scroll
+  // Espera al render y hace scroll
   requestAnimationFrame(() => {
     setTimeout(() => {
       container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
-    }, 50);
+    }, 80);
   });
 }
+
 
 
 function showToast(message) {
@@ -278,14 +279,20 @@ if ('visualViewport' in window) {
   const chatContainer = document.getElementById('chatContainer');
 
   visualViewport.addEventListener('resize', () => {
-    setTimeout(() => {
-      chatContainer.scrollTo({
-        top: chatContainer.scrollHeight,
-        behavior: 'smooth'
-      });
-    }, 150);
+    const offset = window.innerHeight - visualViewport.height;
+
+    // Solo hace scroll si hay teclado visible
+    if (offset > 0) {
+      setTimeout(() => {
+        chatContainer.scrollTo({
+          top: chatContainer.scrollHeight,
+          behavior: 'smooth'
+        });
+      }, 100);
+    }
   });
 }
+
 
 
 
