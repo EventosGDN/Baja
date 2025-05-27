@@ -278,14 +278,6 @@ if ('visualViewport' in window) {
   const chatContainer = document.getElementById('chatContainer');
 
   visualViewport.addEventListener('resize', () => {
-    if (!chatContainer) return;
-
-    const offset = window.innerHeight - visualViewport.height;
-
-    // Agregá padding dinámico al final del chat
-    chatContainer.style.paddingBottom = offset > 0 ? `${offset + 100}px` : '100px';
-
-    // Esperá que el navegador ajuste el layout y luego hacé scroll
     setTimeout(() => {
       chatContainer.scrollTo({
         top: chatContainer.scrollHeight,
@@ -294,6 +286,7 @@ if ('visualViewport' in window) {
     }, 150);
   });
 }
+
 
 
 
