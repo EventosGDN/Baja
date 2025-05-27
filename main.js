@@ -255,15 +255,16 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Ajuste visual para teclado móvil
-  function adjustForKeyboard() {
-    if (window.innerHeight < screen.height - 150) {
-      inputSection.style.transform = 'translateY(-150px)';
-    } else {
-      inputSection.style.transform = 'translateY(0)';
-    }
-  }
+  if ('visualViewport' in window) {
+  const inputSection = document.getElementById('inputSection');
 
-  window.addEventListener('resize', adjustForKeyboard);
+  visualViewport.addEventListener('resize', () => {
+    if (!inputSection) return;
+    const offset = window.innerHeight - visualViewport.height;
+    inputSection.style.transform = offset > 0 ? `translateY(-${offset}px)` : 'translateY(0)';
+  });
+}
+
 
   setupAuth(window.firebaseAuth, (user) => {
     showToast(`¡Hola ${user.displayName}! 👋`);
@@ -271,6 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
     chatContainer.innerHTML = `<div class="empty-state">Iniciá sesión para usar "Bajá un cambio"</div>`;
   });
 });
+
 
 function createFireParticles() {
   const container = document.getElementById('fireParticles');
