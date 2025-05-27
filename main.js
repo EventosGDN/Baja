@@ -131,22 +131,6 @@ async function processTextMessage(text, mode, chatContainer) {
 }
 
 
-// Crear partículas visuales de fuego
-function createFireParticles() {
-  const container = document.getElementById('fireParticles');
-  if (!container) return;
-
-  const particleCount = 20;
-  for (let i = 0; i < particleCount; i++) {
-    const particle = document.createElement('div');
-    particle.className = 'fire-particle';
-    particle.style.left = Math.random() * 100 + '%';
-    particle.style.animationDelay = Math.random() * 3 + 's';
-    particle.style.animationDuration = (2 + Math.random() * 2) + 's';
-    container.appendChild(particle);
-    
-  }
-}
 
 function setupAuth(firebaseAuth, onLogin, onLogout) {
   const auth = firebaseAuth.auth;
@@ -184,6 +168,20 @@ function setupAuth(firebaseAuth, onLogin, onLogout) {
       onLogout?.();
     }
   });
+}
+function createFireParticles() {
+  const container = document.getElementById('fireParticles');
+  if (!container) return;
+
+  const particleCount = 20;
+  for (let i = 0; i < particleCount; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'fire-particle';
+    particle.style.left = Math.random() * 100 + '%';
+    particle.style.animationDelay = Math.random() * 3 + 's';
+    particle.style.animationDuration = (2 + Math.random() * 2) + 's';
+    container.appendChild(particle);
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
