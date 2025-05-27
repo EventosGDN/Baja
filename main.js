@@ -301,9 +301,12 @@ if ('visualViewport' in window) {
 function scrollToLastMessage() {
   const chatContainer = document.getElementById('chatContainer');
   if (chatContainer) {
-    chatContainer.scrollTop = chatContainer.scrollHeight;
+    setTimeout(() => {
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }, 50); // Pequeña pausa para esperar el render
   }
 }
+
 
 // Crear partículas visuales de fuego
 function createFireParticles() {
