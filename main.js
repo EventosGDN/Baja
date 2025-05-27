@@ -11,11 +11,16 @@ function hideLoading() {
 }
 
 function scrollToLastMessage() {
-  const anchor = document.getElementById('scrollAnchor');
-  if (anchor) {
-    anchor.scrollIntoView({ behavior: 'smooth', block: 'end' });
-  }
+  const chatContainer = document.getElementById('chatContainer');
+  if (!chatContainer) return;
+
+  // Esperar a que el DOM actualice el scrollHeight
+  setTimeout(() => {
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  }, 100);
 }
+
+
 
 
 
