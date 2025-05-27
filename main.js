@@ -276,22 +276,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Ajuste visual para teclado móvil
 if ('visualViewport' in window) {
+  const inputSection = document.getElementById('inputSection');
   const chatContainer = document.getElementById('chatContainer');
 
   visualViewport.addEventListener('resize', () => {
     const offset = window.innerHeight - visualViewport.height;
 
-    // Solo hace scroll si hay teclado visible
-    if (offset > 0) {
-      setTimeout(() => {
-        chatContainer.scrollTo({
-          top: chatContainer.scrollHeight,
-          behavior: 'smooth'
-        });
-      }, 100);
-    }
+    // Mueve la caja de entrada
+    inputSection.style.transform = offset > 0 ? `translateY(-${offset}px)` : 'translateY(0)';
+
+    // También hace scroll para mostrar el último mensaje
+    setTimeout(() => {
+      chatContainer.scrollTo({
+        top: chatContainer.scrollHeight,
+        behavior: 'smooth'
+      });
+    }, 120);
   });
 }
+
 
 
 
