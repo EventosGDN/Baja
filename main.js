@@ -325,7 +325,6 @@ if (input) {
 
 if ('visualViewport' in window) {
   const spacer = document.getElementById('chatSpacer');
-  const scrollAnchor = document.getElementById('scrollAnchor');
 
   function ajustarParaTeclado() {
     const offset = window.innerHeight - visualViewport.height;
@@ -335,14 +334,16 @@ if ('visualViewport' in window) {
       spacer.style.height = `${alturaExtra}px`;
     }
 
-    if (scrollAnchor) {
-      scrollAnchor.scrollIntoView({ block: 'end', behavior: 'smooth' });
-    }
+    requestAnimationFrame(() => {
+      const scrollAnchor = document.getElementById('scrollAnchor');
+      if (scrollAnchor) scrollAnchor.scrollIntoView({ block: 'end' });
+    });
   }
 
   visualViewport.addEventListener('resize', ajustarParaTeclado);
   ajustarParaTeclado();
 }
+
 
 
 

@@ -413,13 +413,17 @@ html, body {
 }
 
 
+body.keyboard-open #inputSection {
+  transform: translateY(-300px);
+}
+
 @media (max-height: 600px) {
   body.keyboard-open #inputSection {
-    transform: translateY(-320px);
+    transform: translateY(-360px);
   }
 }
 
-body.keyboard-open #inputSection {
-  bottom: env(keyboard-inset-height, 300px); /* fallback para navegadores sin soporte */
-}
 
+#scrollAnchor {
+  scroll-margin-bottom: 200px; /* empuja un poco más arriba */
+}
