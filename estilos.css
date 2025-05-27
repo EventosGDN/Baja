@@ -124,15 +124,15 @@ body, html {
 }
 
 .main-chat-area {
-  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
+  height: 100vh;
   min-height: 0;
-  height: 100%;
   padding-top: 70px;     /* espacio para el header fijo */
   padding-bottom: 100px; /* espacio para el input fijo */
   background: transparent;
 }
+
 .chat-container {
   flex: 1 1 auto;
   overflow-y: auto;
@@ -385,4 +385,10 @@ body, html {
 
 .message-bubble:last-child {
   margin-bottom: 140px;
+}
+#chatContainer {
+  background: rgba(0, 255, 0, 0.1); /* VERDE CLARO para que se vea */
+  outline: 2px dashed lime;
+  min-height: 0 !important;
+  max-height: 100vh;
 }

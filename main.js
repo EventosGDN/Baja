@@ -14,9 +14,12 @@ function scrollToLastMessage() {
   const chatContainer = document.getElementById('chatContainer');
   if (!chatContainer) return;
 
-  // Esperar a que el DOM actualice el scrollHeight
+  console.log("ALTURA VISIBLE:", chatContainer.clientHeight);
+  console.log("ALTURA TOTAL:", chatContainer.scrollHeight);
+
   setTimeout(() => {
     chatContainer.scrollTop = chatContainer.scrollHeight;
+    console.log("DESPLAZADO A:", chatContainer.scrollTop);
   }, 100);
 }
 
