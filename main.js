@@ -325,23 +325,25 @@ if (input) {
 
 if ('visualViewport' in window) {
   const spacer = document.getElementById('chatSpacer');
+  const scrollAnchor = document.getElementById('scrollAnchor');
 
-  function ajustarParaTeclado() {
+  function ajustarAlturaVisible() {
     const offset = window.innerHeight - visualViewport.height;
-    const alturaExtra = Math.max(offset, 0) + 140;
+    const altura = 140 + Math.max(offset, 0); // ajustá según tu inputSection
 
     if (spacer) {
-      spacer.style.height = `${alturaExtra}px`;
+      spacer.style.height = `${altura}px`;
     }
 
     requestAnimationFrame(() => {
-      const scrollAnchor = document.getElementById('scrollAnchor');
-      if (scrollAnchor) scrollAnchor.scrollIntoView({ block: 'end' });
+      if (scrollAnchor) {
+        scrollAnchor.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }
     });
   }
 
-  visualViewport.addEventListener('resize', ajustarParaTeclado);
-  ajustarParaTeclado();
+  visualViewport.addEventListener('resize', ajustarAlturaVisible);
+  ajustarAlturaVisible();
 }
 
 
