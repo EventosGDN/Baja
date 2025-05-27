@@ -14,14 +14,11 @@ function scrollToLastMessage() {
   const chatContainer = document.getElementById('chatContainer');
   if (!chatContainer) return;
 
-  console.log("ALTURA VISIBLE:", chatContainer.clientHeight);
-  console.log("ALTURA TOTAL:", chatContainer.scrollHeight);
-
   setTimeout(() => {
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-    console.log("DESPLAZADO A:", chatContainer.scrollTop);
-  }, 100);
+    chatContainer.scrollTop = chatContainer.scrollHeight + 300;
+  }, 50);
 }
+
 
 
 
@@ -310,15 +307,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Ajuste visual para teclado móvil
   if ('visualViewport' in window) {
-    visualViewport.addEventListener('resize', () => {
-      const offset = window.innerHeight - visualViewport.height;
-      inputSection.style.transform = offset > 0 ? `translateY(-${offset}px)` : `translateY(0)`;
+  visualViewport.addEventListener('resize', () => {
+    const offset = window.innerHeight - visualViewport.height;
+    inputSection.style.transform = offset > 0 ? `translateY(-${offset}px)` : `translateY(0)`;
 
-      setTimeout(() => {
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-      }, 100);
-    });
-  }
+    // Forzar scroll con margen extra luego del cambio de viewport
+    setTimeout(() => {
+      const chatContainer = document.getElementById('chatContainer');
+      if (chatContainer) {
+        chatContainer.scrollTop = chatContainer.scrollHeight + 300;
+      }
+    }, 250); // darle tiempo a que el teclado termine de animarse
+  });
+}
+
 
   // Scroll automático cuando se agregan mensajes nuevos al chat
   const observer = new MutationObserver(() => {
