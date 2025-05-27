@@ -420,5 +420,6 @@ html, body {
 }
 
 body.keyboard-open #inputSection {
-  bottom: env(safe-area-inset-bottom, 0);
+  bottom: env(keyboard-inset-height, 300px); /* fallback para navegadores sin soporte */
 }
+
