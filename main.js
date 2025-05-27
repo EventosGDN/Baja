@@ -169,3 +169,22 @@ document.addEventListener('DOMContentLoaded', () => {
     chatContainer.innerHTML = `<div class="empty-state">Iniciá sesión para usar "Bajá un cambio"</div>`;
   });
 });
+
+function createFireParticles() {
+  const container = document.getElementById('fireParticles');
+  if (!container) return;
+
+  const particleCount = 20;
+  for (let i = 0; i < particleCount; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'fire-particle';
+    particle.style.left = Math.random() * 100 + '%';
+    particle.style.animationDelay = Math.random() * 3 + 's';
+    particle.style.animationDuration = (2 + Math.random() * 2) + 's';
+    container.appendChild(particle);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  createFireParticles();
+});
