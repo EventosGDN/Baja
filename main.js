@@ -327,25 +327,28 @@ if ('visualViewport' in window) {
   resizeForKeyboard(); // ejecutarlo también al cargar
 }
 if ('visualViewport' in window) {
+  const spacer = document.getElementById('chatSpacer');
   const chatContainer = document.getElementById('chatContainer');
 
-  function ajustarAlturaParaTeclado() {
+  function ajustarEspacioTeclado() {
+    const baseAltura = 140;
     const offset = window.innerHeight - visualViewport.height;
 
-    // Ajustar espacio dinámicamente debajo
-    if (chatContainer) {
-      chatContainer.style.paddingBottom = `${140 + offset}px`;
+    if (spacer) {
+      spacer.style.height = `${baseAltura + offset}px`;
+    }
 
-      // Hacer scroll hacia el fondo con margen adicional
+    if (chatContainer) {
       setTimeout(() => {
-        chatContainer.scrollTop = chatContainer.scrollHeight + 200;
-      }, 150);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }, 100);
     }
   }
 
-  visualViewport.addEventListener('resize', ajustarAlturaParaTeclado);
-  ajustarAlturaParaTeclado(); // también al cargar
+  visualViewport.addEventListener('resize', ajustarEspacioTeclado);
+  ajustarEspacioTeclado();
 }
+
 
 
 
