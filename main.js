@@ -328,24 +328,28 @@ if ('visualViewport' in window) {
 }
 if ('visualViewport' in window) {
   const mainArea = document.querySelector('.main-chat-area');
+  const chatContainer = document.getElementById('chatContainer');
 
-  function resizeForKeyboard() {
-    const heightDisponible = visualViewport.height;
+  function ajustarAlturaVisible() {
+    const altura = window.innerHeight;
+
     if (mainArea) {
-      mainArea.style.height = `${heightDisponible}px`;
+      mainArea.style.height = `${altura}px`;
     }
 
-    const chatContainer = document.getElementById('chatContainer');
     if (chatContainer) {
       setTimeout(() => {
-        chatContainer.scrollTop = chatContainer.scrollHeight + 100;
-      }, 150);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }, 100);
     }
   }
 
-  visualViewport.addEventListener('resize', resizeForKeyboard);
-  resizeForKeyboard(); // ejecutarlo también al cargar
+  visualViewport.addEventListener('resize', ajustarAlturaVisible);
+  window.addEventListener('resize', ajustarAlturaVisible);
+  ajustarAlturaVisible();
 }
+
+
 
 
 
