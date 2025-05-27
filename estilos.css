@@ -95,6 +95,12 @@ body, html {
   align-items: center;
   gap: 12px;
 }
+#imagoSticky {
+  display: none;
+}
+.header.oculto ~ #imagoSticky {
+  display: block;
+}
 .user-photo {
   width: 32px; height: 32px;
   border-radius: 50%;

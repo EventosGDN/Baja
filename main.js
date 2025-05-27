@@ -154,6 +154,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const sendBtn = document.getElementById('sendBtn');
   const modeSelect = document.getElementById('modeSelect');
   const chatContainer = document.getElementById('chatContainer');
+  const header = document.getElementById('appHeader');
+  const imago = document.getElementById('imagoSticky');
 
   sendBtn.addEventListener('click', () => {
     const text = messageInput.value.trim();
@@ -163,12 +165,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  messageInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendBtn.click();
+    }
+  });
+
   setupAuth(window.firebaseAuth, (user) => {
     showToast(`¡Hola ${user.displayName}! 👋`);
   }, () => {
     chatContainer.innerHTML = `<div class="empty-state">Iniciá sesión para usar "Bajá un cambio"</div>`;
   });
+
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 80) {
+      header.classList.add('oculto');
+      imago.style.display = 'block';
+    } else {
+      header.classList.remove('oculto');
+      imago.style.display = 'none';
+    }
+  });
 });
+
 
 function createFireParticles() {
   const container = document.getElementById('fireParticles');
