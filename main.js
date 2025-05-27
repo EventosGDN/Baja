@@ -26,13 +26,14 @@ function addMessage(text, type, container) {
 
   container.appendChild(div);
 
-  // Espera al render y hace scroll
+  // Scroll final usando scroll-margin-bottom para que no quede oculto
   requestAnimationFrame(() => {
     setTimeout(() => {
-      container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+      div.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }, 80);
   });
 }
+
 
 
 
