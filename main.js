@@ -291,27 +291,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 // Ajuste visual para teclado móvil
-if ('visualViewport' in window) {
-  const inputSection = document.getElementById('inputSection');
+  // Ajuste visual para teclado móvil
+  if ('visualViewport' in window) {
+    visualViewport.addEventListener('resize', () => {
+      const offset = window.innerHeight - visualViewport.height;
+      inputSection.style.transform = offset > 0 ? `translateY(-${offset}px)` : `translateY(0)`;
 
-  visualViewport.addEventListener('resize', () => {
-    const offset = window.innerHeight - visualViewport.height;
+      setTimeout(() => {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }, 100);
+    });
+  }
 
-    inputSection.style.transform = offset > 0 ? `translateY(-${offset}px)` : `translateY(0)`;
-
-    setTimeout(scrollToLastMessage, 150);
-  });
-}
-
-// Forzar scroll al último mensaje del chat
-function scrollToLastMessage() {
-  const chatContainer = document.getElementById('chatContainer');
-  if (chatContainer) {
+  // Scroll automático cuando se agregan mensajes nuevos al chat
+  const observer = new MutationObserver(() => {
     requestAnimationFrame(() => {
       chatContainer.scrollTop = chatContainer.scrollHeight;
     });
-  }
-}
+  });
+  observer.observe(chatContainer, { childList: true, subtree: true });
+
+
 
 
 
