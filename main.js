@@ -208,3 +208,74 @@ function createFireParticles() {
 document.addEventListener('DOMContentLoaded', () => {
   createFireParticles();
 });
+
+let mediaRecorder;
+let audioChunks = [];
+let recordingInterval;
+const recordBtn = document.getElementById('recordBtn');
+const audioStatus = document.getElementById('audioStatus');
+const recordingTimer = document.getElementById('recordingTimer');
+
+recordBtn.addEventListener('click', async () => {
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    mediaRecorder.stop();
+    return;
+  }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaRecorder = new MediaRecorder(stream);
+    audioChunks = [];
+
+    mediaRecorder.ondataavailable = (event) => {
+      if (event.data.size > 0) audioChunks.push(event.data);
+    };
+
+    mediaRecorder.onstop = async () => {
+      clearInterval(recordingInterval);
+      recordingTimer.textContent = '00:00';
+      recordBtn.classList.remove('recording');
+      audioStatus.classList.remove('show');
+
+      const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+      const formData = new FormData();
+      formData.append('audio', audioBlob, 'audio.webm');
+
+      try {
+        showLoading('Transcribiendo audio...');
+        const response = await fetch('/api/transcribe', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) throw new Error('Error al transcribir');
+        const data = await response.json();
+        hideLoading();
+
+        if (data.transcription?.trim()) {
+          processTextMessage(data.transcription.trim(), modeSelect.value, chatContainer);
+        } else {
+          showToast('❌ No se pudo transcribir el audio');
+        }
+      } catch (err) {
+        hideLoading();
+        showToast('❌ Error al transcribir audio');
+      }
+    };
+
+    mediaRecorder.start();
+    recordBtn.classList.add('recording');
+    audioStatus.classList.add('show');
+
+    let seconds = 0;
+    recordingInterval = setInterval(() => {
+      seconds++;
+      const mins = String(Math.floor(seconds / 60)).padStart(2, '0');
+      const secs = String(seconds % 60).padStart(2, '0');
+      recordingTimer.textContent = `${mins}:${secs}`;
+    }, 1000);
+
+  } catch (error) {
+    showToast('❌ No se pudo acceder al micrófono');
+  }
+});
