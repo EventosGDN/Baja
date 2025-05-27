@@ -26,13 +26,10 @@ function addMessage(text, type, container) {
 
   container.appendChild(div);
 
-  // Scroll final usando scroll-margin-bottom para que no quede oculto
-  requestAnimationFrame(() => {
-    setTimeout(() => {
-      div.scrollIntoView({ behavior: 'smooth', block: 'end' });
-    }, 80);
-  });
+  // Scroll directo sin animación, más confiable
+  container.scrollTop = container.scrollHeight;
 }
+
 
 
 
@@ -277,24 +274,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Ajuste visual para teclado móvil
 if ('visualViewport' in window) {
-  const inputSection = document.getElementById('inputSection');
   const chatContainer = document.getElementById('chatContainer');
 
   visualViewport.addEventListener('resize', () => {
-    const offset = window.innerHeight - visualViewport.height;
-
-    // Mueve la caja de entrada
-    inputSection.style.transform = offset > 0 ? `translateY(-${offset}px)` : 'translateY(0)';
-
-    // También hace scroll para mostrar el último mensaje
+    // Al abrir teclado, forzamos scroll al fondo
     setTimeout(() => {
-      chatContainer.scrollTo({
-        top: chatContainer.scrollHeight,
-        behavior: 'smooth'
-      });
-    }, 120);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }, 100);
   });
 }
+
 
 
 

@@ -389,4 +389,5 @@ body, html {
 
 .message-bubble:last-child {
   scroll-margin-bottom: 120px; /* espacio virtual debajo */
+  margin-bottom: 140px;
 }
