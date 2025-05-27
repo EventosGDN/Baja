@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const audioStatus = document.getElementById('audioStatus');
   const recordingTimer = document.getElementById('recordingTimer');
   createFireParticles();
-  });
+
   let mediaRecorder;
   let audioChunks = [];
   let recordingInterval;
@@ -273,6 +273,16 @@ document.addEventListener('DOMContentLoaded', () => {
       showToast('❌ No se pudo acceder al micrófono');
     }
   });
+
+  // ✅ Agregá esta línea para que funcione el botón de Google
+  setupAuth(window.firebaseAuth, (user) => {
+    showToast(`¡Hola ${user.displayName}! 👋`);
+  }, () => {
+    chatContainer.innerHTML = `<div class="empty-state">Iniciá sesión para usar "Bajá un cambio"</div>`;
+  });
+
+}); // <-- Cierre correcto de DOMContentLoaded
+
 
 // Ajuste visual para teclado móvil
 if ('visualViewport' in window) {
