@@ -275,14 +275,23 @@ document.addEventListener('DOMContentLoaded', () => {
   // Ajuste visual para teclado móvil
 if ('visualViewport' in window) {
   const chatContainer = document.getElementById('chatContainer');
+  const inputSection = document.getElementById('inputSection');
 
   visualViewport.addEventListener('resize', () => {
-    // Al abrir teclado, forzamos scroll al fondo
+    if (!chatContainer || !inputSection) return;
+
+    const offset = window.innerHeight - visualViewport.height;
+
+    // Mover caja visualmente
+    inputSection.style.transform = offset > 0 ? `translateY(-${offset}px)` : 'translateY(0)';
+
+    // Scroll hacia el fondo cuando se abre el teclado
     setTimeout(() => {
       chatContainer.scrollTop = chatContainer.scrollHeight;
-    }, 100);
+    }, 120);
   });
 }
+
 
 
 
