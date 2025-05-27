@@ -15,10 +15,12 @@
 }
 
 body, html {
-  background: #000 !important;
-  position: relative !important;
+  background: #000;
+  position: relative;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
+
+
 
 .fire-background {
   position: fixed;
@@ -26,7 +28,7 @@ body, html {
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: -1;
+  z-index: 0; /* no -1 */
   pointer-events: none;
   background: radial-gradient(circle at center bottom,
     rgba(255, 100, 0, 0.3) 0%,
@@ -135,7 +137,7 @@ body, html {
   flex: 1 1 auto;
   overflow-y: auto;
   padding: 20px;
-  padding-bottom: 120px;
+  padding-bottom: 140px;
   display: flex;
   flex-direction: column;
 }
@@ -193,12 +195,12 @@ body, html {
 .text-input {
   background: rgba(51, 51, 51, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 25px;
-  padding: 10px 12px;
+  border-radius: 15px;
+  padding: 7px 30px;
   color: var(--color-white);
   font-size: 1rem;
   resize: none;
-  min-height: 36px;
+  min-height: 60px;
   max-height: 80px;
 }
 .mode-select {
@@ -382,6 +384,5 @@ body, html {
 }
 
 .message-bubble:last-child {
-  scroll-margin-bottom: 120px; /* espacio virtual debajo */
   margin-bottom: 140px;
 }

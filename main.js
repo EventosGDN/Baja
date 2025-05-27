@@ -27,7 +27,7 @@ function addMessage(text, type, container) {
   container.appendChild(div);
 
   // Scroll directo sin animación, más confiable
-  container.scrollTop = container.scrollHeight;
+  scrollToLastMessage();
 }
 
 
@@ -102,6 +102,7 @@ async function processTextMessage(text, mode, chatContainer) {
 
   addMessage(text, 'original', chatContainer);
   showLoading('Transformando mensaje...');
+  scrollToLastMessage();
 
   try {
     const response = await transformText(text, mode);
@@ -110,15 +111,15 @@ async function processTextMessage(text, mode, chatContainer) {
     hideLoading();
 
     addMessage(response.result, 'transformed', chatContainer);
-    scrollToBottom(chatContainer); // nuevo scroll robusto
+    scrollToLastMessage();
 
     if (response.hasSecondOption && response.secondOption) {
       setTimeout(() => {
         addMessage(response.connector, 'connector', chatContainer);
-        scrollToBottom(chatContainer);
+        scrollToLastMessage();
         setTimeout(() => {
           addMessage(response.secondOption, 'transformed', chatContainer);
-          scrollToBottom(chatContainer);
+          scrollToLastMessage();
         }, 800);
       }, 1200);
     }
@@ -178,7 +179,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const recordBtn = document.getElementById('recordBtn');
   const audioStatus = document.getElementById('audioStatus');
   const recordingTimer = document.getElementById('recordingTimer');
-
+  createFireParticles();
+  });
   let mediaRecorder;
   let audioChunks = [];
   let recordingInterval;
@@ -272,43 +274,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Ajuste visual para teclado móvil
+// Ajuste visual para teclado móvil
 if ('visualViewport' in window) {
-  const chatContainer = document.getElementById('chatContainer');
   const inputSection = document.getElementById('inputSection');
 
   visualViewport.addEventListener('resize', () => {
-    if (!chatContainer || !inputSection) return;
-
     const offset = window.innerHeight - visualViewport.height;
 
-    // Mover caja visualmente
-    inputSection.style.transform = offset > 0 ? `translateY(-${offset}px)` : 'translateY(0)';
+    inputSection.style.transform = offset > 0 ? `translateY(-${offset}px)` : `translateY(0)`;
 
-    // Scroll hacia el fondo cuando se abre el teclado
-    setTimeout(() => {
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    }, 120);
+    setTimeout(scrollToLastMessage, 150);
   });
 }
 
+// Forzar scroll al último mensaje del chat
+function scrollToLastMessage() {
+  const chatContainer = document.getElementById('chatContainer');
+  if (chatContainer) {
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  }
+}
 
-
-
-
-
-
-
-
-
-  setupAuth(window.firebaseAuth, (user) => {
-    showToast(`¡Hola ${user.displayName}! 👋`);
-  }, () => {
-    chatContainer.innerHTML = `<div class="empty-state">Iniciá sesión para usar "Bajá un cambio"</div>`;
-  });
-});
-
-
+// Crear partículas visuales de fuego
 function createFireParticles() {
   const container = document.getElementById('fireParticles');
   if (!container) return;
@@ -321,25 +308,11 @@ function createFireParticles() {
     particle.style.animationDelay = Math.random() * 3 + 's';
     particle.style.animationDuration = (2 + Math.random() * 2) + 's';
     container.appendChild(particle);
+    
   }
 }
 
+// Ejecutar partículas al cargar la página
 document.addEventListener('DOMContentLoaded', () => {
   createFireParticles();
 });
-
-let mediaRecorder;
-let audioChunks = [];
-let recordingInterval;
-const recordBtn = document.getElementById('recordBtn');
-const audioStatus = document.getElementById('audioStatus');
-const recordingTimer = document.getElementById('recordingTimer');
-
-
-function scrollToBottom(container) {
-  requestAnimationFrame(() => {
-    setTimeout(() => {
-      container.scrollTop = container.scrollHeight;
-    }, 80);
-  });
-}
