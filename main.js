@@ -14,9 +14,9 @@ function scrollToLastMessage() {
   const chatContainer = document.getElementById('chatContainer');
   if (!chatContainer) return;
 
-  requestAnimationFrame(() => {
-    chatContainer.scrollTop = chatContainer.scrollHeight - chatContainer.clientHeight;
-  });
+  setTimeout(() => {
+    chatContainer.scrollTop = 9999999;
+  }, 50);
 }
 
 
