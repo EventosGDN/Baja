@@ -23,7 +23,10 @@ function addMessage(text, type, container) {
     ? text
     : `<div class="message-label">Texto bajando un cambio</div>${text}<button class="copy-btn" onclick="copyMessage(this)">📋</button>`;
   container.appendChild(div);
-  container.scrollTop = container.scrollHeight;
+  setTimeout(() => {
+  container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+}, 100);
+
 }
 
 function showToast(message) {
