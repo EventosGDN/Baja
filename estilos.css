@@ -21,6 +21,7 @@ html, body {
   background: #000;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   overflow: hidden;
+  position: relative;
 }
 
 
@@ -413,16 +414,6 @@ html, body {
   max-height: 100vh;
 }
 
-
-body.keyboard-open #inputSection {
-  transform: translateY(-300px);
-}
-
-@media (max-height: 600px) {
-  body.keyboard-open #inputSection {
-    transform: translateY(-360px);
-  }
-}
 
 
 #scrollAnchor {

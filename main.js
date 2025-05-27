@@ -215,18 +215,14 @@ document.addEventListener('DOMContentLoaded', () => {
   createFireParticles();
   createFireParticles();
 
-// 🔽 Pegá esto abajo 🔽
 const input = document.getElementById('messageInput');
 
 if (input) {
   input.addEventListener('focus', () => {
-    document.body.classList.add('keyboard-open');
-  });
-
-  input.addEventListener('blur', () => {
-    document.body.classList.remove('keyboard-open');
+    window.scrollTo(0, 0); // Previene que el navegador empuje el viewport al enfocar
   });
 }
+
 
 
   let mediaRecorder;
