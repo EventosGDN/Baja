@@ -327,27 +327,26 @@ if ('visualViewport' in window) {
   resizeForKeyboard(); // ejecutarlo también al cargar
 }
 if ('visualViewport' in window) {
-  const mainArea = document.querySelector('.main-chat-area');
   const chatContainer = document.getElementById('chatContainer');
 
-  function ajustarAlturaVisible() {
-    const altura = window.innerHeight;
+  function ajustarAlturaParaTeclado() {
+    const offset = window.innerHeight - visualViewport.height;
 
-    if (mainArea) {
-      mainArea.style.height = `${altura}px`;
-    }
-
+    // Ajustar espacio dinámicamente debajo
     if (chatContainer) {
+      chatContainer.style.paddingBottom = `${140 + offset}px`;
+
+      // Hacer scroll hacia el fondo con margen adicional
       setTimeout(() => {
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-      }, 100);
+        chatContainer.scrollTop = chatContainer.scrollHeight + 200;
+      }, 150);
     }
   }
 
-  visualViewport.addEventListener('resize', ajustarAlturaVisible);
-  window.addEventListener('resize', ajustarAlturaVisible);
-  ajustarAlturaVisible();
+  visualViewport.addEventListener('resize', ajustarAlturaParaTeclado);
+  ajustarAlturaParaTeclado(); // también al cargar
 }
+
 
 
 
