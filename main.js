@@ -12,12 +12,13 @@ function hideLoading() {
 
 function scrollToLastMessage() {
   const chatContainer = document.getElementById('chatContainer');
-  if (!chatContainer) return;
-
-  setTimeout(() => {
-    chatContainer.scrollTop = chatContainer.scrollHeight + 300;
-  }, 50);
+  if (chatContainer) {
+    requestAnimationFrame(() => {
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    });
+  }
 }
+
 
 
 
@@ -308,27 +309,28 @@ document.addEventListener('DOMContentLoaded', () => {
     // Ajuste visual para teclado móvil
 
 if ('visualViewport' in window) {
-  const spacer = document.getElementById('chatSpacer');
   const chatContainer = document.getElementById('chatContainer');
+  const chatSpacer = document.getElementById('chatSpacer');
 
-  function actualizarAlturaChat() {
+  function ajustarParaTeclado() {
     const baseAltura = 140;
     const offset = window.innerHeight - visualViewport.height;
 
-    if (spacer) {
-      spacer.style.height = `${baseAltura + offset}px`;
+    if (chatSpacer) {
+      chatSpacer.style.height = `${baseAltura + offset}px`;
     }
 
     if (chatContainer) {
-      setTimeout(() => {
-        chatContainer.scrollTop = chatContainer.scrollHeight + 100;
-      }, 100);
+      requestAnimationFrame(() => {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      });
     }
   }
 
-  visualViewport.addEventListener('resize', actualizarAlturaChat);
-  actualizarAlturaChat(); // también al cargar
+  visualViewport.addEventListener('resize', ajustarParaTeclado);
+  ajustarParaTeclado();
 }
+
 
 
 
