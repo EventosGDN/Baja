@@ -86,19 +86,27 @@ async function transcribeAudio(audioBlob, mode, chatContainer) {
 }
 
 async function processTextMessage(text, mode, chatContainer) {
-  const canUse = true; // Simulación: reemplazar por verificación real si usás control de uso
+  const canUse = true; // Si usás control de uso, reemplazá por lógica real
   if (!canUse) return;
 
+  // Remover solo una vez el mensaje vacío inicial
   const emptyState = chatContainer.querySelector('.empty-state');
   if (emptyState) emptyState.remove();
 
+  // Agrega el mensaje original solo una vez aquí
   addMessage(text, 'original', chatContainer);
   showLoading('Transformando mensaje...');
 
   try {
     const response = await transformText(text, mode);
+    console.log('Respuesta de API:', response); // útil para depurar duplicados
+
     hideLoading();
+
+    // Agrega primer reformulación
     addMessage(response.result, 'transformed', chatContainer);
+
+    // Agrega segunda opción si existe
     if (response.hasSecondOption && response.secondOption) {
       setTimeout(() => {
         addMessage(response.connector, 'connector', chatContainer);
@@ -107,11 +115,16 @@ async function processTextMessage(text, mode, chatContainer) {
         }, 800);
       }, 1200);
     }
+
+    // Auto-scroll al final después de transformación
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+
   } catch (error) {
     hideLoading();
     showToast('❌ Error al transformar el mensaje: ' + error.message);
   }
 }
+
 
 function setupAuth(firebaseAuth, onLogin, onLogout) {
   const auth = firebaseAuth.auth;
