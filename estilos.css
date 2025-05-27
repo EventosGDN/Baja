@@ -36,11 +36,6 @@ body, html {
     rgba(0, 0, 0, 1) 100%);
 }
 
-.main-chat-area, .chat-container {
-  background: transparent !important;
-  padding-top: 70px !important; /* Ajustable según el alto del header */
-}
-
 .fire-particles {
   position: absolute;
   width: 100%; height: 100%;
@@ -132,17 +127,20 @@ body, html {
   flex-direction: column;
   min-height: 0;
   height: 100%;
-  padding-bottom: 100px; /* valor igual o mayor al alto de .input-section */
+  padding-top: 70px;     /* espacio para el header fijo */
+  padding-bottom: 100px; /* espacio para el input fijo */
+  background: transparent;
 }
 .chat-container {
   flex: 1 1 auto;
+  overflow-y: auto;
   padding: 20px;
   max-width: 600px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  overflow-y: auto;
+  background: transparent;
 }
 .message-bubble {
   padding: 15px 18px;
