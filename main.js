@@ -156,12 +156,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const chatContainer = document.getElementById('chatContainer');
   const header = document.getElementById('appHeader');
   const imago = document.getElementById('imagoSticky');
+  const inputSection = document.getElementById('inputSection');
+  const recordBtn = document.getElementById('recordBtn');
+  const audioStatus = document.getElementById('audioStatus');
+  const recordingTimer = document.getElementById('recordingTimer');
+
+  let mediaRecorder;
+  let audioChunks = [];
+  let recordingInterval;
 
   sendBtn.addEventListener('click', () => {
     const text = messageInput.value.trim();
     if (text) {
       processTextMessage(text, modeSelect.value, chatContainer);
       messageInput.value = '';
+      chatContainer.scrollTop = chatContainer.scrollHeight;
     }
   });
 
@@ -170,12 +179,6 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       sendBtn.click();
     }
-  });
-
-  setupAuth(window.firebaseAuth, (user) => {
-    showToast(`¡Hola ${user.displayName}! 👋`);
-  }, () => {
-    chatContainer.innerHTML = `<div class="empty-state">Iniciá sesión para usar "Bajá un cambio"</div>`;
   });
 
   window.addEventListener('scroll', () => {
@@ -187,8 +190,87 @@ document.addEventListener('DOMContentLoaded', () => {
       imago.style.display = 'none';
     }
   });
-});
 
+  recordBtn.addEventListener('click', async () => {
+    if (mediaRecorder && mediaRecorder.state === 'recording') {
+      mediaRecorder.stop();
+      return;
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorder = new MediaRecorder(stream);
+      audioChunks = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) audioChunks.push(event.data);
+      };
+
+      mediaRecorder.onstop = async () => {
+        clearInterval(recordingInterval);
+        recordingTimer.textContent = '00:00';
+        recordBtn.classList.remove('recording');
+        audioStatus.classList.remove('show');
+
+        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        const formData = new FormData();
+        formData.append('audio', audioBlob, 'audio.webm');
+
+        try {
+          showLoading('Transcribiendo audio...');
+          const response = await fetch('/api/transcribe', {
+            method: 'POST',
+            body: formData,
+          });
+
+          if (!response.ok) throw new Error('Error al transcribir');
+          const data = await response.json();
+          hideLoading();
+
+          if (data.transcription?.trim()) {
+            processTextMessage(data.transcription.trim(), modeSelect.value, chatContainer);
+          } else {
+            showToast('❌ No se pudo transcribir el audio');
+          }
+        } catch {
+          hideLoading();
+          showToast('❌ Error al transcribir audio');
+        }
+      };
+
+      mediaRecorder.start();
+      recordBtn.classList.add('recording');
+      audioStatus.classList.add('show');
+
+      let seconds = 0;
+      recordingInterval = setInterval(() => {
+        seconds++;
+        const mins = String(Math.floor(seconds / 60)).padStart(2, '0');
+        const secs = String(seconds % 60).padStart(2, '0');
+        recordingTimer.textContent = `${mins}:${secs}`;
+      }, 1000);
+    } catch {
+      showToast('❌ No se pudo acceder al micrófono');
+    }
+  });
+
+  // Ajuste visual para teclado móvil
+  function adjustForKeyboard() {
+    if (window.innerHeight < screen.height - 150) {
+      inputSection.style.transform = 'translateY(-150px)';
+    } else {
+      inputSection.style.transform = 'translateY(0)';
+    }
+  }
+
+  window.addEventListener('resize', adjustForKeyboard);
+
+  setupAuth(window.firebaseAuth, (user) => {
+    showToast(`¡Hola ${user.displayName}! 👋`);
+  }, () => {
+    chatContainer.innerHTML = `<div class="empty-state">Iniciá sesión para usar "Bajá un cambio"</div>`;
+  });
+});
 
 function createFireParticles() {
   const container = document.getElementById('fireParticles');
