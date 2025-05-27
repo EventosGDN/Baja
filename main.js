@@ -306,20 +306,23 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
     // Ajuste visual para teclado móvil
-  if ('visualViewport' in window) {
+if ('visualViewport' in window) {
+  const chatContainer = document.getElementById('chatContainer');
+
   visualViewport.addEventListener('resize', () => {
     const offset = window.innerHeight - visualViewport.height;
-    inputSection.style.transform = offset > 0 ? `translateY(-${offset}px)` : `translateY(0)`;
 
-    // Forzar scroll con margen extra luego del cambio de viewport
-    setTimeout(() => {
-      const chatContainer = document.getElementById('chatContainer');
-      if (chatContainer) {
-        chatContainer.scrollTop = chatContainer.scrollHeight + 300;
-      }
-    }, 250); // darle tiempo a que el teclado termine de animarse
+    // En vez de mover la caja, ajustamos el espacio visible del chat
+    if (chatContainer) {
+      chatContainer.style.paddingBottom = `${140 + offset}px`;
+      setTimeout(() => {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }, 100);
+    }
   });
 }
+
+
 
 
   // Scroll automático cuando se agregan mensajes nuevos al chat
