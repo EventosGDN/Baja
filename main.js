@@ -273,25 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Scroll automático cuando se agregan mensajes nuevos al chat
-  const observer = new MutationObserver(() => {
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-  });
-  observer.observe(chatContainer, { childList: true });
-
-});
-
-
-  // ✅ Agregá esta línea para que funcione el botón de Google
-  setupAuth(window.firebaseAuth, (user) => {
-    showToast(`¡Hola ${user.displayName}! 👋`);
-  }, () => {
-    chatContainer.innerHTML = `<div class="empty-state">Iniciá sesión para usar "Bajá un cambio"</div>`;
-  });
-
-
-// Ajuste visual para teclado móvil
-  // Ajuste visual para teclado móvil
+    // Ajuste visual para teclado móvil
   if ('visualViewport' in window) {
     visualViewport.addEventListener('resize', () => {
       const offset = window.innerHeight - visualViewport.height;
@@ -309,10 +291,14 @@ document.addEventListener('DOMContentLoaded', () => {
       chatContainer.scrollTop = chatContainer.scrollHeight;
     });
   });
-  observer.observe(chatContainer, { childList: true, subtree: true });
+  observer.observe(chatContainer, { childList: true, subtree: false });
 
-
-
+  // Configurar autenticación de Google
+  setupAuth(window.firebaseAuth, (user) => {
+    showToast(`¡Hola ${user.displayName}! 👋`);
+  }, () => {
+    chatContainer.innerHTML = `<div class="empty-state">Iniciá sesión para usar "Bajá un cambio"</div>`;
+  });
 
 
 // Crear partículas visuales de fuego
@@ -331,8 +317,5 @@ function createFireParticles() {
     
   }
 }
+}); // <- Cierre correcto del DOMContentLoaded
 
-// Ejecutar partículas al cargar la página
-document.addEventListener('DOMContentLoaded', () => {
-  createFireParticles();
-});
