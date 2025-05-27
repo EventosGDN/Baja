@@ -411,3 +411,15 @@ html, body {
   min-height: 0 !important;
   max-height: 100vh;
 }
+
+
+body.keyboard-open #inputSection {
+  transform: translateY(-300px); /* Ajustá si necesitás más desplazamiento */
+}
+
+@media (max-height: 600px) {
+  body.keyboard-open #inputSection {
+    transform: translateY(-320px);
+  }
+}
+

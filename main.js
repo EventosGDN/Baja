@@ -213,6 +213,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const audioStatus = document.getElementById('audioStatus');
   const recordingTimer = document.getElementById('recordingTimer');
   createFireParticles();
+  createFireParticles();
+
+// 🔽 Pegá esto abajo 🔽
+const input = document.getElementById('messageInput');
+
+if (input) {
+  input.addEventListener('focus', () => {
+    document.body.classList.add('keyboard-open');
+  });
+
+  input.addEventListener('blur', () => {
+    document.body.classList.remove('keyboard-open');
+  });
+}
+
 
   let mediaRecorder;
   let audioChunks = [];
@@ -348,5 +363,5 @@ if ('visualViewport' in window) {
   });
 
 
-}); // <- Cierre correcto del DOMContentLoaded
+}); 
 
