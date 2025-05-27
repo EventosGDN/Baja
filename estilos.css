@@ -139,13 +139,16 @@ html, body {
 
 #inputSection {
   position: fixed;
-  bottom: 0;
   left: 0;
   right: 0;
-  background: #000; /* o el color que usás de fondo */
-  z-index: 1000;
-  padding: 10px 20px;
+  bottom: 0;
+  background: #000;
+  padding: 12px 16px;
+  z-index: 9999;
+  box-shadow: 0 -1px 5px rgba(0,0,0,0.2);
+  border-top: 1px solid #333;
 }
+
 
 
 .chat-container {
