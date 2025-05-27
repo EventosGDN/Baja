@@ -306,33 +306,14 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
     // Ajuste visual para teclado móvil
-if ('visualViewport' in window) {
-  const mainArea = document.querySelector('.main-chat-area');
 
-  function resizeForKeyboard() {
-    const heightDisponible = visualViewport.height;
-    if (mainArea) {
-      mainArea.style.height = `${heightDisponible}px`;
-    }
-
-    const chatContainer = document.getElementById('chatContainer');
-    if (chatContainer) {
-      setTimeout(() => {
-        chatContainer.scrollTop = chatContainer.scrollHeight + 100;
-      }, 150);
-    }
-  }
-
-  visualViewport.addEventListener('resize', resizeForKeyboard);
-  resizeForKeyboard(); // ejecutarlo también al cargar
-}
 if ('visualViewport' in window) {
   const spacer = document.getElementById('chatSpacer');
   const chatContainer = document.getElementById('chatContainer');
 
-  function ajustarEspacioTeclado() {
-    const offset = window.innerHeight - visualViewport.height;
+  function actualizarAlturaChat() {
     const baseAltura = 140;
+    const offset = window.innerHeight - visualViewport.height;
 
     if (spacer) {
       spacer.style.height = `${baseAltura + offset}px`;
@@ -341,19 +322,13 @@ if ('visualViewport' in window) {
     if (chatContainer) {
       setTimeout(() => {
         chatContainer.scrollTop = chatContainer.scrollHeight + 100;
-      }, 150);
+      }, 100);
     }
   }
 
-  visualViewport.addEventListener('resize', ajustarEspacioTeclado);
-  ajustarEspacioTeclado();
+  visualViewport.addEventListener('resize', actualizarAlturaChat);
+  actualizarAlturaChat(); // también al cargar
 }
-
-
-
-
-
-
 
 
 
