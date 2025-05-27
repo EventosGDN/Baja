@@ -331,8 +331,8 @@ if ('visualViewport' in window) {
   const chatContainer = document.getElementById('chatContainer');
 
   function ajustarEspacioTeclado() {
-    const baseAltura = 140;
     const offset = window.innerHeight - visualViewport.height;
+    const baseAltura = 140;
 
     if (spacer) {
       spacer.style.height = `${baseAltura + offset}px`;
@@ -340,8 +340,8 @@ if ('visualViewport' in window) {
 
     if (chatContainer) {
       setTimeout(() => {
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-      }, 100);
+        chatContainer.scrollTop = chatContainer.scrollHeight + 100;
+      }, 150);
     }
   }
 
