@@ -279,10 +279,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   visualViewport.addEventListener('resize', () => {
     if (!inputSection) return;
+
     const offset = window.innerHeight - visualViewport.height;
     inputSection.style.transform = offset > 0 ? `translateY(-${offset}px)` : 'translateY(0)';
+
+    // 🧠 También empujá el scroll del chat
+    scrollToBottom(document.getElementById('chatContainer'));
   });
 }
+
 
 
   setupAuth(window.firebaseAuth, (user) => {
@@ -319,11 +324,11 @@ const recordBtn = document.getElementById('recordBtn');
 const audioStatus = document.getElementById('audioStatus');
 const recordingTimer = document.getElementById('recordingTimer');
 
+
 function scrollToBottom(container) {
-  setTimeout(() => {
-    container.scrollTo({
-      top: container.scrollHeight,
-      behavior: 'smooth'
-    });
-  }, 100);
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      container.scrollTop = container.scrollHeight;
+    }, 80);
+  });
 }
