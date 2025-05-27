@@ -309,28 +309,25 @@ document.addEventListener('DOMContentLoaded', () => {
     // Ajuste visual para teclado móvil
 
 if ('visualViewport' in window) {
-  const chatContainer = document.getElementById('chatContainer');
   const chatSpacer = document.getElementById('chatSpacer');
+  const scrollAnchor = document.getElementById('scrollAnchor');
 
-  function ajustarParaTeclado() {
-    const baseAltura = 140;
+  function ajustarLayout() {
+    const base = 140;
     const offset = window.innerHeight - visualViewport.height;
 
     if (chatSpacer) {
-      chatSpacer.style.height = `${baseAltura + offset}px`;
+      chatSpacer.style.height = `${base + offset}px`;
     }
 
-    if (chatContainer) {
-      requestAnimationFrame(() => {
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-      });
+    if (scrollAnchor) {
+      scrollAnchor.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
   }
 
-  visualViewport.addEventListener('resize', ajustarParaTeclado);
-  ajustarParaTeclado();
+  visualViewport.addEventListener('resize', ajustarLayout);
+  ajustarLayout();
 }
-
 
 
 
