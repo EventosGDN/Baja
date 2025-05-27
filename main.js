@@ -276,17 +276,26 @@ document.addEventListener('DOMContentLoaded', () => {
   // Ajuste visual para teclado móvil
   if ('visualViewport' in window) {
   const inputSection = document.getElementById('inputSection');
+  const chatContainer = document.getElementById('chatContainer');
 
   visualViewport.addEventListener('resize', () => {
-    if (!inputSection) return;
+    if (!inputSection || !chatContainer) return;
 
     const offset = window.innerHeight - visualViewport.height;
+
+    // Mueve la caja de entrada si el teclado ocupa espacio
     inputSection.style.transform = offset > 0 ? `translateY(-${offset}px)` : 'translateY(0)';
 
-    // 🧠 También empujá el scroll del chat
-    scrollToBottom(document.getElementById('chatContainer'));
+    // Forzá scroll al fondo después del cambio visual
+    setTimeout(() => {
+      chatContainer.scrollTo({
+        top: chatContainer.scrollHeight,
+        behavior: 'smooth'
+      });
+    }, 120); // tiempo suficiente para que el viewport se estabilice
   });
 }
+
 
 
 
