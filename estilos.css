@@ -132,6 +132,7 @@ body, html {
   flex-direction: column;
   min-height: 0;
   height: 100%;
+  padding-bottom: 100px; /* valor igual o mayor al alto de .input-section */
 }
 .chat-container {
   flex: 1 1 auto;
