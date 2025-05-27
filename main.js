@@ -11,12 +11,10 @@ function hideLoading() {
 }
 
 function scrollToLastMessage() {
-  const chatContainer = document.getElementById('chatContainer');
-  if (!chatContainer) return;
-
-  setTimeout(() => {
-    chatContainer.scrollTop = 9999999;
-  }, 50);
+  const anchor = document.getElementById('scrollAnchor');
+  if (anchor) {
+    anchor.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }
 }
 
 
