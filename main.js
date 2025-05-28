@@ -102,6 +102,20 @@ async function transcribeAudio(audioBlob, mode, chatContainer) {
   }
 }
 
+function scrollToLastMessage(extra = 180) {
+  const chatContainer = document.getElementById('chatContainer');
+  requestAnimationFrame(() => {
+    chatContainer.scrollTo({
+      top: chatContainer.scrollHeight + extra,
+      behavior: 'smooth'
+    });
+  });
+}
+
+
+
+
+
 async function processTextMessage(text, mode, chatContainer) {
   const canUse = true;
   if (!canUse) return;
@@ -137,6 +151,7 @@ async function processTextMessage(text, mode, chatContainer) {
     showToast('❌ Error al transformar el mensaje: ' + error.message);
   }
 }
+
 
 
 
@@ -327,16 +342,6 @@ if ('visualViewport' in window) {
 
   visualViewport.addEventListener('resize', ajustarAlturaVisible);
   ajustarAlturaVisible();
-}
-
-function scrollToLastMessage(extra = 180) {
-  const chatContainer = document.getElementById('chatContainer');
-  requestAnimationFrame(() => {
-    chatContainer.scrollTo({
-      top: chatContainer.scrollHeight + extra,
-      behavior: 'smooth'
-    });
-  });
 }
 
 
