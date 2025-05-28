@@ -32,13 +32,17 @@ function addMessage(text, type, container) {
     ? text
     : `<div class="message-label">Texto bajando un cambio</div>${text}<button class="copy-btn" onclick="copyMessage(this)">📋</button>`;
 
-container.appendChild(div);
+  container.appendChild(div);
 
-const scrollAnchor = document.getElementById('scrollAnchor');
-if (scrollAnchor) container.appendChild(scrollAnchor);
-scrollToLastMessage();
+  // Mover el scrollAnchor al final siempre
+  const scrollAnchor = document.getElementById('scrollAnchor');
+  if (scrollAnchor) {
+    container.appendChild(scrollAnchor);
+  }
 
+  scrollToLastMessage(160); // más margen por si el teclado o el input tapa
 }
+
 
 
 function showToast(message) {
