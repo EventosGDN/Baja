@@ -125,8 +125,8 @@ async function processTextMessage(text, mode, chatContainer) {
         setTimeout(() => {
           addMessage(response.secondOption, 'transformed', chatContainer);
           scrollToLastMessage();
-        }, 800);
-      }, 1200);
+        }, 1000);
+      }, 1400);
     }
 
   } catch (error) {
