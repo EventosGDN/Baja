@@ -215,15 +215,11 @@ document.addEventListener('DOMContentLoaded', () => {
   createFireParticles();
   createFireParticles();
 
-const input = document.getElementById('messageInput');
-
-if (input) {
-  input.addEventListener('focus', () => {
-    window.scrollTo(0, 0); // Previene que el navegador empuje el viewport al enfocar
+  if (messageInput) {
+  messageInput.addEventListener('focus', () => {
+    window.scrollTo(0, 0);
   });
 }
-
-
 
   let mediaRecorder;
   let audioChunks = [];
