@@ -10,7 +10,7 @@ function hideLoading() {
   loading.style.display = 'none';
 }
 
-function scrollToLastMessage(extra = 100) {
+function scrollToLastMessage(extra = 120) {
   const chatContainer = document.getElementById('chatContainer');
   chatContainer.scrollTo({
     top: chatContainer.scrollHeight + extra,
@@ -32,10 +32,12 @@ function addMessage(text, type, container) {
     ? text
     : `<div class="message-label">Texto bajando un cambio</div>${text}<button class="copy-btn" onclick="copyMessage(this)">📋</button>`;
 
-  container.appendChild(div);
+container.appendChild(div);
 
-  // Scroll directo sin animación, más confiable
-  scrollToLastMessage();
+const scrollAnchor = document.getElementById('scrollAnchor');
+if (scrollAnchor) container.appendChild(scrollAnchor);
+scrollToLastMessage();
+
 }
 
 
@@ -333,7 +335,8 @@ if ('visualViewport' in window) {
   // Scroll automático cuando se agregan mensajes nuevos al chat
   const observer = new MutationObserver(() => {
     requestAnimationFrame(() => {
-      chatContainer.scrollTop = chatContainer.scrollHeight;
+      scrollToLastMessage(120);
+
     });
   });
   observer.observe(chatContainer, { childList: true, subtree: false });
