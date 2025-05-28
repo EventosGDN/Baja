@@ -34,18 +34,19 @@ function addMessage(text, type, container) {
 
   container.appendChild(div);
 
-  // Mover scrollAnchor al final
+  // Mover scrollAnchor justo antes del spacer
   const scrollAnchor = document.getElementById('scrollAnchor');
   const spacer = document.getElementById('chatSpacer');
   if (scrollAnchor && spacer) {
     container.insertBefore(scrollAnchor, spacer);
   }
 
-  // Hacer scroll sobre el mensaje real, cuando todo ya está pintado
+  // Hacer scroll al mensaje agregado
   setTimeout(() => {
     div.scrollIntoView({ behavior: 'smooth', block: 'end' });
   }, 200);
 }
+
 
 
 
