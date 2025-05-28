@@ -371,3 +371,4 @@ if ('serviceWorker' in navigator) {
       .catch(err => console.error('❌ Error al registrar Service Worker:', err));
   });
 }
+
