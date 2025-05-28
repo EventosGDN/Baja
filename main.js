@@ -127,7 +127,6 @@ async function processTextMessage(text, mode, chatContainer) {
     hideLoading();
 
     addMessage(response.result, 'transformed', chatContainer);
-    scrollToLastMessage();
 
     if (response.hasSecondOption && response.secondOption) {
       setTimeout(() => {
@@ -337,18 +336,16 @@ if ('visualViewport' in window) {
   ajustarAlturaVisible();
 }
 
-
-
-
-
- /*  // Scroll automático cuando se agregan mensajes nuevos al chat
-  const observer = new MutationObserver(() => {
-    requestAnimationFrame(() => {
-      scrollToLastMessage(120);
-
+function scrollToLastMessage(extra = 180) {
+  const chatContainer = document.getElementById('chatContainer');
+  requestAnimationFrame(() => {
+    chatContainer.scrollTo({
+      top: chatContainer.scrollHeight + extra,
+      behavior: 'smooth'
     });
   });
-  observer.observe(chatContainer, { childList: true, subtree: false }); */
+}
+
 
   // Configurar autenticación de Google
   setupAuth(window.firebaseAuth, (user) => {
