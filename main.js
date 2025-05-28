@@ -32,22 +32,24 @@ function addMessage(text, type, container) {
     ? text
     : `<div class="message-label">Texto bajando un cambio</div>${text}<button class="copy-btn" onclick="copyMessage(this)">📋</button>`;
 
-  container.appendChild(div);
+    container.appendChild(div);
 
-  // Mover el scrollAnchor al final siempre
-  container.appendChild(div);
+  // Insertar buffer después del último mensaje real
+  const buffer = document.createElement('div');
+  buffer.className = 'message-buffer';
+  container.appendChild(buffer);
 
-  // Mover scrollAnchor antes del spacer
+  // Mover scrollAnchor si querés mantenerlo
   const scrollAnchor = document.getElementById('scrollAnchor');
   const spacer = document.getElementById('chatSpacer');
   if (scrollAnchor && spacer) {
     container.insertBefore(scrollAnchor, spacer);
   }
 
-  // Scroll directamente al globo recién insertado
+  // Scroll final
   setTimeout(() => {
-    div.scrollIntoView({ behavior: 'smooth', block: 'end' });
-  }, 10);
+    buffer.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, 20);
 }
 
 
