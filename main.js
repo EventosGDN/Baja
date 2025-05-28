@@ -10,13 +10,6 @@ function hideLoading() {
   loading.style.display = 'none';
 }
 
-/* function scrollToLastMessage(extra = 180) {
-  const chatContainer = document.getElementById('chatContainer');
-  chatContainer.scrollTo({
-    top: chatContainer.scrollHeight + extra,
-    behavior: 'smooth'
-  });
-} */
 
 function addMessage(text, type, container) {
   const div = document.createElement('div');
