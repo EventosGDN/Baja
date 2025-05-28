@@ -10,7 +10,7 @@ function hideLoading() {
   loading.style.display = 'none';
 }
 
-function scrollToLastMessage(extra = 120) {
+function scrollToLastMessage(extra = 180) {
   const chatContainer = document.getElementById('chatContainer');
   chatContainer.scrollTo({
     top: chatContainer.scrollHeight + extra,
@@ -35,12 +35,13 @@ function addMessage(text, type, container) {
   container.appendChild(div);
 
   // Mover el scrollAnchor al final siempre
-  const scrollAnchor = document.getElementById('scrollAnchor');
-  if (scrollAnchor) {
-    container.appendChild(scrollAnchor);
+    const scrollAnchor = document.getElementById('scrollAnchor');
+  const spacer = document.getElementById('chatSpacer');
+  if (scrollAnchor && spacer) {
+    container.insertBefore(scrollAnchor, spacer);
   }
 
-  scrollToLastMessage(160); // más margen por si el teclado o el input tapa
+  scrollToLastMessage(180); // aumentamos un poco más
 }
 
 
