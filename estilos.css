@@ -422,10 +422,3 @@ html, body {
 #scrollAnchor {
   scroll-margin-bottom: 200px; /* empuja un poco más arriba */
 }
-
-.message-buffer {
-  height: 60px; /* ajustá según lo que falte para ver completo el globo */
-  width: 100%;
-  opacity: 0;
-  pointer-events: none;
-}

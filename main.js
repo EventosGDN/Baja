@@ -10,13 +10,13 @@ function hideLoading() {
   loading.style.display = 'none';
 }
 
-function scrollToLastMessage(extra = 180) {
+/* function scrollToLastMessage(extra = 180) {
   const chatContainer = document.getElementById('chatContainer');
   chatContainer.scrollTo({
     top: chatContainer.scrollHeight + extra,
     behavior: 'smooth'
   });
-}
+} */
 
 function addMessage(text, type, container) {
   const div = document.createElement('div');
@@ -32,21 +32,19 @@ function addMessage(text, type, container) {
     ? text
     : `<div class="message-label">Texto bajando un cambio</div>${text}<button class="copy-btn" onclick="copyMessage(this)">📋</button>`;
 
-     container.appendChild(div);
+  container.appendChild(div);
 
-  // Eliminar cualquier .message-buffer anterior si quedó
-  const previousBuffer = container.querySelector('.message-buffer');
-  if (previousBuffer) previousBuffer.remove();
+  // Mover scrollAnchor al final
+  const scrollAnchor = document.getElementById('scrollAnchor');
+  const spacer = document.getElementById('chatSpacer');
+  if (scrollAnchor && spacer) {
+    container.insertBefore(scrollAnchor, spacer);
+  }
 
-  // Insertar nuevo buffer real
-  const buffer = document.createElement('div');
-  buffer.className = 'message-buffer';
-  container.appendChild(buffer);
-
-  // Scroll asegurado sobre el buffer recién creado
+  // Hacer scroll sobre el mensaje real, cuando todo ya está pintado
   setTimeout(() => {
-    buffer.scrollIntoView({ behavior: 'smooth', block: 'end' });
-  }, 150);
+    div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, 200);
 }
 
 
