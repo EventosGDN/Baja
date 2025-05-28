@@ -10,22 +10,13 @@ function hideLoading() {
   loading.style.display = 'none';
 }
 
-function scrollToLastMessage() {
+function scrollToLastMessage(extra = 100) {
   const chatContainer = document.getElementById('chatContainer');
-  if (chatContainer) {
-    requestAnimationFrame(() => {
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    });
-  }
+  chatContainer.scrollTo({
+    top: chatContainer.scrollHeight + extra,
+    behavior: 'smooth'
+  });
 }
-
-
-
-
-
-
-
-
 
 function addMessage(text, type, container) {
   const div = document.createElement('div');
@@ -46,9 +37,6 @@ function addMessage(text, type, container) {
   // Scroll directo sin animación, más confiable
   scrollToLastMessage();
 }
-
-
-
 
 
 function showToast(message) {
