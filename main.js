@@ -35,13 +35,19 @@ function addMessage(text, type, container) {
   container.appendChild(div);
 
   // Mover el scrollAnchor al final siempre
-    const scrollAnchor = document.getElementById('scrollAnchor');
+  container.appendChild(div);
+
+  // Mover scrollAnchor antes del spacer
+  const scrollAnchor = document.getElementById('scrollAnchor');
   const spacer = document.getElementById('chatSpacer');
   if (scrollAnchor && spacer) {
     container.insertBefore(scrollAnchor, spacer);
   }
 
-  scrollToLastMessage(180); // aumentamos un poco más
+  // Scroll directamente al globo recién insertado
+  setTimeout(() => {
+    div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, 10);
 }
 
 
