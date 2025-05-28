@@ -32,24 +32,21 @@ function addMessage(text, type, container) {
     ? text
     : `<div class="message-label">Texto bajando un cambio</div>${text}<button class="copy-btn" onclick="copyMessage(this)">📋</button>`;
 
-    container.appendChild(div);
+     container.appendChild(div);
 
-  // Insertar buffer después del último mensaje real
+  // Eliminar cualquier .message-buffer anterior si quedó
+  const previousBuffer = container.querySelector('.message-buffer');
+  if (previousBuffer) previousBuffer.remove();
+
+  // Insertar nuevo buffer real
   const buffer = document.createElement('div');
   buffer.className = 'message-buffer';
   container.appendChild(buffer);
 
-  // Mover scrollAnchor si querés mantenerlo
-  const scrollAnchor = document.getElementById('scrollAnchor');
-  const spacer = document.getElementById('chatSpacer');
-  if (scrollAnchor && spacer) {
-    container.insertBefore(scrollAnchor, spacer);
-  }
-
-  // Scroll final
+  // Scroll asegurado sobre el buffer recién creado
   setTimeout(() => {
     buffer.scrollIntoView({ behavior: 'smooth', block: 'end' });
-  }, 20);
+  }, 150);
 }
 
 
@@ -345,14 +342,14 @@ if ('visualViewport' in window) {
 
 
 
-  // Scroll automático cuando se agregan mensajes nuevos al chat
+ /*  // Scroll automático cuando se agregan mensajes nuevos al chat
   const observer = new MutationObserver(() => {
     requestAnimationFrame(() => {
       scrollToLastMessage(120);
 
     });
   });
-  observer.observe(chatContainer, { childList: true, subtree: false });
+  observer.observe(chatContainer, { childList: true, subtree: false }); */
 
   // Configurar autenticación de Google
   setupAuth(window.firebaseAuth, (user) => {

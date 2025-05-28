@@ -383,6 +383,7 @@ html, body {
   }
   .chat-container {
     padding: 15px;
+    padding-bottom: 140px; /* ← RESTAURAR el padding */
   }
   .input-section {
     padding: 15px;
