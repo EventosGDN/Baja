@@ -34,10 +34,6 @@ function addMessage(text, type, container) {
     container.insertBefore(scrollAnchor, spacer);
   }
 
-  // Hacer scroll al mensaje agregado
-  setTimeout(() => {
-    div.scrollIntoView({ behavior: 'smooth', block: 'end' });
-  }, 200);
 }
 
 
