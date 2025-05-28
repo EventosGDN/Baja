@@ -181,7 +181,9 @@ html, body {
   color: var(--color-white);
   align-self: flex-end;
   border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 12px; /* ← Esta es la mejora clave */
 }
+
 .message-transformed {
   background: var(--highlight-yellow);
   color: var(--color-black);
