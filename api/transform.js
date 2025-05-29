@@ -31,6 +31,8 @@ module.exports = async function handler(req, res) {
             formal: `Sos un experto en comunicación profesional argentina.
 Transformá este mensaje enojado o frustrado en algo apropiado para el ámbito laboral, pero mantené la firmeza y la intención del mensaje original.
 
+IMPORTANTE: Quien escribe es la persona que siente esa emoción. Reformulá en primera persona como si estuviera intentando expresarse con respeto y profesionalismo, no como un tercero evaluando.
+
 INSTRUCCIONES IMPORTANTES:
 - Si el mensaje es complejo, podés dar 2 versiones diferentes separadas EXACTAMENTE por " ||| " 
 - NO uses etiquetas como "Opción 1:", "Opción 2:", "Primera opción:", etc.
