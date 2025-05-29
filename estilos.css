@@ -418,10 +418,11 @@ html, body {
   margin-bottom: 140px;
 }
 #chatContainer {
-  /* background: rgba(0, 255, 0, 0.1); /* VERDE CLARO para que se vea */ */
+  /* background: rgba(0, 255, 0, 0.1);  VERDE CLARO para que se vea */
   min-height: 0 !important;
   max-height: 100vh;
 }
+
 
 .message-reflection {
   background: rgba(0, 128, 128, 0.08);
