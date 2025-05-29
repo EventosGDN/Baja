@@ -42,6 +42,8 @@ Mensaje a transformar: "${prompt}"
 
 Transformá directamente, sin explicaciones ni etiquetas:`,
 
+
+
             amigable: `Transformá este mensaje en algo más amigable y cálido, manteniendo el estilo argentino.
 Suavizá la forma pero no pierdas la intención ni la firmeza del mensaje original.
 
