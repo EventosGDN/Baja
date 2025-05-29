@@ -423,3 +423,12 @@ html, body {
 #scrollAnchor {
   scroll-margin-bottom: 200px; /* empuja un poco más arriba */
 }
+
+body,
+html,
+.main-chat-area,
+#chatContainer,
+#inputSection,
+.input-section {
+  background: transparent !important;
+}
