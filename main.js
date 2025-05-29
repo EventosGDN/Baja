@@ -137,6 +137,8 @@ async function processTextMessage(text, mode, chatContainer) {
   addMessage(text, 'original', chatContainer);
   showLoading('Transformando mensaje...');
   scrollToLastMessage();
+  header.classList.add('oculto');
+  
 
   try {
     const response = await transformText(text, mode);
