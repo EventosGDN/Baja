@@ -134,25 +134,23 @@ function scrollToLastMessage(extra = 180) {
 
 
 async function processTextMessage(text, mode, chatContainer) {
+  const emptyState = chatContainer.querySelector('.empty-state');
+  const reflectionEnabled = document.getElementById('reflectionToggle')?.checked;
   const canUse = true;
   if (!canUse) return;
 
-  const emptyState = chatContainer.querySelector('.empty-state');
   if (emptyState) emptyState.remove();
 
   addMessage(text, 'original', chatContainer);
   showLoading('Transformando mensaje...');
   scrollToLastMessage();
   header.classList.add('oculto');
-  
 
   try {
-    const response = await transformText(text, mode, reflectionEnabled);
-    const reflectionEnabled = document.getElementById('reflectionToggle')?.checked;
+    const response = await transformText(text, mode);
     console.log('Respuesta de API:', response);
 
     hideLoading();
-
     addMessage(response.result, 'transformed', chatContainer);
 
     if (response.hasSecondOption && response.secondOption) {
@@ -167,30 +165,27 @@ async function processTextMessage(text, mode, chatContainer) {
     }
 
     if (reflectionEnabled) {
-  const reflectionPrompt = `Actuás como un guía empático y contenedor. Recibiste el siguiente mensaje de una persona que atraviesa un momento emocional intenso y busca claridad emocional. Tu tarea es ofrecerle una reflexión breve y contenedora.
+      const reflectionPrompt = `Actuás como un guía empático y contenedor. Recibiste el siguiente mensaje de una persona que atraviesa un momento emocional intenso y busca claridad emocional. Brindale una reflexión breve y contenedora.\n\nMensaje: "${text}"`;
 
-Mensaje: "${text}"`;
+      const reflectionRes = await fetch('/api/transform', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: reflectionPrompt, mode: 'reflexion' })
+      });
 
-  const reflectionRes = await fetch('/api/transform', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt: reflectionPrompt, mode: 'reflexion' })
-  });
-
-  if (reflectionRes.ok) {
-    const reflection = await reflectionRes.json();
-    addMessage(reflection.result, 'reflection', chatContainer);
-    scrollToLastMessage();
-  }
-}
-
-
+      if (reflectionRes.ok) {
+        const reflection = await reflectionRes.json();
+        addMessage(reflection.result, 'reflection', chatContainer);
+        scrollToLastMessage();
+      }
+    }
 
   } catch (error) {
     hideLoading();
     showToast('❌ Error al transformar el mensaje: ' + error.message);
   }
 }
+
 
 
 
