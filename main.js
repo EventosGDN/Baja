@@ -136,77 +136,68 @@ function scrollToLastMessage(extra = 180) {
 
 
 async function processTextMessage(text, mode, chatContainer) {
-  const emptyState = chatContainer.querySelector('.empty-state');
   const reflectionEnabled = document.getElementById('reflectionToggle')?.checked;
-  const canUse = true;
-  if (!canUse) return;
-
+  const emptyState = chatContainer.querySelector('.empty-state');
   if (emptyState) emptyState.remove();
 
   addMessage(text, 'original', chatContainer);
-  showLoading('Transformando mensaje...');
   scrollToLastMessage();
   header.classList.add('oculto');
 
-  try {
-  const reflectionEnabled = document.getElementById('reflectionToggle')?.checked;
-  const response = await transformText(text, mode);
+  // 🌿 Si está activado el Modo Reflexión, solo mostrar reflexión y salir
+  if (reflectionEnabled) {
+    showLoading('Reflexionando...');
 
-  console.log('Respuesta de API:', response);
-  hideLoading();
+    try {
+      const reflectionPrompt = `Actuás como un guía empático y contenedor. Recibiste el siguiente mensaje de una persona que atraviesa un momento emocional intenso. Brindale una reflexión breve que le ayude a calmarse, comprender mejor lo que siente, o tomar perspectiva: "${text}"`;
 
-  addMessage(response.result, 'transformed', chatContainer);
+      const reflectionRes = await fetch('/api/transform', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: reflectionPrompt, mode: 'reflexion' })
+      });
 
-  if (response.hasSecondOption && response.secondOption) {
-    setTimeout(() => {
-      addMessage(response.connector, 'connector', chatContainer);
-      scrollToLastMessage();
-      setTimeout(() => {
-        addMessage(response.secondOption, 'transformed', chatContainer);
+      hideLoading();
+
+      if (reflectionRes.ok) {
+        const reflection = await reflectionRes.json();
+        addMessage(reflection.result, 'reflection', chatContainer);
         scrollToLastMessage();
-
-        // Solo después de todo, mostramos reflexión si está activada
-        if (reflectionEnabled) {
-          const reflectionPrompt = `Actuás como un guía empático y contenedor. Recibiste el siguiente mensaje de una persona que atraviesa un momento emocional intenso. Brindale una reflexión breve que le ayude a calmarse, comprender mejor lo que siente, o tomar perspectiva: "${text}"`;
-
-          fetch('/api/transform', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ prompt: reflectionPrompt, mode: 'reflexion' })
-          })
-          .then(res => res.json())
-          .then(reflection => {
-            addMessage(reflection.result, 'reflection', chatContainer);
-            scrollToLastMessage();
-          })
-          .catch(err => {
-            console.error("Error al generar reflexión:", err);
-          });
-        }
-
-      }, 1200);
-    }, 1600);
-  } else if (reflectionEnabled) {
-    // Si no hay segunda opción, agregamos reflexión directamente
-    const reflectionPrompt = `Actuás como un guía empático y contenedor. Recibiste el siguiente mensaje de una persona que atraviesa un momento emocional intenso. Brindale una reflexión breve que le ayude a calmarse, comprender mejor lo que siente, o tomar perspectiva: "${text}"`;
-
-    const reflectionRes = await fetch('/api/transform', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt: reflectionPrompt, mode: 'reflexion' })
-    });
-
-    if (reflectionRes.ok) {
-      const reflection = await reflectionRes.json();
-      addMessage(reflection.result, 'reflection', chatContainer);
-      scrollToLastMessage();
+      } else {
+        showToast('❌ No se pudo generar la reflexión');
+      }
+    } catch (err) {
+      hideLoading();
+      showToast('❌ Error: ' + err.message);
     }
+
+    return; // Detenemos la ejecución si modo reflexión está activo
   }
 
-} catch (error) {
-  hideLoading();
-  showToast('❌ Error al transformar el mensaje: ' + error.message);
-}
+  // 🔁 Modo normal (con transformación + opción alternativa)
+  showLoading('Transformando mensaje...');
+  try {
+    const response = await transformText(text, mode);
+    console.log('Respuesta de API:', response);
+
+    hideLoading();
+    addMessage(response.result, 'transformed', chatContainer);
+    scrollToLastMessage();
+
+    if (response.hasSecondOption && response.secondOption) {
+      setTimeout(() => {
+        addMessage(response.connector, 'connector', chatContainer);
+        scrollToLastMessage();
+        setTimeout(() => {
+          addMessage(response.secondOption, 'transformed', chatContainer);
+          scrollToLastMessage();
+        }, 1200);
+      }, 1600);
+    }
+  } catch (error) {
+    hideLoading();
+    showToast('❌ Error al transformar el mensaje: ' + error.message);
+  }
 }
 
 
