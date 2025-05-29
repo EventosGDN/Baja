@@ -149,20 +149,6 @@ html, body {
   background: transparent;
 }
 
-#inputSection {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(0, 0, 0, 0.6); /* Más transparente */
-  backdrop-filter: blur(10px) saturate(160%);
-  z-index: 9999;
-  padding: 12px 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-
-
 
 .chat-container {
   flex: 1 1 auto;
