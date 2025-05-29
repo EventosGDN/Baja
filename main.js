@@ -13,28 +13,30 @@ function hideLoading() {
 
 function addMessage(text, type, container) {
   const div = document.createElement('div');
-  div.className = type === 'original'
-    ? 'message-bubble message-original'
-    : type === 'connector'
-    ? 'message-bubble message-transformed connector'
-    : 'message-bubble message-transformed';
 
-  div.innerHTML = type === 'original'
-    ? `<div class="message-label">Texto original</div>${text}`
-    : type === 'connector'
-    ? text
-    : `<div class="message-label">Texto bajando un cambio</div>${text}<button class="copy-btn" onclick="copyMessage(this)">📋</button>`;
+  if (type === 'original') {
+    div.className = 'message-bubble message-original';
+    div.innerHTML = `<div class="message-label">Texto original</div>${text}`;
+  } else if (type === 'connector') {
+    div.className = 'message-bubble message-transformed connector';
+    div.innerHTML = text;
+  } else if (type === 'reflection') {
+    div.className = 'message-bubble message-reflection';
+    div.innerHTML = `<div class="message-label">🌿 Reflexión</div>${text}`;
+  } else {
+    div.className = 'message-bubble message-transformed';
+    div.innerHTML = `<div class="message-label">Texto bajando un cambio</div>${text}<button class="copy-btn" onclick="copyMessage(this)">📋</button>`;
+  }
 
   container.appendChild(div);
 
-  // Mover scrollAnchor justo antes del spacer
   const scrollAnchor = document.getElementById('scrollAnchor');
   const spacer = document.getElementById('chatSpacer');
   if (scrollAnchor && spacer) {
     container.insertBefore(scrollAnchor, spacer);
   }
-
 }
+
 
 let lastScrollTop = 0;
 const chatContainer = document.getElementById('chatContainer');
