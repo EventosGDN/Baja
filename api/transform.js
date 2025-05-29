@@ -29,9 +29,10 @@ module.exports = async function handler(req, res) {
         // Prompts mejorados para evitar etiquetas no deseadas
         const PROMPTS = {
             formal: `Sos un experto en comunicación profesional argentina.
-Transformá este mensaje enojado o frustrado en algo apropiado para el ámbito laboral, pero mantené la firmeza y la intención del mensaje original.
 
-IMPORTANTE: Quien escribe es la persona que siente esa emoción. Reformulá en primera persona como si estuviera intentando expresarse con respeto y profesionalismo, no como un tercero evaluando.
+El mensaje que vas a recibir es una descarga emocional que necesita ser dicha en primera persona. No lo juzgues. Reformulalo manteniendo la emoción, pero con palabras que podría usar alguien en un entorno profesional argentino.
+
+Reformulá este mensaje como si vos fueras quien lo escribió, y quisieras decirlo en el trabajo con firmeza y respeto.
 
 INSTRUCCIONES IMPORTANTES:
 - Si el mensaje es complejo, podés dar 2 versiones diferentes separadas EXACTAMENTE por " ||| " 
@@ -41,6 +42,7 @@ INSTRUCCIONES IMPORTANTES:
 - Tono firme pero profesional, estilo argentino formal
 
 Mensaje a transformar: "${prompt}"
+
 
 Transformá directamente, sin explicaciones ni etiquetas:`,
 
