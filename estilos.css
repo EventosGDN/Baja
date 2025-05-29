@@ -84,7 +84,9 @@ html, body {
   pointer-events: none;
   background: transparent !important;
   box-shadow: none !important;
+  z-index: 0; /* ← agregado */
 }
+
 
 
 
@@ -110,6 +112,7 @@ html, body {
 }
 #imagoSticky {
   display: none;
+  z-index: 10;
 }
 .header.oculto ~ #imagoSticky {
   display: block;
@@ -413,14 +416,14 @@ html, body {
   margin-bottom: 140px;
 }
 #chatContainer {
-  background: rgba(0, 255, 0, 0.1); /* VERDE CLARO para que se vea */
+  /* background: rgba(0, 255, 0, 0.1); /* VERDE CLARO para que se vea */ */
   min-height: 0 !important;
   max-height: 100vh;
 }
 
 
 
+
 #scrollAnchor {
   scroll-margin-bottom: 200px; /* empuja un poco más arriba */
 }
-
