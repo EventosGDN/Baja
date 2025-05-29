@@ -82,7 +82,22 @@ INSTRUCCIONES IMPORTANTES:
 
 Mensaje a transformar: "${prompt}"
 
-Transformá directamente, sin explicaciones ni etiquetas:`
+Transformá directamente, sin explicaciones ni etiquetas:`,
+
+            reflexion: `Actuás como un guía empático y contenedor.
+Recibiste el siguiente mensaje de una persona que atraviesa un momento emocional intenso y busca claridad emocional.
+Tu tarea es ofrecerle una reflexión breve y contenedora, sin juzgar, sin corregir, solo ayudando a procesar lo que siente.
+
+INSTRUCCIONES IMPORTANTES:
+- Máximo 2 oraciones.
+- No repitas el mensaje original.
+- No des explicaciones, solo reflexión emocional.
+- Estilo sereno, humano, con calidez.
+
+Mensaje recibido: "${prompt}"
+
+Respondé con una reflexión emocional sin etiquetas ni introducciones:`
+
         };
 
         console.log('Llamando a Gemini API...');
