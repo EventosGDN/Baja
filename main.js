@@ -132,34 +132,7 @@ function scrollToLastMessage(extra = 180) {
 }
 
 
-
-
-
 async function processTextMessage(text, mode, chatContainer) {
-  const reflectionEnabled = document.getElementById('reflectionToggle')?.checked;
-  const emptyState = chatContainer.querySelector('.empty-state');
-  if (emptyState) emptyState.remove();
-
-  addMessage(text, 'original', chatContainer);
-  scrollToLastMessage();
-  header.classList.add('oculto');
-
-  // 🌿 Si está activado el Modo Reflexión, solo mostrar reflexión y salir
-if (reflectionEnabled) {
-  showLoading('Reflexionando...');
-
-  try {
-    const reflectionPrompt = `Actuás como un guía empático y contenedor. Recibiste el siguiente mensaje de una persona que atraviesa un momento emocional intenso. Brindale una reflexión breve que le ayude a calmarse, comprender mejor lo que siente, o tomar perspectiva: "${text}"`;
-
-    const reflectionRes = await fetch('/api/transform', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt: reflectionPrompt, mode: 'reflexion' })
-    });
-
-    hideLoading();
-
-    async function processTextMessage(text, mode, chatContainer) {
   const reflectionEnabled = document.getElementById('reflectionToggle')?.checked;
   const emptyState = chatContainer.querySelector('.empty-state');
   if (emptyState) emptyState.remove();
@@ -210,6 +183,8 @@ if (reflectionEnabled) {
     showToast('❌ Error al procesar: ' + error.message);
   }
 }
+
+
 
 
 function setupAuth(firebaseAuth, onLogin, onLogout) {
