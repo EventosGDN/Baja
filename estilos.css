@@ -424,10 +424,27 @@ html, body {
 }
 
 .message-reflexion {
+  align-self: flex-end;
+  max-width: 80%;
+  padding: 12px 16px;
+  margin: 8px 0;
+  border-radius: 16px;
   background: rgba(0, 128, 128, 0.08);
-  color: #ccffff;
-  border: 1px solid rgba(0, 255, 255, 0.2);
+  border: 1px solid rgba(0, 255, 255, 0.15);
+  color: #ffffff;
+  backdrop-filter: blur(6px) saturate(160%);
   font-style: italic;
+  box-shadow: 0 0 6px rgba(0, 255, 255, 0.1);
+  position: relative;
+}
+
+.message-reflexion::before {
+  content: "🌿 Reflexión";
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 4px;
 }
 
 
