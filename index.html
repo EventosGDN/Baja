@@ -43,6 +43,13 @@
 
 
 <body>
+
+<div id="reflectionHint" class="reflection-hint" style="display: none;">
+  🌿 Podés activar el modo Reflexión si querés que la app te ayude a ver las cosas desde otro ángulo.
+  <button onclick="cerrarHint()" class="hint-close">Entendido</button>
+</div>
+
+
   <div class="fire-background">
     <div class="fire-particles" id="fireParticles"></div>
   </div>
@@ -89,6 +96,17 @@
             <button class="send-btn" id="sendBtn" title="Enviar mensaje">⚡</button>
           </div>
         </div>
+
+        <div class="mode-toggle">
+        <label class="ios-switch">
+          <input type="checkbox" id="reflectionToggle" />
+          <span class="slider"></span>
+        </label>
+        <span class="toggle-label">🌿 Modo Reflexión</span>
+      </div>
+
+
+
 
         <div class="audio-status" id="audioStatus">
           <span>🔴 Grabando...</span>

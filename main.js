@@ -141,6 +141,8 @@ async function processTextMessage(text, mode, chatContainer) {
   
 
   try {
+    const reflectionEnabled = document.getElementById('reflectionToggle')?.checked;
+
     const response = await transformText(text, mode);
     console.log('Respuesta de API:', response);
 
@@ -158,6 +160,26 @@ async function processTextMessage(text, mode, chatContainer) {
         }, 1200);
       }, 1600);
     }
+
+    if (reflectionEnabled) {
+  const reflectionPrompt = `Actuás como un guía empático y contenedor. Recibiste el siguiente mensaje de una persona que atraviesa un momento emocional intenso y busca claridad emocional. Tu tarea es ofrecerle una reflexión breve y contenedora.
+
+Mensaje: "${text}"`;
+
+  const reflectionRes = await fetch('/api/transform', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt: reflectionPrompt, mode: 'reflexion' })
+  });
+
+  if (reflectionRes.ok) {
+    const reflection = await reflectionRes.json();
+    addMessage(reflection.result, 'reflection', chatContainer);
+    scrollToLastMessage();
+  }
+}
+
+
 
   } catch (error) {
     hideLoading();
@@ -231,6 +253,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const recordBtn = document.getElementById('recordBtn');
   const audioStatus = document.getElementById('audioStatus');
   const recordingTimer = document.getElementById('recordingTimer');
+  const reflectionToggle = document.getElementById('reflectionToggle');
+if (reflectionToggle) {
+  reflectionToggle.addEventListener('change', () => {
+    modoReflexionActivo = reflectionToggle.checked;
+  });
+}
+
   createFireParticles();
   createFireParticles();
 
@@ -376,3 +405,18 @@ if ('serviceWorker' in navigator) {
   });
 }
 
+let modoReflexionActivo = false;
+
+
+function mostrarHintReflexion() {
+  if (!localStorage.getItem('reflectionHintShown')) {
+    document.getElementById('reflectionHint').style.display = 'flex';
+  }
+}
+
+function cerrarHint() {
+  document.getElementById('reflectionHint').style.display = 'none';
+  localStorage.setItem('reflectionHintShown', 'true');
+}
+
+window.addEventListener('load', mostrarHintReflexion);

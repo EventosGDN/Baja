@@ -423,9 +423,133 @@ html, body {
   max-height: 100vh;
 }
 
+.message-reflexion {
+  background: rgba(0, 128, 128, 0.08);
+  color: #ccffff;
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  font-style: italic;
+}
 
 
 
 #scrollAnchor {
   scroll-margin-bottom: 200px; /* empuja un poco más arriba */
+}
+
+.mode-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.toggle-label {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1rem;
+  user-select: none;
+}
+
+
+.ios-switch {
+  position: relative;
+  display: inline-block;
+  width: 52px;
+  height: 28px;
+}
+
+.ios-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(6px) saturate(160%);
+  -webkit-backdrop-filter: blur(6px) saturate(160%);
+  border-radius: 34px;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 3px;
+  bottom: 3px;
+  background-color: #fff;
+  border-radius: 50%;
+  transition: 0.4s;
+}
+
+.ios-switch input:checked + .slider {
+  background-color: rgba(0, 200, 130, 0.3);
+}
+
+.ios-switch input:checked + .slider:before {
+  transform: translateX(24px);
+}
+
+
+.message-bubble.reflection {
+  background: rgba(0, 128, 128, 0.08);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-style: italic;
+  position: relative;
+}
+
+.message-bubble.reflection::before {
+  content: "🌿 Reflexión";
+  display: block;
+  font-size: 0.8rem;
+  color: #aaffff;
+  margin-bottom: 4px;
+  opacity: 0.7;
+}
+
+
+.reflection-hint {
+  position: fixed;
+  bottom: 160px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 128, 128, 0.1);
+  backdrop-filter: blur(8px);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-size: 0.95rem;
+  max-width: 90%;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  animation: fadeInUp 0.6s ease;
+}
+
+.hint-close {
+  background: none;
+  border: none;
+  color: #00ffff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 20px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
 }
