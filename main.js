@@ -36,6 +36,21 @@ function addMessage(text, type, container) {
 
 }
 
+let lastScrollTop = 0;
+const chatContainer = document.getElementById('chatContainer');
+const header = document.getElementById('appHeader');
+
+chatContainer.addEventListener('scroll', () => {
+  const scrollTop = chatContainer.scrollTop;
+
+  if (scrollTop > 50 && scrollTop > lastScrollTop) {
+    header.classList.add('oculto');
+  } else if (scrollTop < 50 || scrollTop < lastScrollTop) {
+    header.classList.remove('oculto');
+  }
+
+  lastScrollTop = scrollTop;
+});
 
 
 
