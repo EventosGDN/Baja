@@ -135,6 +135,8 @@ function scrollToLastMessage(extra = 180) {
 async function processTextMessage(text, mode, chatContainer) {
   const reflectionEnabled = document.getElementById('reflectionToggle')?.checked;
   const emptyState = chatContainer.querySelector('.empty-state');
+  const canUse = true;
+  if (!canUse) return;
   if (emptyState) emptyState.remove();
 
   addMessage(text, 'original', chatContainer);
@@ -143,29 +145,52 @@ async function processTextMessage(text, mode, chatContainer) {
   header.classList.add('oculto');
 
   try {
-    const response = await transformText(text, mode, reflectionEnabled);
-    hideLoading();
+    if (reflectionEnabled) {
+      // 🧘‍♂️ MODO REFLEXIÓN - sin transformaciones
+      const reflectionPrompt = `Actuás como un guía empático y contenedor. Recibiste el siguiente mensaje de una persona que atraviesa un momento emocional intenso. Brindale una reflexión breve que le ayude a calmarse, comprender mejor lo que siente, o tomar perspectiva: "${text}"`;
 
-    if (reflectionEnabled && response.reflection) {
-      // MODO REFLEXIÓN ACTIVO
-      addMessage(response.reflection, 'reflection', chatContainer);
-      scrollToLastMessage();
+      const res = await fetch('/api/transform', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: reflectionPrompt, mode: 'reflexion' })
+      });
 
-      if (response.emotionFollowUp) {
-        setTimeout(() => {
-          addMessage(response.emotionFollowUp, 'reflection', chatContainer);
-          scrollToLastMessage();
-        }, 1600);
+      hideLoading();
+
+      if (res.ok) {
+        const data = await res.json();
+        addMessage(data.result, 'reflection', chatContainer);
+        scrollToLastMessage();
+
+        // Detección emocional para follow-up
+        const emoRes = await fetch('/api/emotion', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text }) // mismo mensaje original
+        });
+
+        if (emoRes.ok) {
+          const emoData = await emoRes.json();
+          if (emoData.followUp) {
+            setTimeout(() => {
+              addMessage(emoData.followUp, 'reflection', chatContainer);
+              scrollToLastMessage();
+            }, 2000);
+          }
+        }
+      } else {
+        showToast('❌ No se pudo generar la reflexión');
       }
 
-      return; // Evitamos mostrar respuestas estándar
+      return; // 👈 IMPORTANTE: No continuar con transformaciones
     }
 
-    // MODO ESTÁNDAR
-    if (response.result) {
-      addMessage(response.result, 'transformed', chatContainer);
-      scrollToLastMessage();
-    }
+    // 🎭 MODO NORMAL - transformación estándar
+    const response = await transformText(text, mode);
+    hideLoading();
+    console.log('Respuesta de API:', response);
+
+    addMessage(response.result, 'transformed', chatContainer);
 
     if (response.hasSecondOption && response.secondOption) {
       setTimeout(() => {
@@ -180,12 +205,9 @@ async function processTextMessage(text, mode, chatContainer) {
 
   } catch (error) {
     hideLoading();
-    showToast('❌ Error al procesar: ' + error.message);
+    showToast('❌ Error al procesar el mensaje: ' + error.message);
   }
 }
-
-
-
 
 function setupAuth(firebaseAuth, onLogin, onLogout) {
   const auth = firebaseAuth.auth;
