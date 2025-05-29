@@ -426,7 +426,7 @@ html, body {
   margin-bottom: 140px;
 }
 #chatContainer {
-  background: rgba(0, 255, 0, 0.1); /* VERDE CLARO para que se vea */
+  
   outline: 2px dashed lime;
   min-height: 0 !important;
   max-height: 100vh;
