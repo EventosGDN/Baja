@@ -82,8 +82,8 @@ html, body {
   transform: translateY(-100%);
   opacity: 0;
   pointer-events: none;
-  background: transparent !important;
-  box-shadow: none !important;
+  background: transparent !important;     /* ← esto borra el color oscuro */
+  box-shadow: none !important;            /* ← esto borra la línea difusa inferior */
 }
 
 
