@@ -71,27 +71,33 @@ async function copyMessage(btn) {
   }
 }
 
-async function transformText(text, mode) {
+async function transformText(text, mode, includeReflection = false) {
   const prompts = {
-    formal: `Actuás como un experto en comunicación profesional en Argentina.
-Convertí el siguiente mensaje emocional en una versión firme y profesional...
-Mensaje: "${text}"`,
-    amigable: `Actuás como una persona cálida y directa...
-Mensaje: "${text}"`,
-    directo: `Reformulá este mensaje en un tono directo...
-Mensaje: "${text}"`,
-    diplomatico: `Sos un experto en comunicación estratégica...
-Mensaje: "${text}"`
+    formal: `Actuás como un experto en comunicación profesional... Mensaje: "${text}"`,
+    amigable: `Actuás como una persona cálida... Mensaje: "${text}"`,
+    directo: `Reformulá este mensaje... Mensaje: "${text}"`,
+    diplomatico: `Sos un experto en comunicación estratégica... Mensaje: "${text}"`
+  };
+
+  const reflectionPrompt = `Actuás como un guía empático y contenedor. Recibiste el siguiente mensaje de una persona que atraviesa un momento emocional intenso. Brindale una reflexión breve que le ayude a calmarse, comprender mejor lo que siente, o tomar perspectiva: "${text}"`;
+
+  const body = {
+    prompt: prompts[mode],
+    mode,
+    includeReflection,
+    reflectionPrompt
   };
 
   const response = await fetch('/api/transform', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt: prompts[mode], mode })
+    body: JSON.stringify(body)
   });
+
   if (!response.ok) throw new Error(await response.text());
   return await response.json();
 }
+
 
 async function transcribeAudio(audioBlob, mode, chatContainer) {
   try {
@@ -141,9 +147,8 @@ async function processTextMessage(text, mode, chatContainer) {
   
 
   try {
+    const response = await transformText(text, mode, reflectionEnabled);
     const reflectionEnabled = document.getElementById('reflectionToggle')?.checked;
-
-    const response = await transformText(text, mode);
     console.log('Respuesta de API:', response);
 
     hideLoading();
