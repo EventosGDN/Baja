@@ -48,45 +48,44 @@ Transformá directamente, sin explicaciones ni etiquetas:`,
 
 
 
-            amigable: `Transformá este mensaje en algo más amigable y cálido, manteniendo el estilo argentino.
-Suavizá la forma pero no pierdas la intención ni la firmeza del mensaje original.
+            amigable: `Sos una persona empática y positiva. Vas a reformular este mensaje como si fueras quien lo siente, pero buscando expresarlo con calidez, cercanía y sin agresividad.
 
 INSTRUCCIONES IMPORTANTES:
-- Si hay diferentes enfoques, podés dar 2 versiones separadas EXACTAMENTE por " ||| "
-- NO uses etiquetas como "Opción 1:", "Opción 2:", "Primera versión:", etc.
-- Cada versión debe ser directa, sin prefijos ni numeración
-- Máximo 2-3 oraciones por versión
-- Estilo argentino cálido y copado
+- Reformulá en primera persona con un tono comprensivo.
+- Podés mostrar disconformidad, pero sin enojo ni queja agresiva.
+- Podés dar hasta 2 versiones separadas por " ||| ".
+- NO uses etiquetas como "Opción 1:", etc.
 
 Mensaje a transformar: "${prompt}"
+
 
 Transformá directamente, sin explicaciones ni etiquetas:`,
 
-            directo: `Convertí este mensaje en algo directo pero respetuoso, sin rodeos pero sin agredir innecesariamente.
-Mantené la claridad y la fuerza del mensaje original pero con mejor forma.
+            directo: `Sos una persona frontal y honesta, pero con autocontrol. Vas a reformular este mensaje como si vos lo hubieras escrito, diciendo exactamente lo que querés decir, pero sin insultos ni agresiones. 
+
+Debe sonar directo, claro y con carácter, pero sin violencia ni falta de respeto.
 
 INSTRUCCIONES IMPORTANTES:
-- Si hay diferentes formas de ser directo, podés dar 2 versiones separadas EXACTAMENTE por " ||| "
-- NO uses etiquetas como "Opción 1:", "Opción 2:", "Primera forma:", etc.
-- Cada versión debe ser directa, sin prefijos ni numeración
-- Máximo 2-3 oraciones por versión
-- Estilo argentino directo pero civilizado
+- Reformulá en primera persona, manteniendo la emoción original.
+- Podés dar hasta 2 versiones separadas por " ||| ".
+- NO uses etiquetas como "Opción 1:", "Opción 2:", etc.
+- No hace falta que sea amable, pero sí claro y firme.
 
 Mensaje a transformar: "${prompt}"
+
 
 Transformá directamente, sin explicaciones ni etiquetas:`,
 
-            diplomatico: `Usá toda tu habilidad diplomática para transformar este mensaje en comunicación estratégica y táctica.
-Mantené la firmeza del mensaje pero usá diplomacia y psicología comunicacional.
+            diplomatico: `Sos un experto en comunicación estratégica y manejo de conflictos. Vas a reformular este mensaje emocional como si vos fueras quien lo siente, pero querés expresarlo de manera diplomática, con foco en la negociación o resolución del conflicto.
 
 INSTRUCCIONES IMPORTANTES:
-- Si hay diferentes estrategias, podés dar 2 versiones separadas EXACTAMENTE por " ||| "
-- NO uses etiquetas como "Opción 1:", "Opción 2:", "Primera estrategia:", etc.
-- Cada versión debe ser directa, sin prefijos ni numeración
-- Máximo 2-3 oraciones por versión
-- Diplomacia argentina con astucia
+- Reformulá en primera persona, manteniendo la intención.
+- Evitá agresividad, pero no suavices tanto que se pierda el mensaje.
+- Podés dar hasta 2 versiones separadas por " ||| ".
+- Sin usar etiquetas como "Opción 1:".
 
 Mensaje a transformar: "${prompt}"
+
 
 Transformá directamente, sin explicaciones ni etiquetas:`,
 
