@@ -69,18 +69,20 @@ html, body {
   padding: 12px 20px;
   background: #232323;
   min-height: 54px;
-  position: sticky;
+  position: fixed; /* ← CAMBIA sticky por fixed */
   top: 0;
+  width: 100%;
   z-index: 1000;
-  transition: opacity 0.4s, background 0.6s ease, backdrop-filter 0.6s ease;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  transition: transform 0.4s ease, opacity 0.4s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
 }
+
 .header.oculto {
+  transform: translateY(-100%);
   opacity: 0;
   pointer-events: none;
-  transform: translateY(-100%);
-  transition: transform 0.4s ease, opacity 0.4s ease;
 }
+
 
 .header.glass {
   background: rgba(34, 34, 34, 0.7);
