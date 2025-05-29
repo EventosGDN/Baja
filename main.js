@@ -159,36 +159,56 @@ if (reflectionEnabled) {
 
     hideLoading();
 
-    if (reflectionRes.ok) {
-      const reflection = await reflectionRes.json();
-      addMessage(reflection.result, 'reflection', chatContainer);
+    async function processTextMessage(text, mode, chatContainer) {
+  const reflectionEnabled = document.getElementById('reflectionToggle')?.checked;
+  const emptyState = chatContainer.querySelector('.empty-state');
+  if (emptyState) emptyState.remove();
+
+  addMessage(text, 'original', chatContainer);
+  showLoading(reflectionEnabled ? 'Reflexionando...' : 'Transformando mensaje...');
+  scrollToLastMessage();
+  header.classList.add('oculto');
+
+  try {
+    const response = await transformText(text, mode, reflectionEnabled);
+    hideLoading();
+
+    if (reflectionEnabled && response.reflection) {
+      // MODO REFLEXIÓN ACTIVO
+      addMessage(response.reflection, 'reflection', chatContainer);
       scrollToLastMessage();
 
-      // ⏳ Después de un pequeño delay, mostrar una frase de seguimiento
-      const followUps = [
-        "¿Querés contarme un poco más?",
-        "Estoy acá si necesitás seguir hablando.",
-        "A veces ponerlo en palabras ayuda más de lo que creemos.",
-        "Tomate tu tiempo, te escucho.",
-        "Esto que sentís tiene sentido, ¿querés seguir descargando?"
-      ];
-      const randomFollowUp = followUps[Math.floor(Math.random() * followUps.length)];
+      if (response.emotionFollowUp) {
+        setTimeout(() => {
+          addMessage(response.emotionFollowUp, 'reflection', chatContainer);
+          scrollToLastMessage();
+        }, 1600);
+      }
 
-      setTimeout(() => {
-        addMessage(randomFollowUp, 'reflection', chatContainer);
-        scrollToLastMessage();
-      }, 2500); // 2.5 segundos después de la reflexión
-    } else {
-      showToast('❌ No se pudo generar la reflexión');
+      return; // Evitamos mostrar respuestas estándar
     }
-  } catch (err) {
+
+    // MODO ESTÁNDAR
+    if (response.result) {
+      addMessage(response.result, 'transformed', chatContainer);
+      scrollToLastMessage();
+    }
+
+    if (response.hasSecondOption && response.secondOption) {
+      setTimeout(() => {
+        addMessage(response.connector, 'connector', chatContainer);
+        scrollToLastMessage();
+        setTimeout(() => {
+          addMessage(response.secondOption, 'transformed', chatContainer);
+          scrollToLastMessage();
+        }, 1200);
+      }, 1600);
+    }
+
+  } catch (error) {
     hideLoading();
-    showToast('❌ Error: ' + err.message);
+    showToast('❌ Error al procesar: ' + error.message);
   }
-
-  return; // Cortamos aquí porque es modo reflexión
-}
-
 }
 
 

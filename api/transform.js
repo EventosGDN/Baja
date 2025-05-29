@@ -267,3 +267,23 @@ Respondé con una reflexión emocional sin etiquetas ni introducciones:`
         });
     }
 }
+
+// En transform.js (backend)
+function detectarEmocion(texto) {
+  texto = texto.toLowerCase();
+  if (texto.includes('odio') || texto.includes('harto') || texto.includes('mierda')) return 'enojo';
+  if (texto.includes('triste') || texto.includes('llorar') || texto.includes('vacío')) return 'tristeza';
+  if (texto.includes('ansioso') || texto.includes('miedo') || texto.includes('nervioso')) return 'ansiedad';
+  if (texto.includes('frustrado') || texto.includes('impotencia') || texto.includes('nada cambia')) return 'frustración';
+  return null;
+}
+
+function followUpPorEmocion(emocion) {
+  const mensajes = {
+    enojo: "🌿 Es normal sentirse así. Si querés, sigamos bajando un cambio juntos.",
+    tristeza: "🌿 Lo que estás sintiendo merece ser escuchado.",
+    ansiedad: "🌿 Dale, respiremos un poco juntos. No estás solo/a.",
+    frustración: "🌿 Quizás no salió como esperabas, pero podés volver a intentarlo."
+  };
+  return mensajes[emocion] || null;
+}
