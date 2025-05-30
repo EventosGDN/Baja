@@ -541,7 +541,7 @@ function createFogParticles(count) {
       radius: 100 + Math.random() * 100,
       speedX: (Math.random() - 0.5) * 0.3,
       speedY: (Math.random() - 0.5) * 0.3,
-      opacity: 0.07 + Math.random() * 0.05
+      opacity: 0.06 + Math.random() * 0.01
     });
   }
   return particles;
@@ -552,7 +552,7 @@ function drawFog() {
   for (const p of fogParticles) {
     ctx.beginPath();
     const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius);
-    gradient.addColorStop(0, `rgba(180, 180, 180, ${p.opacity})`);
+    gradient.addColorStop(0, `rgba(255, 255, 255, ${p.opacity})`);
     gradient.addColorStop(1, 'transparent');
     ctx.fillStyle = gradient;
     ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
