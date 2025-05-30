@@ -273,11 +273,33 @@ document.addEventListener('DOMContentLoaded', () => {
   const audioStatus = document.getElementById('audioStatus');
   const recordingTimer = document.getElementById('recordingTimer');
   const reflectionToggle = document.getElementById('reflectionToggle');
+
 if (reflectionToggle) {
-  reflectionToggle.addEventListener('change', () => {
-    modoReflexionActivo = reflectionToggle.checked;
+  reflectionToggle.addEventListener('change', (e) => {
+    const enabled = e.target.checked;
+
+    document.body.classList.toggle('reflection-mode', enabled);
+    document.body.classList.toggle('modo-reflexion', enabled);
+
+    const fireBg = document.querySelector('.fire-background');
+    if (fireBg) {
+      fireBg.classList.toggle('reflection', enabled);
+    }
+
+    // 🔥 Ocultar o mostrar partículas de fuego
+    const particles = document.querySelectorAll('.fire-particle');
+    particles.forEach(p => {
+      p.style.display = enabled ? 'none' : 'block';
+    });
+
+    if (enabled) {
+      iniciarNiebla();
+    }
   });
 }
+
+
+
 
   createFireParticles();
   createFireParticles();
@@ -439,3 +461,127 @@ function cerrarHint() {
 }
 
 window.addEventListener('load', mostrarHintReflexion);
+
+/* function iniciarNiebla() {
+  const canvas = document.getElementById('fogCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const particulas = [];
+
+  for (let i = 0; i < 100; i++) {
+    particulas.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      radius: Math.random() * 60 + 20,
+      dx: (Math.random() - 0.5) * 0.3,
+      dy: (Math.random() - 0.5) * 0.3,
+      alpha: Math.random() * 0.03 + 0.02
+    });
+  }
+
+  function animar() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (const p of particulas) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha})`;
+      ctx.fill();
+
+      p.x += p.dx;
+      p.y += p.dy;
+
+      if (p.x < -p.radius) p.x = canvas.width + p.radius;
+      if (p.x > canvas.width + p.radius) p.x = -p.radius;
+      if (p.y < -p.radius) p.y = canvas.height + p.radius;
+      if (p.y > canvas.height + p.radius) p.y = -p.radius;
+    }
+    requestAnimationFrame(animar);
+  }
+
+  animar();
+} */
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const toggle = document.getElementById("reflectionToggle");
+  if (toggle) {
+    toggle.addEventListener("change", (e) => {
+      const enabled = e.target.checked;
+      if (enabled) iniciarNiebla();
+      document.getElementById("fogCanvas").style.display = enabled ? "block" : "none";
+
+    });
+  }
+});
+
+
+// === NIEBLA REALISTA CON CANVAS ===
+const fogCanvas = document.getElementById('fogCanvas');
+const ctx = fogCanvas.getContext('2d');
+let fogParticles = [];
+
+function resizeFogCanvas() {
+  fogCanvas.width = window.innerWidth;
+  fogCanvas.height = window.innerHeight;
+}
+
+window.addEventListener('resize', resizeFogCanvas);
+resizeFogCanvas();
+
+function createFogParticles(count) {
+  const particles = [];
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: Math.random() * fogCanvas.width,
+      y: Math.random() * fogCanvas.height,
+      radius: 100 + Math.random() * 100,
+      speedX: (Math.random() - 0.5) * 0.3,
+      speedY: (Math.random() - 0.5) * 0.3,
+      opacity: 0.03 + Math.random() * 0.05
+    });
+  }
+  return particles;
+}
+
+function drawFog() {
+  ctx.clearRect(0, 0, fogCanvas.width, fogCanvas.height);
+  for (const p of fogParticles) {
+    ctx.beginPath();
+    const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius);
+    gradient.addColorStop(0, `rgba(255, 255, 255, ${p.opacity})`);
+    gradient.addColorStop(1, 'transparent');
+    ctx.fillStyle = gradient;
+    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    p.x += p.speedX;
+    p.y += p.speedY;
+
+    if (p.x < -p.radius) p.x = fogCanvas.width + p.radius;
+    if (p.x > fogCanvas.width + p.radius) p.x = -p.radius;
+    if (p.y < -p.radius) p.y = fogCanvas.height + p.radius;
+    if (p.y > fogCanvas.height + p.radius) p.y = -p.radius;
+  }
+  requestAnimationFrame(drawFog);
+}
+
+function iniciarNiebla() {
+  fogParticles = createFogParticles(500); // ajustable
+  drawFog();
+}
+
+// Activar desde el toggle
+if (reflectionToggle) {
+  reflectionToggle.addEventListener('change', (e) => {
+    const enabled = e.target.checked;
+    document.body.classList.toggle('modo-reflexion', enabled);
+
+    if (enabled) {
+      iniciarNiebla();
+    }
+  });
+}

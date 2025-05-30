@@ -412,6 +412,7 @@ html, body {
   flex-direction: column;
   gap: 8px;
   width: 100%;
+  border-radius: 15px;
 }
 
 .message-bubble:last-child {
@@ -558,4 +559,66 @@ html, body {
     opacity: 1;
     transform: translate(-50%, 0);
   }
+}
+
+
+
+.reflection-bubble {
+  background: rgba(0, 128, 128, 0.08);
+  border: 1px solid rgba(0, 128, 128, 0.2);
+  color: white;
+  font-style: italic;
+  padding: 10px 14px;
+  border-radius: 16px;
+  margin: 6px 0;
+  max-width: 80%;
+  backdrop-filter: blur(8px);
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+
+
+
+body.modo-reflexion::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0;
+  width: 150%;
+  height: 150%;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.02) 0%, transparent 60%);
+  animation: fogDrift 60s ease-in-out infinite;
+  opacity: 0.15;
+  mix-blend-mode: screen;
+  backdrop-filter: blur(20px);
+}
+
+
+/* Asegurate que solo se vea en modo reflexión */
+body:not(.modo-reflexion)::before {
+  display: none;
+}
+
+
+/* Estilo del canvas de niebla */
+#fogCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.35;
+  transition: opacity 2s ease;
+  display: none;
+}
+
+body.modo-reflexion #fogCanvas {
+  display: block;
+}
+
+body.modo-reflexion .fire-background {
+  display: none !important;
 }
