@@ -360,6 +360,9 @@ if (messageInput) {
   if (mediaRecorder && mediaRecorder.state === 'recording') {
     // Caso 2: usuario presiona grabar por segunda vez (envía audio)
     mediaRecorder.stop();
+    if (mediaRecorder && mediaRecorder.stream) {
+  mediaRecorder.stream.getTracks().forEach(track => track.stop());
+}
     stopRecordBtn.style.display = 'none';
     sendBtn.style.display = 'inline-block';
     return;
@@ -440,14 +443,32 @@ if ('visualViewport' in window) {
     chatContainer.innerHTML = `<div class="empty-state">Iniciá sesión para usar "Bajá un cambio"</div>`;
   });
 
-  stopRecordBtn.addEventListener('click', () => {
+stopRecordBtn.addEventListener('click', () => {
   if (mediaRecorder && mediaRecorder.state === 'recording') {
+    // Bandera para no procesar audio
     descartarAudio = true;
+
+    // Detener grabación
     mediaRecorder.stop();
+
+    // Cerrar acceso al micrófono
+    if (mediaRecorder.stream) {
+      mediaRecorder.stream.getTracks().forEach(track => track.stop());
+    }
+
+    // Reset visual
     stopRecordBtn.style.display = 'none';
     sendBtn.style.display = 'inline-block';
+    recordBtn.classList.remove('recording');
+    audioStatus.classList.remove('show');
+    clearInterval(recordingInterval);
+    recordingTimer.textContent = '00:00';
+
+    // Vaciar el audio grabado
+    audioChunks = [];
   }
 });
+
 
 
 
