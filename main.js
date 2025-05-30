@@ -1,3 +1,5 @@
+let descartarAudio = false;
+
 function showLoading(message) {
   const loading = document.getElementById('loading');
   const loadingText = document.getElementById('loadingText');
@@ -273,10 +275,25 @@ document.addEventListener('DOMContentLoaded', () => {
   const audioStatus = document.getElementById('audioStatus');
   const recordingTimer = document.getElementById('recordingTimer');
   const reflectionToggle = document.getElementById('reflectionToggle');
+  const stopRecordBtn = document.getElementById('stopRecordBtn');
+
 
 if (reflectionToggle) {
   reflectionToggle.addEventListener('change', (e) => {
     const enabled = e.target.checked;
+    const messageInput = document.getElementById('messageInput');
+    const modeSelect = document.getElementById('modeSelect');
+if (modeSelect) {
+  modeSelect.classList.toggle('oculto', enabled);
+
+}
+
+if (messageInput) {
+  messageInput.placeholder = enabled
+    ? "¿Querés descargar lo que sentís?"
+    : "Me cansé, váyanse a la put que los parió... o grabá un audio...";
+}
+
 
     document.body.classList.toggle('reflection-mode', enabled);
     document.body.classList.toggle('modo-reflexion', enabled);
@@ -340,67 +357,55 @@ if (reflectionToggle) {
   });
 
   recordBtn.addEventListener('click', async () => {
-    if (mediaRecorder && mediaRecorder.state === 'recording') {
-      mediaRecorder.stop();
-      return;
-    }
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    // Caso 2: usuario presiona grabar por segunda vez (envía audio)
+    mediaRecorder.stop();
+    stopRecordBtn.style.display = 'none';
+    sendBtn.style.display = 'inline-block';
+    return;
+  }
 
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaRecorder = new MediaRecorder(stream);
-      audioChunks = [];
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaRecorder = new MediaRecorder(stream);
+    audioChunks = [];
 
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) audioChunks.push(event.data);
-      };
+    mediaRecorder.ondataavailable = (event) => {
+      if (event.data.size > 0) audioChunks.push(event.data);
+    };
 
-      mediaRecorder.onstop = async () => {
-        clearInterval(recordingInterval);
-        recordingTimer.textContent = '00:00';
-        recordBtn.classList.remove('recording');
-        audioStatus.classList.remove('show');
+    mediaRecorder.onstop = async () => {
+      clearInterval(recordingInterval);
+      recordingTimer.textContent = '00:00';
+      recordBtn.classList.remove('recording');
+      audioStatus.classList.remove('show');
 
-        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-        const formData = new FormData();
-        formData.append('audio', audioBlob, 'audio.webm');
+      if (descartarAudio) {
+        descartarAudio = false;
+        return;
+      }
 
-        try {
-          showLoading('Transcribiendo audio...');
-          const response = await fetch('/api/transcribe', {
-            method: 'POST',
-            body: formData,
-          });
+      const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+      await transcribeAudio(audioBlob, modeSelect.value, chatContainer);
+    };
 
-          if (!response.ok) throw new Error('Error al transcribir');
-          const data = await response.json();
-          hideLoading();
+    mediaRecorder.start();
+    recordBtn.classList.add('recording');
+    audioStatus.classList.add('show');
+    stopRecordBtn.style.display = 'inline-block';
+    sendBtn.style.display = 'none';
 
-          if (data.transcription?.trim()) {
-            processTextMessage(data.transcription.trim(), modeSelect.value, chatContainer);
-          } else {
-            showToast('❌ No se pudo transcribir el audio');
-          }
-        } catch {
-          hideLoading();
-          showToast('❌ Error al transcribir audio');
-        }
-      };
-
-      mediaRecorder.start();
-      recordBtn.classList.add('recording');
-      audioStatus.classList.add('show');
-
-      let seconds = 0;
-      recordingInterval = setInterval(() => {
-        seconds++;
-        const mins = String(Math.floor(seconds / 60)).padStart(2, '0');
-        const secs = String(seconds % 60).padStart(2, '0');
-        recordingTimer.textContent = `${mins}:${secs}`;
-      }, 1000);
-    } catch {
-      showToast('❌ No se pudo acceder al micrófono');
-    }
-  });
+    let seconds = 0;
+    recordingInterval = setInterval(() => {
+      seconds++;
+      const mins = String(Math.floor(seconds / 60)).padStart(2, '0');
+      const secs = String(seconds % 60).padStart(2, '0');
+      recordingTimer.textContent = `${mins}:${secs}`;
+    }, 1000);
+  } catch {
+    showToast('❌ No se pudo acceder al micrófono');
+  }
+});
 
     // Ajuste visual para teclado móvil
 
@@ -435,6 +440,16 @@ if ('visualViewport' in window) {
     chatContainer.innerHTML = `<div class="empty-state">Iniciá sesión para usar "Bajá un cambio"</div>`;
   });
 
+  stopRecordBtn.addEventListener('click', () => {
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    descartarAudio = true;
+    mediaRecorder.stop();
+    stopRecordBtn.style.display = 'none';
+    sendBtn.style.display = 'inline-block';
+  }
+});
+
+
 
 }); 
 
@@ -461,49 +476,6 @@ function cerrarHint() {
 }
 
 window.addEventListener('load', mostrarHintReflexion);
-
-/* function iniciarNiebla() {
-  const canvas = document.getElementById('fogCanvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-
-  const particulas = [];
-
-  for (let i = 0; i < 100; i++) {
-    particulas.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      radius: Math.random() * 60 + 20,
-      dx: (Math.random() - 0.5) * 0.3,
-      dy: (Math.random() - 0.5) * 0.3,
-      alpha: Math.random() * 0.03 + 0.02
-    });
-  }
-
-  function animar() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for (const p of particulas) {
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha})`;
-      ctx.fill();
-
-      p.x += p.dx;
-      p.y += p.dy;
-
-      if (p.x < -p.radius) p.x = canvas.width + p.radius;
-      if (p.x > canvas.width + p.radius) p.x = -p.radius;
-      if (p.y < -p.radius) p.y = canvas.height + p.radius;
-      if (p.y > canvas.height + p.radius) p.y = -p.radius;
-    }
-    requestAnimationFrame(animar);
-  }
-
-  animar();
-} */
 
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -585,3 +557,5 @@ if (reflectionToggle) {
     }
   });
 }
+
+
