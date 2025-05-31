@@ -148,44 +148,46 @@ async function processTextMessage(text, mode, chatContainer) {
 
   try {
     if (reflectionEnabled) {
-      // 🧘‍♂️ MODO REFLEXIÓN - sin transformaciones
-      const reflectionPrompt = `Actuás como un guía empático y contenedor. Recibiste el siguiente mensaje de una persona que atraviesa un momento emocional intenso. Brindale una reflexión breve que le ayude a calmarse, comprender mejor lo que siente, o tomar perspectiva: "${text}"`;
+  // 🧘‍♂️ MODO REFLEXIÓN — Prompt avanzado
+  const res = await fetch('/api/transform', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      prompt: text,
+      mode: 'reflexion' // clave para seleccionar el prompt especial en el backend
+    })
+  });
 
-      const res = await fetch('/api/transform', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: reflectionPrompt, mode: 'reflexion' })
-      });
+  hideLoading();
 
-      hideLoading();
+  if (res.ok) {
+    const data = await res.json();
+    addMessage(data.result, 'reflection', chatContainer);
+    scrollToLastMessage();
 
-      if (res.ok) {
-        const data = await res.json();
-        addMessage(data.result, 'reflection', chatContainer);
-        scrollToLastMessage();
+    // Detección emocional para follow-up
+    const emoRes = await fetch('/api/emotion', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text }) // mensaje original
+    });
 
-        // Detección emocional para follow-up
-        const emoRes = await fetch('/api/emotion', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text }) // mismo mensaje original
-        });
-
-        if (emoRes.ok) {
-          const emoData = await emoRes.json();
-          if (emoData.followUp) {
-            setTimeout(() => {
-              addMessage(emoData.followUp, 'reflection', chatContainer);
-              scrollToLastMessage();
-            }, 2000);
-          }
-        }
-      } else {
-        showToast('❌ No se pudo generar la reflexión');
+    if (emoRes.ok) {
+      const emoData = await emoRes.json();
+      if (emoData.followUp) {
+        setTimeout(() => {
+          addMessage(emoData.followUp, 'reflection', chatContainer);
+          scrollToLastMessage();
+        }, 2000);
       }
-
-      return; // 👈 IMPORTANTE: No continuar con transformaciones
     }
+  } else {
+    showToast('❌ No se pudo generar la reflexión');
+  }
+
+  return; // 🚫 Detener aquí, no ejecutar transformaciones normales
+}
+
 
     // 🎭 MODO NORMAL - transformación estándar
     const response = await transformText(text, mode);
@@ -542,13 +544,18 @@ function createFogParticles(count) {
 
 function drawFog() {
   ctx.clearRect(0, 0, fogCanvas.width, fogCanvas.height);
+  const time = Date.now() * 0.001;
+
   for (const p of fogParticles) {
     ctx.beginPath();
-    const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius);
-    gradient.addColorStop(0, `rgba(255, 255, 255, ${p.opacity})`);
+    const dynamicOpacity = p.opacity + 0.01 * Math.sin(time + p.x * 0.01); // animación suave
+    const dynamicRadius = p.radius + 5 * Math.cos(time + p.y * 0.01); // cambio de tamaño suave
+
+    const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, dynamicRadius);
+    gradient.addColorStop(0, `rgba(255, 255, 255, ${dynamicOpacity})`);
     gradient.addColorStop(1, 'transparent');
     ctx.fillStyle = gradient;
-    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+    ctx.arc(p.x, p.y, dynamicRadius, 0, Math.PI * 2);
     ctx.fill();
 
     p.x += p.speedX;
@@ -559,24 +566,15 @@ function drawFog() {
     if (p.y < -p.radius) p.y = fogCanvas.height + p.radius;
     if (p.y > fogCanvas.height + p.radius) p.y = -p.radius;
   }
+
   requestAnimationFrame(drawFog);
 }
+
 
 function iniciarNiebla() {
   fogParticles = createFogParticles(250); // ajustable
   drawFog();
 }
 
-// Activar desde el toggle
-if (reflectionToggle) {
-  reflectionToggle.addEventListener('change', (e) => {
-    const enabled = e.target.checked;
-    document.body.classList.toggle('modo-reflexion', enabled);
-
-    if (enabled) {
-      iniciarNiebla();
-    }
-  });
-}
 
 
