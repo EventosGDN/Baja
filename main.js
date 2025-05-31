@@ -148,14 +148,17 @@ async function processTextMessage(text, mode, chatContainer) {
 
   try {
     if (reflectionEnabled) {
-  // 🧘‍♂️ MODO REFLEXIÓN — Prompt avanzado
+  // 🧘‍♂️ MODO REFLEXIÓN - con enfoque terapéutico y empático
+  const reflectionPrompt = `
+Recibiste este mensaje: "${text}"
+Respondé como si fueras una persona con formación en acompañamiento emocional, que escucha con empatía, contención y sin juzgar. Usá un lenguaje claro, humano y cálido. Podés inspirarte en el estilo de Carl Rogers, Virginia Satir o textos de autoayuda contemporáneos, pero sin sonar forzado. Tu objetivo es ayudar a esa persona a procesar lo que siente, sin minimizar su dolor, validando sus emociones y ofreciéndole una perspectiva más amable o esperanzadora. Terminá tu reflexión con una pregunta suave o una invitación a pensar.
+
+Respondé en un solo párrafo, sin hacer referencia a que sos un sistema ni usar clichés.`;
+
   const res = await fetch('/api/transform', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      prompt: text,
-      mode: 'reflexion' // clave para seleccionar el prompt especial en el backend
-    })
+    body: JSON.stringify({ prompt: reflectionPrompt, mode: 'reflexion' })
   });
 
   hideLoading();
@@ -165,11 +168,11 @@ async function processTextMessage(text, mode, chatContainer) {
     addMessage(data.result, 'reflection', chatContainer);
     scrollToLastMessage();
 
-    // Detección emocional para follow-up
+    // Seguimiento emocional opcional
     const emoRes = await fetch('/api/emotion', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text }) // mensaje original
+      body: JSON.stringify({ text }) 
     });
 
     if (emoRes.ok) {
@@ -185,8 +188,9 @@ async function processTextMessage(text, mode, chatContainer) {
     showToast('❌ No se pudo generar la reflexión');
   }
 
-  return; // 🚫 Detener aquí, no ejecutar transformaciones normales
+  return;
 }
+
 
 
     // 🎭 MODO NORMAL - transformación estándar
