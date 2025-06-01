@@ -159,6 +159,8 @@ Tu tarea es responder con:
 3. Lenguaje cálido y respetuoso, evitando clichés.
 4. Preguntas abiertas que inviten a la reflexión.
 5. Mensajes breves que ayuden a contener, calmar y dar perspectiva.
+6. Acompañamiento sin juicios ni sugestiones.
+7. Evitá repetir estructuras o frases. Respondé con frescura, como si fuera una conversación real y única.
 
 Si detectás señales de angustia intensa, desesperanza o riesgo (aunque sea leve), respondé con mayor cuidado e invitá a la persona a considerar pedir ayuda profesional, siempre desde un lugar amoroso y sin alarmismo.
 
@@ -180,6 +182,8 @@ Respondé con una reflexión breve, terapéutica, cálida y contenedora.
   if (res.ok) {
     const data = await res.json();
     addMessage(data.result, 'reflection', chatContainer);
+    await new Promise(resolve => setTimeout(resolve, 2000)); // 2 segundos
+
     scrollToLastMessage();
 
     // Seguimiento emocional opcional
