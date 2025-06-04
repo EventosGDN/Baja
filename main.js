@@ -148,8 +148,8 @@ async function processTextMessage(text, mode, chatContainer) {
 
   try {
     if (reflectionEnabled) {
-  // 🧘‍♂️ MODO REFLEXIÓN - con enfoque terapéutico y empático
-/*   const reflectionPrompt = `
+      // 🧘‍♀️ MODO REFLEXIÓN — 1° respuesta principal
+      const reflectionPrompt = `
 Actuás como un amigo psicólogo, con quien la persona ya viene conversando. Tenés una conexión real, cercana, pero profesional. Estás atento/a a sus palabras, su tono, y lo que puede estar sintiendo detrás de lo que dice. No das consejos genéricos ni usás frases hechas. Escuchás activamente, validás lo que siente y respondés con lógica emocional, empatía real y sensibilidad.
 
 Tu objetivo no es resolver todo, sino acompañar con humanidad. Si algo no está bien, sabés decirlo con respeto y claridad, sin juzgar. Si no sabés algo, lo decís. Usás un lenguaje cálido, directo, y adaptado a cómo habla la persona. Podés usar pausas, metáforas sencillas, o preguntas que ayuden a pensar o comprenderse mejor. Respondé como alguien que realmente se preocupa y no como un sistema automático.
@@ -157,50 +157,52 @@ Tu objetivo no es resolver todo, sino acompañar con humanidad. Si algo no está
 Mensaje recibido: "${text}"
 
 Respondé con una reflexión breve, terapéutica, cálida y contenedora.
-`; */
+`;
 
-    const res = await fetch('https://bajarender.onrender.com/reflexion', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message: text })
-  });
+      const res = await fetch('/api/transform', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: reflectionPrompt, mode: 'reflexion' })
+      });
 
+      hideLoading();
 
-  hideLoading();
+      if (res.ok) {
+        const data = await res.json();
+        addMessage(data.result, 'reflection', chatContainer);
+        scrollToLastMessage();
 
-  if (res.ok) {
-    const data = await res.json();
-    addMessage(data.result, 'reflection', chatContainer);
-    await new Promise(resolve => setTimeout(resolve, 2000)); // 2 segundos
+        // 2° respuesta de acompañamiento emocional
+        const followUpPrompt = `
+Estás hablando con alguien que te compartió lo siguiente:
 
-    scrollToLastMessage();
+"${text}"
 
-    // Seguimiento emocional opcional
-    const emoRes = await fetch('/api/emotion', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text }) 
-    });
+Tu tarea ahora es escribirle un mensaje de acompañamiento emocional corto, que cierre esta charla con empatía. No repitas lo que dijo, ni des explicaciones. Usá un lenguaje sereno, humano y afectuoso.
 
-    if (emoRes.ok) {
-      const emoData = await emoRes.json();
-      if (emoData.followUp) {
-        setTimeout(() => {
-          addMessage(emoData.followUp, 'reflection', chatContainer);
-          scrollToLastMessage();
-        }, 2000);
+Respondé como si fueras un psicólogo cercano, en 1 sola oración:`;
+
+        const emoRes = await fetch('/api/transform', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt: followUpPrompt, mode: 'reflexion' })
+        });
+
+        if (emoRes.ok) {
+          const emoData = await emoRes.json();
+          setTimeout(() => {
+            addMessage(emoData.result, 'reflection', chatContainer);
+            scrollToLastMessage();
+          }, 2000);
+        }
+      } else {
+        showToast('❌ No se pudo generar la reflexión');
       }
+
+      return;
     }
-  } else {
-    showToast('❌ No se pudo generar la reflexión');
-  }
 
-  return;
-}
-
-
-
-    // 🎭 MODO NORMAL - transformación estándar
+    // 🎭 MODO NORMAL — transformación con opciones
     const response = await transformText(text, mode);
     hideLoading();
     console.log('Respuesta de API:', response);
@@ -223,6 +225,7 @@ Respondé con una reflexión breve, terapéutica, cálida y contenedora.
     showToast('❌ Error al procesar el mensaje: ' + error.message);
   }
 }
+
 
 function setupAuth(firebaseAuth, onLogin, onLogout) {
   const auth = firebaseAuth.auth;
