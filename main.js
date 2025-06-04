@@ -174,11 +174,15 @@ Respondé con una reflexión breve, terapéutica, cálida y contenedora.
 
         // 2° respuesta de acompañamiento emocional
         const followUpPrompt = `
-Estás hablando con alguien que te compartió lo siguiente:
+Estás hablando con alguien que esta en un momento de mucha emocion que te compartió lo siguiente:
 
 "${text}"
 
-Tu tarea ahora es escribirle un mensaje de acompañamiento emocional corto, que cierre esta charla con empatía. No repitas lo que dijo, ni des explicaciones. Usá un lenguaje sereno, humano y afectuoso.
+Tu tarea ahora es escribirle un mensaje de acompañamiento emocional corto, 
+que brinde esta charla con empatía. No repitas lo que dijo, 
+ni des explicaciones sin sentido. Usá un lenguaje sereno, humano y afectuoso.
+Entiende la situacion por la que pasa y la emocion que lo invade y 
+brinda la mejor ayuda posible. y si tiene que decir no, decilo.
 
 Respondé como si fueras un psicólogo cercano, en 1 sola oración:`;
 
