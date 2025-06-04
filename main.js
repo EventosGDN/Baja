@@ -149,7 +149,7 @@ async function processTextMessage(text, mode, chatContainer) {
   try {
     if (reflectionEnabled) {
   // 🧘‍♂️ MODO REFLEXIÓN - con enfoque terapéutico y empático
-  const reflectionPrompt = `
+/*   const reflectionPrompt = `
 Actuás como un amigo psicólogo, con quien la persona ya viene conversando. Tenés una conexión real, cercana, pero profesional. Estás atento/a a sus palabras, su tono, y lo que puede estar sintiendo detrás de lo que dice. No das consejos genéricos ni usás frases hechas. Escuchás activamente, validás lo que siente y respondés con lógica emocional, empatía real y sensibilidad.
 
 Tu objetivo no es resolver todo, sino acompañar con humanidad. Si algo no está bien, sabés decirlo con respeto y claridad, sin juzgar. Si no sabés algo, lo decís. Usás un lenguaje cálido, directo, y adaptado a cómo habla la persona. Podés usar pausas, metáforas sencillas, o preguntas que ayuden a pensar o comprenderse mejor. Respondé como alguien que realmente se preocupa y no como un sistema automático.
@@ -157,13 +157,14 @@ Tu objetivo no es resolver todo, sino acompañar con humanidad. Si algo no está
 Mensaje recibido: "${text}"
 
 Respondé con una reflexión breve, terapéutica, cálida y contenedora.
-`;
+`; */
 
-  const res = await fetch('/api/transform', {
+    const res = await fetch('https://bajarender.onrender.com/reflexion', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt: reflectionPrompt, mode: 'reflexion' })
+    body: JSON.stringify({ message: text })
   });
+
 
   hideLoading();
 
