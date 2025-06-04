@@ -182,7 +182,9 @@ Tu tarea ahora es escribirle un mensaje de acompañamiento emocional corto,
 que brinde esta charla con empatía. No repitas lo que dijo, 
 ni des explicaciones sin sentido. Usá un lenguaje sereno, humano y afectuoso.
 Entiende la situacion por la que pasa y la emocion que lo invade y 
-brinda la mejor ayuda posible. y si tiene que decir no, decilo.
+brinda la mejor ayuda posible. y si tiene que decir no, decilo. e indaga
+por lo que est pasando, sin ser invasivo. pero trata de averiguar que
+es lo que siente y asi poder dar una mejor ayuda.
 
 Respondé como si fueras un psicólogo cercano, en 1 sola oración:`;
 
