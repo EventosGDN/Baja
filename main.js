@@ -582,7 +582,7 @@ function drawFog() {
 
 
 function iniciarNiebla() {
-  fogParticles = createFogParticles(250); // ajustable
+  fogParticles = createFogParticles(270); // ajustable
   drawFog();
 }
 
