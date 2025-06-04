@@ -1,4 +1,4 @@
-export default async function handler(req, res) {
+/* export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Método no permitido' });
   }
@@ -45,3 +45,4 @@ Mensaje: "${text}"
     return res.status(500).json({ error: 'Error interno al detectar emoción' });
   }
 }
+ */
