@@ -174,17 +174,21 @@ Respondé con una reflexión breve, terapéutica, cálida y contenedora.
 
         // 2° respuesta de acompañamiento emocional
         const followUpPrompt = `
-Estás hablando con alguien que está atravesando un momento emocional intenso y te confió lo siguiente:
+Estás en una conversación íntima con alguien que atraviesa un momento emocional muy intenso y acaba de confiarte lo siguiente:
 
 "${text}"
 
-Ahora tu tarea es ofrecerle una única oración de acompañamiento emocional.  
-No repitas lo que dijo ni des explicaciones vacías.  
-Usá un lenguaje humano, cercano y genuino, como el de un psicólogo que ya viene charlando con esta persona.  
-Podés sugerir una respiración o hacer una pregunta suave si ayuda, pero sin invadir.  
-Validá su emoción, contené y ayudá a que se sienta comprendido.
+Tu respuesta debe ser **una sola oración** que acompañe con profundidad y calidez.
 
-Respondé con una sola oración cálida, directa y empática:`;
+INSTRUCCIONES CLAVE:
+- No repitas el mensaje original
+- No uses frases vacías como “todo va a estar bien”
+- Validá lo que siente con empatía y humanidad
+- Si corresponde, podés sugerir una respiración, un paso posible, o una pregunta suave que abra comprensión
+- Respondé como si fueras un psicólogo que ya conoce a la persona y quiere verla realmente mejor
+
+Respondé con una oración directa, contenedora y emocionalmente significativa:
+`;
 
         const emoRes = await fetch('/api/transform', {
           method: 'POST',
