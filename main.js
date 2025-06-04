@@ -134,67 +134,62 @@ function scrollToLastMessage(extra = 180) {
 }
 
 
-async function processTextMessage(text, mode, chatContainer) {
-  const reflectionEnabled = document.getElementById('reflectionToggle')?.checked;
-  const emptyState = chatContainer.querySelector('.empty-state');
-  const canUse = true;
-  if (!canUse) return;
-  if (emptyState) emptyState.remove();
+let mode = 'formal'; // Valor por defecto
+
+const modeSelector = document.getElementById('modeSelector');
+if (modeSelector) {
+  modeSelector.addEventListener('change', (e) => {
+    mode = e.target.value;
+  });
+}
+
+async function processTextMessage(text) {
+  if (!text.trim()) return;
 
   addMessage(text, 'original', chatContainer);
-  showLoading(reflectionEnabled ? 'Reflexionando...' : 'Transformando mensaje...');
-  scrollToLastMessage();
-  header.classList.add('oculto');
+
+  let aiResponse = '';
 
   try {
-    if (reflectionEnabled) {
-  // 🧘‍♂️ MODO REFLEXIÓN - con enfoque terapéutico y empático
-  const reflectionPrompt = `
-Actuás como un amigo psicólogo, con quien la persona ya viene conversando. Tenés una conexión real, cercana, pero profesional. Estás atento/a a sus palabras, su tono, y lo que puede estar sintiendo detrás de lo que dice. No das consejos genéricos ni usás frases hechas. Escuchás activamente, validás lo que siente y respondés con lógica emocional, empatía real y sensibilidad.
+    let response;
+    if (mode === 'reflexion') {
+      // Llamar al endpoint de Render solo para modo reflexión
+      response = await fetch('https://bajarender.onrender.com/reflexion', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text })
+      });
 
-Tu objetivo no es resolver todo, sino acompañar con humanidad. Si algo no está bien, sabés decirlo con respeto y claridad, sin juzgar. Si no sabés algo, lo decís. Usás un lenguaje cálido, directo, y adaptado a cómo habla la persona. Podés usar pausas, metáforas sencillas, o preguntas que ayuden a pensar o comprenderse mejor. Respondé como alguien que realmente se preocupa y no como un sistema automático.
+      if (!response.ok) throw new Error('Error en IA modo reflexión');
 
-Mensaje recibido: "${text}"
+      const data = await response.json();
+      aiResponse = data.response || "No pude reflexionar sobre eso.";
+      addMessage(aiResponse, 'reflection', chatContainer);
+    } else {
+      // Modo clásico (formal, amigable, etc.) usando backend local
+      response = await fetch('/api/transform', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: text, mode })
+      });
 
-Respondé con una reflexión breve, terapéutica, cálida y contenedora.
-`;
+      const data = await response.json();
 
-  const res = await fetch('/api/transform', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt: reflectionPrompt, mode: 'reflexion' })
-  });
+      if (data.hasSecondOption) {
+        aiResponse = `${data.result}
 
-  hideLoading();
-
-  if (res.ok) {
-    const data = await res.json();
-    addMessage(data.result, 'reflection', chatContainer);
-    await new Promise(resolve => setTimeout(resolve, 2000)); // 2 segundos
-
-    scrollToLastMessage();
-
-    // Seguimiento emocional opcional
-    const emoRes = await fetch('/api/emotion', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text }) 
-    });
-
-    if (emoRes.ok) {
-      const emoData = await emoRes.json();
-      if (emoData.followUp) {
-        setTimeout(() => {
-          addMessage(emoData.followUp, 'reflection', chatContainer);
-          scrollToLastMessage();
-        }, 2000);
+${data.connector}
+${data.secondOption}`;
+      } else {
+        aiResponse = data.result;
       }
-    }
-  } else {
-    showToast('❌ No se pudo generar la reflexión');
-  }
 
-  return;
+      addMessage(aiResponse, 'ai', chatContainer);
+    }
+  } catch (err) {
+    console.error("Error en processTextMessage:", err);
+    showToast("❌ Error al procesar el mensaje.");
+  }
 }
 
 
